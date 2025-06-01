@@ -182,8 +182,8 @@
 <body class="bg-gray-50">
     <!-- Language Switch -->
     <div class="language-switch flex">
-        <button id="englishBtn" class="language-btn active">EN</button>
-        <button id="chineseBtn" class="language-btn">中文</button>
+        <button id="englishBtn" class="language-btn">EN</button>
+        <button id="chineseBtn" class="language-btn active">中文</button>
     </div>
 
     <!-- Hero Section -->
@@ -200,7 +200,7 @@
                 </h1>
 
                 <p class="mb-4 text-xl font-bold tracking-tight md:text-2xl">
-                    <span class="english-content">If you want to go fast, go alone, if you want to go far, go together.</span>
+                    <span class="english-content">If you want to go far, go together.</span>
                     <span class="chinese-content chinese-font" style="display: none;">一個人走得快， 一群人走得遠</span>
                 </p>
 
@@ -918,19 +918,31 @@
     </footer>
 
     <script>
-        // Language toggle functionality
-        document.getElementById('englishBtn').addEventListener('click', function() {
-            document.querySelectorAll('.english-content').forEach(el => el.style.display = 'block');
-            document.querySelectorAll('.chinese-content').forEach(el => el.style.display = 'none');
-            document.getElementById('englishBtn').classList.add('active');
-            document.getElementById('chineseBtn').classList.remove('active');
+        function setLanguage(lang) {
+            if (lang === 'chinese') {
+                document.querySelectorAll('.english-content').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.chinese-content').forEach(el => el.style.display = 'block');
+                document.getElementById('englishBtn').classList.remove('active');
+                document.getElementById('chineseBtn').classList.add('active');
+            } else {
+                document.querySelectorAll('.english-content').forEach(el => el.style.display = 'block');
+                document.querySelectorAll('.chinese-content').forEach(el => el.style.display = 'none');
+                document.getElementById('englishBtn').classList.add('active');
+                document.getElementById('chineseBtn').classList.remove('active');
+            }
+        }
+
+        // Set Chinese as default on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setLanguage('chinese');
         });
-        
+
+        document.getElementById('englishBtn').addEventListener('click', function() {
+            setLanguage('english');
+        });
+
         document.getElementById('chineseBtn').addEventListener('click', function() {
-            document.querySelectorAll('.english-content').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.chinese-content').forEach(el => el.style.display = 'block');
-            document.getElementById('englishBtn').classList.remove('active');
-            document.getElementById('chineseBtn').classList.add('active');
+            setLanguage('chinese');
         });
         
         // Initialize map (placeholder - would need actual GPX data)
