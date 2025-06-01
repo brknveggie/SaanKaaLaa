@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaanKaaLaa 50 - YYCHKer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/2.1.2/gpx.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'race-red': '#dc2626',
+                        'race-blue': '#2563eb',
+                        'race-yellow': '#eab308',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        .chinese-font {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        
+        .map-container {
+            height: 400px;
+            background-image: url('https://maps.googleapis.com/maps/api/staticmap?center=39.7392,-104.9903&zoom=12&size=800x400&maptype=terrain&path=color:0xff0000ff|weight:5|39.7392,-104.9903|39.7355,-104.9912|39.7321,-104.9956|39.7298,-105.0001|39.7275,-105.0067&key=YOUR_API_KEY');
+            background-size: cover;
+            background-position: center;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .elevation-profile {
+            height: 250px;
+            position: relative;
+            border-radius: 0.5rem;
+        }
+        
+        .elevation-marker {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 1.5rem;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, #3b82f6, #10b981);
+            border-radius: 2px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -3rem;
+            top: 0.5rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            background-color: #3b82f6;
+            border: 4px solid #eff6ff;
+        }
+        
+        .route-difficulty-easy {
+            background-color: #10b981;
+        }
+        
+        .route-difficulty-medium {
+            background-color: #f59e0b;
+        }
+        
+        .route-difficulty-hard {
+            background-color: #ef4444;
+        }
+        
+        .gradient-text {
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-image: linear-gradient(90deg, #dc2626, #2563eb);
+        }
+        
+        .parallax {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .language-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: white;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+        
+        .language-btn {
+            padding: 8px 16px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .language-btn.active {
+            background-color: #2563eb;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .event-details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .parallax {
+                background-attachment: scroll;
+            }
+            
+            .language-switch {
+                top: 10px;
+                right: 10px;
+            }
+        }
+        
+        /* Hide Chinese content by default */
+        .chinese-content {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Language Switch -->
+    <div class="language-switch flex">
+        <button id="englishBtn" class="language-btn active">EN</button>
+        <button id="chineseBtn" class="language-btn">中文</button>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="relative overflow-hidden text-white bg-gray-900">
+        <div class="absolute inset-0">
+            <img src="./assets/head1.jpg" alt="Mountain Range" class="object-cover w-full h-full opacity-50 parallax">
+                 alt="Trail runners" class="object-cover w-full h-full opacity-50 parallax">
+        </div>
+        <div class="relative z-10 px-4 py-24 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="mb-4 text-4xl font-extrabold tracking-tight md:text-6xl">
+                    <span class="gradient-text english-content">SaanKaaLaa 50</span>
+                    <span class="gradient-text chinese-content chinese-font" style="display: none;">山卡旯 50</span>
+                </h1>
+
+                <p class="mb-4 text-xl font-bold tracking-tight md:text-2xl">
+                    <span class="english-content">If you want to go fast, go alone, if you want to go far, go together.</span>
+                    <span class="chinese-content chinese-font" style="display: none;">一個人走得快， 一群人走得遠</span>
+                </p>
+
+                <p class="max-w-2xl mx-auto text-xl text-gray-300 md:text-2xl english-content">
+                    A self-organized team challenge on August 30, 2025
+                </p>
+                <p class="max-w-2xl mx-auto text-xl text-gray-300 md:text-2xl chinese-content chinese-font" style="display: none;">
+                    2025年8月30日，自主團隊挑戰
+                </p>
+                <div class="flex flex-wrap justify-center gap-4 mt-8">
+                    <a href="#register" class="inline-flex items-center px-6 py-3 text-base font-medium text-white transition duration-300 transform border border-transparent rounded-md shadow-sm bg-race-red hover:bg-red-800 hover:scale-105 english-content">
+                        <i class="mr-2 fas fa-edit"></i> Register Your Team
+                    </a>
+                    <a href="#register" class="inline-flex items-center px-6 py-3 text-base font-medium text-white transition duration-300 transform border border-transparent rounded-md shadow-sm bg-race-red hover:bg-red-800 hover:scale-105 chinese-content chinese-font" style="display: none;">
+                        <i class="mr-2 fas fa-edit"></i> 團隊報名
+                    </a>
+                    <a href="#details" class="inline-flex items-center px-6 py-3 text-base font-medium transition duration-300 transform bg-white border border-transparent rounded-md shadow-sm text-race-blue hover:bg-gray-100 hover:scale-105 english-content">
+                        <i class="mr-2 fas fa-info-circle"></i> Challenge Details
+                    </a>
+                    <a href="#details" class="inline-flex items-center px-6 py-3 text-base font-medium transition duration-300 transform bg-white border border-transparent rounded-md shadow-sm text-race-blue hover:bg-gray-100 hover:scale-105 chinese-content chinese-font" style="display: none;">
+                        <i class="mr-2 fas fa-info-circle"></i> 挑戰詳情
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Event Highlights -->
+    <section class="py-16 bg-white">
+        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="mb-12 text-center">
+                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-blue bg-blue-50 english-content">THE CHALLENGE</span>
+                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-blue bg-blue-50 chinese-content chinese-font" style="display: none;">挑戰內容</span>
+                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl english-content">
+                    Team Up & Conquer Together
+                </h2>
+                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl chinese-content chinese-font" style="display: none;">
+                    團隊合作 共同征服
+                </h2>
+                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 english-content">
+                    A 54K trail challenge where teams of 4 must start and finish together
+                </p>
+                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 chinese-content chinese-font" style="display: none;">
+                    4人團隊必須同時起跑和完成比賽的54公里越野挑戰
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-8 text-center md:grid-cols-3">
+                <div class="p-8 bg-white border border-gray-100 shadow-sm rounded-xl card-hover">
+                    <div class="flex items-center justify-center w-16 h-16 mx-auto bg-red-100 rounded-full text-race-red">
+                        <i class="text-2xl fas fa-users"></i>
+                    </div>
+                    <h3 class="mt-6 text-xl font-semibold text-gray-900 english-content">Team Challenge</h3>
+                    <h3 class="mt-6 text-xl font-semibold text-gray-900 chinese-content chinese-font" style="display: none;">團隊挑戰</h3>
+                    <p class="mt-4 text-gray-600 english-content">
+                        Teams of 4 must start and finish together. Test your teamwork on rugged trails.
+                    </p>
+                    <p class="mt-4 text-gray-600 chinese-content chinese-font" style="display: none;">
+                        4人一隊必須同時起跑和完成比賽。在崎嶇賽道上考驗團隊精神。
+                    </p>
+                </div>
+                
+                <div class="p-8 bg-white border border-gray-100 shadow-sm rounded-xl card-hover">
+                    <div class="flex items-center justify-center w-16 h-16 mx-auto bg-blue-100 rounded-full text-race-blue">
+                        <i class="text-2xl fas fa-route"></i>
+                    </div>
+                    <h3 class="mt-6 text-xl font-semibold text-gray-900 english-content">Self-Supported</h3>
+                    <h3 class="mt-6 text-xl font-semibold text-gray-900 chinese-content chinese-font" style="display: none;">自主挑戰</h3>
+                    <p class="mt-4 text-gray-600 english-content">
+                        Basic aid stations with water and snacks provided by volunteers along the route.
+                    </p>
+                    <p class="mt-4 text-gray-600 chinese-content chinese-font" style="display: none;">
+                        沿途由義工提供基本補水站。
+                    </p>
+                </div>
+                
+                <div class="p-8 bg-white border border-gray-100 shadow-sm rounded-xl card-hover">
+                    <div class="flex items-center justify-center w-16 h-16 mx-auto bg-yellow-100 rounded-full text-race-yellow">
+                        <i class="text-2xl fas fa-medal"></i>
+                    </div>
+                    <h3 class="mt-6 text-xl font-semibold text-gray-900 english-content">Personal Achievement</h3>
+                    <h3 class="mt-6 text-xl font-semibold text-gray-900 chinese-content chinese-font" style="display: none;">個人成就</h3>
+                    <p class="mt-4 text-gray-600 english-content">
+                        The reward is the challenge itself - push your limits with your teammates earn this life changing experience.
+                    </p>
+                    <p class="mt-4 text-gray-600 chinese-content chinese-font" style="display: none;">
+                        挑戰本身就是獎勵 - 與隊友一起突破極限，獲得這個特別的體驗。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    <!-- Route Section -->
+    <section id="route" class="py-16 bg-gradient-to-b from-gray-50 to-white">
+        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="mb-12 text-center">
+                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-blue bg-blue-50 english-content">THE COURSE</span>
+                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-blue bg-blue-50 chinese-content chinese-font" style="display: none;">路線</span>
+                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl english-content">
+                    Challenge Route
+                </h2>
+                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl chinese-content chinese-font" style="display: none;">
+                    挑戰路線
+                </h2>
+                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 english-content">
+                    A challenging 54K with diverse terrain and stunning views
+                </p>
+                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 chinese-content chinese-font" style="display: none;">
+                    多樣地形和壯麗景觀的54公里挑戰賽道
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                <div>
+                    <div class="mb-8 shadow-xl map-container" id="map-container"></div>
+
+                    <div class="p-8 bg-white shadow-sm rounded-xl card-hover">
+                        <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 english-content">
+                            <i class="mr-2 fas fa-chart-line text-race-blue"></i> Elevation Profile
+                        </h3>
+                        <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 chinese-content chinese-font" style="display: none;">
+                            <i class="mr-2 fas fa-chart-line text-race-blue"></i> 攀升圖
+                        </h3>
+                        <div id="elevation-profile"class="mb-4 rounded-lg elevation-profile">
+                        </div>
+                        
+                    </div>
+                    <div class="p-8 flex justify-center">
+                        <a href="https://www.strava.com/routes/3340583531654407086" target="_blank" rel="noopener" class="inline-flex items-center px-4 py-2 text-base font-medium text-white bg-race-blue rounded-md shadow-sm hover:bg-blue-700 transition duration-300 english-content">
+                            <i class="fab fa-strava mr-2"></i> View on Strava
+                        </a>
+                        <a href="https://www.strava.com/routes/3340583531654407086" target="_blank" rel="noopener" class="inline-flex items-center px-4 py-2 text-base font-medium text-white bg-race-blue rounded-md shadow-sm hover:bg-blue-700 transition duration-300 chinese-content chinese-font" style="display: none;">
+                            <i class="fab fa-strava mr-2"></i> 在 Strava 查看路線
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="p-8 bg-white shadow-sm rounded-xl card-hover">
+                        <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 english-content">
+                            <i class="mr-2 fas fa-route text-race-blue"></i> Course Details
+                        </h3>
+                        <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 chinese-content chinese-font" style="display: none;">
+                            <i class="mr-2 fas fa-route text-race-blue"></i> 賽道詳情
+                        </h3>
+                        
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <h4 class="font-medium text-gray-900 english-content">Start to Aid Station 1 (Powderface Ridge Trailhead)</h4>
+                                <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">起點至補給站1 (Powderface Ridge Trailhead)</h4>
+                                <p class="text-sm text-gray-600">15 km • 500m elevation gain</p>
+                                <p class="mt-2 text-gray-700 english-content">
+                                    Gentle climb through forest trails with some rocky sections, descending to the plains and follow trail back to trailhead.
+                                </p>
+                                <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
+                                    穿過森林小徑的緩坡，小部分碎石路段，最後下降至平原。
+                                </p>
+                                <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-easy english-content">
+                                    <i class="mr-1 fas fa-leaf"></i> Easy
+                                </span>
+                                <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-easy chinese-content chinese-font" style="display: none;">
+                                    <i class="mr-1 fas fa-leaf"></i> 簡單
+                                </span>
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <h4 class="font-medium text-gray-900 english-content">Aid Station 1 to 2 (Elbow Fall Parking Lot)</h4>
+                                <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">補給站1至2 (Elbow Fall Parking)</h4>
+                                <p class="text-sm text-gray-600">14 km • 680m elevation gain</p>
+                                <p class="mt-2 text-gray-700 english-content">
+                                    Steep climb with switchback.
+                                </p>
+                                <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
+                                    陡峭的爬升。
+                                </p>
+                                <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-hard english-content">
+                                    <i class="mr-1 fas fa-exclamation-triangle"></i> Difficult
+                                </span>
+                                <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-hard chinese-content chinese-font" style="display: none;">
+                                    <i class="mr-1 fas fa-exclamation-triangle"></i> 困難
+                                </span>
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <h4 class="font-medium text-gray-900 english-content">Aid Station 2 to 3 (Moose Mountain Trailhead Parking)</h4>
+                                <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">補給站2至3 (Moose Mountain Trailhead Parking)</h4>
+                                <p class="text-sm text-gray-600">10.5 km • 600m elevation gain</p>
+                                <p class="mt-2 text-gray-700 english-content">
+                                    Climb on well paved road and trail to last aid station.
+                                </p>
+                                <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
+                                    爬上鋪好的道路和步道至最後一個補給站。
+                                </p>
+                                <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-medium english-content">
+                                    <i class="mr-1 fas fa-hiking"></i> Moderate
+                                </span>
+                                <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-medium chinese-content chinese-font" style="display: none;">
+                                    <i class="mr-1 fas fa-hiking"></i> 中等困難
+                                </span>
+                                                                
+                            </div>
+                            
+                            <div class="timeline-item">
+                                <h4 class="font-medium text-gray-900 english-content">Aid Station 3 to Finish (Allen Bill Day Use Area)</h4>
+                                <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">補給站3至終點 (Allen Bill Day Use Area)</h4>
+                                <p class="text-sm text-gray-600">14.5 km • 170m elevation gain • 750m elevation loss</p>
+                                <p class="mt-2 text-gray-700 english-content">
+                                    Flowing single-track through forest trails down with some climbs.
+                                </p>
+                                <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
+                                    穿越森林小徑下坡，有些爬升。
+                                </p>
+                                <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-medium english-content">
+                                    <i class="mr-1 fas fa-hiking"></i> Moderate
+                                </span>
+                                <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-medium chinese-content chinese-font" style="display: none;">
+                                    <i class="mr-1 fas fa-hiking"></i> 中等困難
+                                </span>
+                                                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Event Details -->
+    <section id="details" class="py-16 bg-white">
+        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="mb-12 text-center">
+                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-blue bg-blue-50 english-content">THE PREPARATION</span>
+                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-blue bg-blue-50 chinese-content chinese-font" style="display: none;">準備就緒</span>
+                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl english-content">
+                    Challenge Details
+                </h2>
+                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl chinese-content chinese-font" style="display: none;">
+                    挑戰詳情
+                </h2>
+                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 english-content">
+                    What you need to know about this self-organized team challenge
+                </p>
+                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 chinese-content chinese-font" style="display: none;">
+                    關於這場自主團隊挑戰的資訊
+                </p>
+            </div>
+            
+            <div class="grid gap-8 event-details-grid grid-cols-1">
+                <div class="p-8 shadow-sm bg-gray-50 rounded-xl card-hover">
+                    <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 english-content">
+                        <i class="mr-2 far fa-calendar-alt text-race-blue"></i> Schedule
+                    </h3>
+                    <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 chinese-content chinese-font" style="display: none;">
+                        <i class="mr-2 far fa-calendar-alt text-race-blue"></i> 時間表
+                    </h3>
+                    
+                    <div class="space-y-6">
+                        <div class="p-4 bg-white border-l-4 border-blue-500 rounded-lg">
+                            <h4 class="font-medium text-gray-900 english-content">Check-in</h4>
+                            <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">報到</h4>
+                            <p class="text-sm text-gray-600">August 30, 2025 • 5:00 AM</p>
+                            <p class="mt-2 text-gray-700 english-content">
+                                Team check-in and safety briefing at the start point. Volunteer will shuttle teams to the start line.
+                            </p>
+                            <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
+                                團隊報到和起點處的安全簡報。義工將會協助團隊前往起點。
+                            </p>
+                        </div>
+                        
+                        <div class="p-4 bg-white border-l-4 border-green-500 rounded-lg">
+                            <h4 class="font-medium text-gray-900 english-content">Challenge Begin</h4>
+                            <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">挑戰開始</h4>
+                            <p class="text-sm text-gray-600">August 30, 2025 • 6:00 AM</p>
+                            <p class="mt-2 text-gray-700 english-content">
+                                54K challenge begins at dawn. Teams must stay together throughout.
+                            </p>
+                            <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
+                                54公里挑戰於黎明開始。團隊必須全程保持在一起。
+                            </p>
+                        </div>
+
+                        <div class="p-4 bg-white border-l-4 border-yellow-500 rounded-lg">
+                            <h4 class="font-medium text-gray-900 english-content">Suggested Cutoff at Aid Station 2 (Elbow Fall Parking Lot)</h4>
+                            <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">建議</h4>
+                            <p class="text-sm text-gray-600">August 30, 2025 • 14:00 AM</p>
+                            <p class="mt-2 text-gray-700 english-content">
+                                Suggest team that did not make to Aid Station 2 (Elbow Fall Parking Lot) in time to drop out of the challenge.
+                            </p>
+                            <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
+                                建議未能在限時內到達第二補給站（Elbow Fall Parking Lot）的團隊提早完成挑戰。
+                            </p>
+                        </div>
+
+                        <div class="p-4 bg-white border-l-4 border-green-500 rounded-lg">
+                            <h4 class="font-medium text-gray-900 english-content">Challenge Finish</h4>
+                            <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">挑戰結束</h4>
+                            <p class="text-sm text-gray-600">August 30, 2025 • 20:00 PM</p>
+                            <p class="mt-2 text-gray-700 english-content">
+                                Finish Challenge at finish line and enjoy some food and drinks.
+                            </p>
+                            <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
+                                於終點處完成挑戰並享用美食和飲料。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-8 shadow-sm bg-gray-50 rounded-xl card-hover">
+                    <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 english-content">
+                        <i class="mr-2 fas fa-info-circle text-race-blue"></i> Important Notes
+                    </h3>
+                    <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 chinese-content chinese-font" style="display: none;">
+                        <i class="mr-2 fas fa-info-circle text-race-blue"></i> 重要事項
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-6 h-6 mt-1 text-blue-500">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <p class="ml-3 text-gray-700 english-content">
+                                This is a <span class="font-medium">self-supported challenge</span>, not an organized race
+                            </p>
+                            <p class="ml-3 text-gray-700 chinese-content chinese-font" style="display: none;">
+                                這是<span class="font-medium">自主挑戰</span>，不是正式比賽
+                            </p>
+                        </div>
+
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-6 h-6 mt-1 text-blue-500">
+                                <i class="fas fa-running"></i>
+                            </div>
+                            <p class="ml-3 text-gray-700 english-content">
+                                Challenger are responsible for their own safety and equipment
+                            </p>
+                            <p class="ml-3 text-gray-700 chinese-content chinese-font" style="display: none;">
+                                挑戰者需自行負責安全和裝備
+                            </p>
+                        </div>
+                        
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-6 h-6 mt-1 text-blue-500">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <p class="ml-3 text-gray-700 english-content">
+                                Teams of <span class="font-medium">exactly 4 members</span> must start and finish together
+                            </p>
+                            <p class="ml-3 text-gray-700 chinese-content chinese-font" style="display: none;">
+                                <span class="font-medium">4人團隊</span>必須同時起跑和完成比賽
+                            </p>
+                        </div>
+
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-6 h-6 mt-1 text-blue-500">
+                                <i class="fas fa-route"></i>
+                            </div>
+                            <p class="ml-3 text-gray-700 english-content">
+                                Use any watch/app to record the Challenge
+                            </p>
+                            <p class="ml-3 text-gray-700 chinese-content chinese-font" style="display: none;">
+                                以任何手錶或應用程式記錄挑戰
+                            </p>
+                        </div>
+                        
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-6 h-6 mt-1 text-blue-500">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <p class="ml-3 text-gray-700 english-content">
+                                Basic water stations provided by volunteers
+                            </p>
+                            <p class="ml-3 text-gray-700 chinese-content chinese-font" style="display: none;">
+                                義工提供的基本補水站
+                            </p>
+                        </div>
+                        
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-6 h-6 mt-1 text-blue-500">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <p class="ml-3 text-gray-700 english-content">
+                                Take photos at checkpoints and share on social media with #SaanKaaLaa50
+                            </p>
+                            <p class="ml-3 text-gray-700 chinese-content chinese-font" style="display: none;">
+                                在檢查點拍照並在社交媒體上分享 #SaanKaaLaa50
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <div class="p-8 shadow-sm bg-gray-50 rounded-xl card-hover">
+                    <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 english-content">
+                        <i class="mr-2 fas fa-running text-race-blue"></i> Recommend Gear
+                    </h3>
+                    <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 chinese-content chinese-font" style="display: none;">
+                        <i class="mr-2 fas fa-running text-race-blue"></i> 建議裝備
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
+                                <i class="fas fa-shoe-prints"></i>
+                            </div>
+                            <p class="ml-2 text-gray-700 english-content">Trail running shoes</p>
+                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">越野跑鞋</p>
+                        </div>
+                        
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
+                                <i class="fas fa-tshirt"></i>
+                            </div>
+                            <p class="ml-2 text-gray-700 english-content">Moisture-wicking layers</p>
+                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">吸濕排汗衣物</p>
+                        </div>
+                        
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
+                                <i class="fas fa-wind"></i>
+                            </div>
+                            <p class="ml-2 text-gray-700 english-content">Wind/Rain jacket</p>
+                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">防風/雨外套</p>
+                        </div>
+                        
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
+                                <i class="fas fa-sun"></i>
+                            </div>
+                            <p class="ml-2 text-gray-700 english-content">Sun Protection (hat, sunscreen)</p>
+                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">防曬裝備(帽子、防曬霜)</p>
+                        </div>
+                        
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
+                                <i class="fas fa-bottle-water"></i>
+                            </div>
+                            <p class="ml-2 text-gray-700 english-content">Water(1L minimum) / water filter</p>
+                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">水(至少1升)及或濾水器</p>
+                        </div>
+                        
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <p class="ml-2 text-gray-700 english-content">Energy gels / Snacks</p>
+                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">能量膠/零食</p>
+                        </div>
+                        
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
+                                <i class="fas fa-spray-can"></i>
+                            </div>
+                            <p class="ml-2 text-gray-700 english-content">Bear Spray</p>
+                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">防熊噴霧</p>
+                        </div>
+
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
+                                <i class="fas fa-first-aid"></i>
+                            </div>
+                            <p class="ml-2 text-gray-700 english-content">Basic First Aid Kit</p>
+                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">基本急救包</p>
+                        </div>
+                        
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <p class="ml-2 text-gray-700 english-content">Fully charged phone</p>
+                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">手機</p>
+                        </div>
+
+                        <div class="flex items-start p-3 bg-white rounded-lg">
+                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
+                                <i class="fas fa-satellite-dish"></i>
+                            </div>
+                            <p class="ml-2 text-gray-700 english-content">Satellite Communication (inReach...)</p>
+                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">衛星通訊裝置 (inReach...)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Form -->
+    <section id="register" class="py-16 bg-gray-50">
+        <div class="max-w-3xl px-4 mx-auto sm:px-6 lg:px-8">
+            <div class="overflow-hidden bg-white shadow-xl rounded-xl card-hover">
+                <div class="px-8 py-6 bg-gradient-to-r from-race-blue to-blue-600">
+                    <h2 class="text-2xl font-bold text-white english-content">Team Registration</h2>
+                    <h2 class="text-2xl font-bold text-white chinese-content chinese-font" style="display: none;">團隊報名</h2>
+                    <p class="text-blue-100 english-content">Register your team for this free challenge</p>
+                    <p class="text-blue-100 chinese-content chinese-font" style="display: none;">為您的團隊報名參加這場挑戰</p>
+                </div>
+                
+                <form class="p-8 space-y-6" id="registrationForm">
+                    <div>
+                        <label for="teamName" class="block text-sm font-medium text-gray-700 english-content">Team Name *</label>
+                        <label for="teamName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">團隊名稱 *</label>
+                        <input type="text" id="teamName" name="teamName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                    </div>
+                    
+                    <div>
+                        <h3 class="mb-4 text-lg font-medium text-gray-900 english-content">Team Contact Point</h3>
+                        <h3 class="mb-4 text-lg font-medium text-gray-900 chinese-content chinese-font" style="display: none;">團隊聯絡人</h3>
+                        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <div>
+                                <label for="captainFirstName" class="block text-sm font-medium text-gray-700 english-content">First Name *</label>
+                                <label for="captainFirstName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">名字 *</label>
+                                <input type="text" id="captainFirstName" name="captainFirstName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                            </div>
+                            
+                            <div>
+                                <label for="captainLastName" class="block text-sm font-medium text-gray-700 english-content">Last Name *</label>
+                                <label for="captainLastName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">姓氏 *</label>
+                                <input type="text" id="captainLastName" name="captainLastName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                            </div>
+                            
+                            <div>
+                                <label for="captainPhone" class="block text-sm font-medium text-gray-700 english-content">Phone *</label>
+                                <label for="captainPhone" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電話 *</label>
+                                <input type="tel" id="captainPhone" name="captainPhone" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                            </div>
+
+                            <div>
+                                <label for="captainEmail" class="block text-sm font-medium text-gray-700 english-content">Email *</label>
+                                <label for="captainEmail" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電子郵件 *</label>
+                                <input type="email" id="captainEmail" name="captainEmail" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="mb-4 text-lg font-medium text-gray-900 english-content">Team Members</h3>
+                        <h3 class="mb-4 text-lg font-medium text-gray-900 chinese-content chinese-font" style="display: none;">團隊成員</h3>
+                        <div class="space-y-6">
+                            <!-- Member 1 -->
+                            <div class="p-4 bg-gray-50 rounded-lg">
+                                <h4 class="mb-3 font-medium text-gray-900 english-content">Member 1</h4>
+                                <h4 class="mb-3 font-medium text-gray-900 chinese-content chinese-font" style="display: none;">成員1</h4>
+                                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                    <div>
+                                        <label for="member1FirstName" class="block text-sm font-medium text-gray-700 english-content">First Name *</label>
+                                        <label for="member1FirstName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">名字 *</label>
+                                        <input type="text" id="member1FirstName" name="member1FirstName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="member1LastName" class="block text-sm font-medium text-gray-700 english-content">Last Name *</label>
+                                        <label for="member1LastName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">姓氏 *</label>
+                                        <input type="text" id="member1LastName" name="member1LastName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                    </div>
+                                    <div>
+                                        <label for="member1Phone" class="block text-sm font-medium text-gray-700 english-content">Phone *</label>
+                                        <label for="member1Phone" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電話 *</label>
+                                        <input type="tel" id="member1Phone" name="member1Phone" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                    </div>
+
+                                    <div>
+                                        <label for="member1Email" class="block text-sm font-medium text-gray-700 english-content">Email </label>
+                                        <label for="member1Email" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電子郵件 </label>
+                                        <input type="email" id="member1Email" name="member1Email"  class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                    </div>                                    
+                                </div>
+                            </div>
+                            
+                            <!-- Member 2 -->
+                            <div class="p-4 bg-gray-50 rounded-lg">
+                                <h4 class="mb-3 font-medium text-gray-900 english-content">Member 2</h4>
+                                <h4 class="mb-3 font-medium text-gray-900 chinese-content chinese-font" style="display: none;">成員2</h4>
+                                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                    <div>
+                                        <label for="member2FirstName" class="block text-sm font-medium text-gray-700 english-content">First Name *</label>
+                                        <label for="member2FirstName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">名字 *</label>
+                                        <input type="text" id="member2FirstName" name="member2FirstName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="member2LastName" class="block text-sm font-medium text-gray-700 english-content">Last Name *</label>
+                                        <label for="member2LastName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">姓氏 *</label>
+                                        <input type="text" id="member2LastName" name="member2LastName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                    </div>
+
+                                    <div>
+                                        <label for="member2Phone" class="block text-sm font-medium text-gray-700 english-content">Phone *</label>
+                                        <label for="member2Phone" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電話 *</label>
+                                        <input type="tel" id="member2Phone" name="member2Phone" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                    </div>
+
+                                    <div>
+                                        <label for="member2Email" class="block text-sm font-medium text-gray-700 english-content">Email </label>
+                                        <label for="member2Email" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電子郵件 </label>
+                                        <input type="email" id="member2Email" name="member2Email"  class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                    </div>                                    
+                                </div>
+                            </div>
+                            
+                            <!-- Member 3 -->
+                            <div class="p-4 bg-gray-50 rounded-lg">
+                                <h4 class="mb-3 font-medium text-gray-900 english-content">Member 3</h4>
+                                <h4 class="mb-3 font-medium text-gray-900 chinese-content chinese-font" style="display: none;">成員3</h4>
+                                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                    <div>
+                                        <label for="member3FirstName" class="block text-sm font-medium text-gray-700 english-content">First Name *</label>
+                                        <label for="member3FirstName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">名字 *</label>
+                                        <input type="text" id="member3FirstName" name="member3FirstName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                    </div>
+                                    
+                                    <div>
+                                        <label for="member3LastName" class="block text-sm font-medium text-gray-700 english-content">Last Name *</label>
+                                        <label for="member3LastName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">姓氏 *</label>
+                                        <input type="text" id="member3LastName" name="member3LastName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                    </div>                                
+                                    
+                                    <div>
+                                        <label for="member3Phone" class="block text-sm font-medium text-gray-700 english-content">Phone *</label>
+                                        <label for="member3Phone" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電話 *</label>
+                                        <input type="tel" id="member3Phone" name="member3Phone" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                    </div>
+
+                                    <div>
+                                        <label for="member3Email" class="block text-sm font-medium text-gray-700 english-content">Email </label>
+                                        <label for="member3Email" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電子郵件 </label>
+                                        <input type="email" id="member3Email" name="member3Email"  class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4">
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="terms" name="terms" type="checkbox" required class="w-4 h-4 text-race-blue border-gray-300 rounded focus:ring-race-blue">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="terms" class="font-medium text-gray-700 english-content">
+                                    I confirm that all team members understand this is a self-supported challenge and we are responsible for our own safety
+                                </label>
+                                <label for="terms" class="font-medium text-gray-700 chinese-content chinese-font" style="display: none;">
+                                    我確認所有團隊成員了解這是自主挑戰，我們需自行負責安全
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <button type="submit" class="flex justify-center w-full px-6 py-4 text-base font-medium text-white transition duration-300 transform bg-race-blue border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-race-blue hover:scale-105 english-content">
+                            Submit Team Registration
+                        </button>
+                        <button type="submit" class="flex justify-center w-full px-6 py-4 text-base font-medium text-white transition duration-300 transform bg-race-blue border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-race-blue hover:scale-105 chinese-content chinese-font" style="display: none;">
+                            提交團隊報名
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-gray-900">
+        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+                <div>
+                    <h3 class="mb-4 text-lg font-medium text-white english-content">About the Challenge</h3>
+                    <h3 class="mb-4 text-lg font-medium text-white chinese-content chinese-font" style="display: none;">關於挑戰</h3>
+                    <p class="text-gray-400 english-content">
+                        A self-organized 54K team challenge where groups of 4 must start and finish together. Basic aid stations provided by volunteers.
+                    </p>
+                    <p class="text-gray-400 chinese-content chinese-font" style="display: none;">
+                        自主組織的54公里團隊挑戰，4人團隊必須同時起跑和完成比賽。義工提供基本補給站。
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="mb-4 text-lg font-medium text-white english-content">Contact</h3>
+                    <h3 class="mb-4 text-lg font-medium text-white chinese-content chinese-font" style="display: none;">聯絡我們</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li class="flex items-start">
+                            <i class="mt-1 mr-3 text-gray-400 fas fa-envelope"></i>
+                            <span class="english-content">brknveggie@gmail.com</span>
+                            <span class="chinese-content chinese-font" style="display: none;">brknveggie@gmail.com</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="mb-4 text-lg font-medium text-white english-content">Follow Us</h3>
+                    <h3 class="mb-4 text-lg font-medium text-white chinese-content chinese-font" style="display: none;">關注我們</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="text-xl fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="text-xl fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pt-8 mt-8 border-t border-gray-800">
+                <p class="text-sm text-center text-gray-400 english-content">
+                    &copy; SaanKaaLaa 50. All rights reserved.
+                </p>
+                <p class="text-sm text-center text-gray-400 chinese-content chinese-font" style="display: none;">
+                    &copy; 山卡旯 50。保留所有權利。
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Language toggle functionality
+        document.getElementById('englishBtn').addEventListener('click', function() {
+            document.querySelectorAll('.english-content').forEach(el => el.style.display = 'block');
+            document.querySelectorAll('.chinese-content').forEach(el => el.style.display = 'none');
+            document.getElementById('englishBtn').classList.add('active');
+            document.getElementById('chineseBtn').classList.remove('active');
+        });
+        
+        document.getElementById('chineseBtn').addEventListener('click', function() {
+            document.querySelectorAll('.english-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.chinese-content').forEach(el => el.style.display = 'block');
+            document.getElementById('englishBtn').classList.remove('active');
+            document.getElementById('chineseBtn').classList.add('active');
+        });
+        
+        // Initialize map (placeholder - would need actual GPX data)
+        document.addEventListener('DOMContentLoaded', function() {
+            const map = L.map('map-container').setView([50.8, -114.9], 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            const elevationControl = L.control.elevation({
+                theme: "lime-theme",
+                width: '100%',
+                height: 250,
+                margins: {
+                    top: 40,
+                    right: 30,
+                    bottom: 40,
+                    left: 30
+                },
+                elevationDiv: "#elevation-profile",
+                detached: true,
+                closeBtn: false,
+                legend: false,
+                followMarker: true,
+                hoveringLegend: true,
+                autofitBounds: true,
+                imperial: false,
+                speed: false,
+                time: false,
+                highlightStyle: {
+                    color: '#3b82f6',
+                    weight: 3,
+                    opacity: 0.9
+                },
+                
+            });
+            elevationControl.addTo(map);
+            // This would be replaced with actual GPX data for the route
+             const gpx = new L.GPX('assets/YYCHKWalker.gpx', {
+                async: true,
+                markers: {
+                    startIcon: 'assets/start.png',
+                    endIcon: 'assets/end.png'
+                },
+                polyline_options: {
+                    color: '#FFA500',
+                    opacity: 0.90,
+                    weight: 4,
+                    lineCap: 'round'
+                }
+            })
+            .on('loaded', function(e) {
+                map.fitBounds(e.target.getBounds());
+                elevationGain = e.target.get_elevation_gain();
+            })
+            .on('addline', function(e) {
+                elevationControl.addData(e.line);
+            })
+            .on("error", function(e) {
+                console.error("Failed to load GPX:", e);
+            })
+            .addTo(map);
+                        
+        });
+
+
+        // Initialize EmailJS
+        (function() {
+            emailjs.init({publicKey: "4HZmWHrDr_85loz1y"});
+        })();
+
+        // Form submission
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            submitButton.disabled = true;
+            
+            // Prepare template parameters
+            // Get current date formatted
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0];
+
+            // Prepare template parameters - make sure these match your template variables exactly
+            const templateParams = {
+                team_name: document.getElementById('teamName').value,
+                
+                captain_first_name: document.getElementById('captainFirstName').value,
+                captain_last_name: document.getElementById('captainLastName').value,
+                captain_email: document.getElementById('captainEmail').value,
+                captain_phone: document.getElementById('captainPhone').value,
+                
+                member1_first_name: document.getElementById('member1FirstName').value,
+                member1_last_name: document.getElementById('member1LastName').value,
+                member1_email: document.getElementById('member1Email').value,
+                member1_phone: document.getElementById('member1Phone').value,
+                
+                member2_first_name: document.getElementById('member2FirstName').value,
+                member2_last_name: document.getElementById('member2LastName').value,
+                member2_email: document.getElementById('member2Email').value,
+                member2_phone: document.getElementById('member2Phone').value,
+                
+                member3_first_name: document.getElementById('member3FirstName').value,
+                member3_last_name: document.getElementById('member3LastName').value,
+                member3_email: document.getElementById('member3Email').value,
+                member3_phone: document.getElementById('member3Phone').value,
+                
+                registration_date: formattedDate
+            };
+
+            console.log('Template Params:', templateParams); // Debugging line
+            
+            // Send email
+            emailjs.send('service_ggipkj8', 'template_t6njbi4', templateParams)
+                .then(function() {
+                    alert('Thank you for registering your team! We will contact you with further details.');
+                    //document.getElementById('registrationForm').reset();
+                    
+                    // Reset button
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                }, function(error) {
+                    alert('There was a problem with your submission. Please try again.');
+                    console.error('Error:', error);
+                    
+                    // Reset button
+                    submitButton.innerHTML = originalText;
+                    submitButton.disabled = false;
+                });
+        });
+        </script>
+
+</body>
+</html>
