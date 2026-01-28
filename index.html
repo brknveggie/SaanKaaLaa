@@ -625,6 +625,37 @@
         .mobile-menu a:hover {
             color: #0d9488;
         }
+        
+        /* Testimonials swiper custom arrows */
+        .testimonialsSwiper .swiper-button-next,
+        .testimonialsSwiper .swiper-button-prev {
+            color: #7c3aed;
+            background: rgba(124, 58, 237, 0.1);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .testimonialsSwiper .swiper-button-next:after,
+        .testimonialsSwiper .swiper-button-prev:after {
+            font-size: 20px;
+        }
+        
+        .testimonialsSwiper .swiper-button-next:hover,
+        .testimonialsSwiper .swiper-button-prev:hover {
+            background: rgba(124, 58, 237, 0.2);
+            color: #a78bfa;
+        }
+        
+        .testimonialsSwiper .swiper-pagination-bullet {
+            background: #7c3aed;
+            opacity: 0.5;
+        }
+        
+        .testimonialsSwiper .swiper-pagination-bullet-active {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -1699,9 +1730,11 @@
                 const grid = document.getElementById('finishers-grid');
                 const isChineseActive = document.getElementById('chineseBtn').classList.contains('active');
                 
-                grid.innerHTML = teams.map(team => `
+                grid.innerHTML = teams.map(team => {
+                    const photoPath = team.photo ? `assets/finishers/${team.photo}` : 'assets/placeholder.jpg';
+                    return `
                     <div class="gradient-border p-0 overflow-hidden group">
-                        <div class="relative h-64 bg-cover bg-center transition-transform duration-300 group-hover:scale-105" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('${team.photo || 'assets/placeholder.jpg'}');">
+                        <div class="relative h-64 bg-cover bg-center transition-transform duration-300 group-hover:scale-105" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('${photoPath}');">
                             <div class="absolute inset-0 flex flex-col justify-end p-6 text-white">
                                 <h4 class="text-2xl font-bold mb-1 drop-shadow-lg">${team.name_zh}</h4>
                                 <p class="text-sm text-gray-200 mb-3 drop-shadow">${team.name_en}</p>
@@ -1714,7 +1747,7 @@
                             </div>
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
             } catch (error) {
                 console.error('Error loading finishers:', error);
             }
@@ -1732,11 +1765,13 @@
                 const container = document.getElementById('testimonials-container');
                 const isChineseActive = document.getElementById('chineseBtn').classList.contains('active');
                 
-                container.innerHTML = testimonials.map(t => `
+                container.innerHTML = testimonials.map(t => {
+                    const photoPath = t.photo ? `assets/testimonials/${t.photo}` : 'assets/placeholder-avatar.jpg';
+                    return `
                     <div class="swiper-slide">
                         <div class="gradient-border p-6 md:p-8 mx-4">
                             <div class="flex flex-col items-center text-center gap-4">
-                                <div class="w-20 h-20 rounded-full bg-cover bg-center ring-4 ring-skl-violet/50 shadow-lg" style="background-image: url('${t.photo || 'assets/placeholder-avatar.jpg'}');"></div>
+                                <div class="w-20 h-20 rounded-full bg-cover bg-center ring-4 ring-skl-violet/50 shadow-lg" style="background-image: url('${photoPath}');"></div>
                                 <div class="flex-1 max-w-2xl">
                                     <div class="flex items-center justify-center gap-3 mb-4">
                                         <span class="font-bold text-xl">${t.name}</span>
@@ -1752,7 +1787,7 @@
                             </div>
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
                 
                 // Initialize testimonials swiper after content is loaded
                 new Swiper('.testimonialsSwiper', {
@@ -1768,7 +1803,7 @@
                         prevEl: '.testimonialsSwiper .swiper-button-prev',
                     },
                     autoplay: {
-                        delay: 8000,
+                        delay: 4000,
                         disableOnInteraction: false,
                     },
                 });
