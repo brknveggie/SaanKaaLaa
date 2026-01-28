@@ -864,7 +864,7 @@
             </div>
             
             <!-- Testimonials -->
-            <div data-aos="fade-up" class="max-w-4xl mx-auto mb-16">
+            <div data-aos="fade-up" class="mb-16">
                 <h3 class="text-xl font-display text-center mb-8 english-content">
                     <i class="mr-2 fas fa-quote-left text-skl-violet"></i> CHALLENGER STORIES
                 </h3>
@@ -872,8 +872,13 @@
                     <i class="mr-2 fas fa-quote-left text-skl-violet"></i> 挑戰者心聲
                 </h3>
                 
-                <div id="testimonials-container">
-                    <!-- Loaded dynamically from data/testimonials.json -->
+                <div class="swiper testimonialsSwiper">
+                    <div class="swiper-wrapper" id="testimonials-container">
+                        <!-- Loaded dynamically from data/testimonials.json -->
+                    </div>
+                    <div class="swiper-pagination"></div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
                 </div>
             </div>
             
@@ -1728,26 +1733,45 @@
                 const isChineseActive = document.getElementById('chineseBtn').classList.contains('active');
                 
                 container.innerHTML = testimonials.map(t => `
-                    <div class="gradient-border p-6 md:p-8 mb-6">
-                        <div class="flex items-start gap-4">
-                            <div class="flex-shrink-0">
-                                <div class="w-12 h-12 rounded-full bg-cover bg-center ring-2 ring-skl-violet/50" style="background-image: url('${t.photo || 'assets/placeholder-avatar.jpg'}');"></div>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <span class="font-bold text-lg">${t.name}</span>
-                                    <span class="text-xs px-2 py-1 rounded-full bg-skl-primary/20 text-skl-primary">${t.category} ${t.year}</span>
-                                </div>
-                                <p class="text-gray-300 leading-relaxed chinese-content chinese-font" style="display: ${isChineseActive ? 'block' : 'none'};">${t.quote_zh}</p>
-                                <p class="text-gray-300 leading-relaxed english-content" style="display: ${isChineseActive ? 'none' : 'block'};">${t.quote_en}</p>
-                                <div class="mt-4 pt-4 border-t border-white/10">
-                                    <p class="text-skl-accent italic text-sm chinese-content chinese-font" style="display: ${isChineseActive ? 'block' : 'none'};">"${t.highlight_zh}"</p>
-                                    <p class="text-skl-accent italic text-sm english-content" style="display: ${isChineseActive ? 'none' : 'block'};">"${t.highlight_en}"</p>
+                    <div class="swiper-slide">
+                        <div class="gradient-border p-6 md:p-8 mx-4">
+                            <div class="flex flex-col items-center text-center gap-4">
+                                <div class="w-20 h-20 rounded-full bg-cover bg-center ring-4 ring-skl-violet/50 shadow-lg" style="background-image: url('${t.photo || 'assets/placeholder-avatar.jpg'}');"></div>
+                                <div class="flex-1 max-w-2xl">
+                                    <div class="flex items-center justify-center gap-3 mb-4">
+                                        <span class="font-bold text-xl">${t.name}</span>
+                                        <span class="text-xs px-3 py-1 rounded-full bg-skl-primary/20 text-skl-primary">${t.category} ${t.year}</span>
+                                    </div>
+                                    <p class="text-gray-300 leading-relaxed text-base md:text-lg mb-4 chinese-content chinese-font" style="display: ${isChineseActive ? 'block' : 'none'};">${t.quote_zh}</p>
+                                    <p class="text-gray-300 leading-relaxed text-base md:text-lg mb-4 english-content" style="display: ${isChineseActive ? 'none' : 'block'};">${t.quote_en}</p>
+                                    <div class="pt-4 border-t border-white/10">
+                                        <p class="text-skl-accent italic text-sm md:text-base chinese-content chinese-font" style="display: ${isChineseActive ? 'block' : 'none'};">"${t.highlight_zh}"</p>
+                                        <p class="text-skl-accent italic text-sm md:text-base english-content" style="display: ${isChineseActive ? 'none' : 'block'};">"${t.highlight_en}"</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 `).join('');
+                
+                // Initialize testimonials swiper after content is loaded
+                new Swiper('.testimonialsSwiper', {
+                    slidesPerView: 1,
+                    spaceBetween: 30,
+                    loop: testimonials.length > 1,
+                    pagination: {
+                        el: '.testimonialsSwiper .swiper-pagination',
+                        clickable: true,
+                    },
+                    navigation: {
+                        nextEl: '.testimonialsSwiper .swiper-button-next',
+                        prevEl: '.testimonialsSwiper .swiper-button-prev',
+                    },
+                    autoplay: {
+                        delay: 8000,
+                        disableOnInteraction: false,
+                    },
+                });
             } catch (error) {
                 console.error('Error loading testimonials:', error);
             }
