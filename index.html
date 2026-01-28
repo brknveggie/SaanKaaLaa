@@ -1630,13 +1630,44 @@
         document.addEventListener('DOMContentLoaded', () => applyLanguage('chinese'));
         
         // Gallery photos
-        const allPhotos = [
-            'z62_7488', 'z62_7505', 'z62_7519', 'z62_7523', 'z62_7531', 'z62_7537', 'z62_7540', 'z62_7551', 'z62_7556', 'z62_7566', 'z62_7686', 'z62_7696', 'z62_7745', 'z62_7761', 'z62_7766', 'z62_7779', 'z62_7785', 'z62_7841', 'z62_7854', 'z62_7865', 'z62_7875', 'z62_7878', 'z62_7888', 'z62_7895', 'z62_7900', 'z62_7904', 'z62_7913', 'z62_7916', 'z62_7921', 'z62_7923', 'z62_8015', 'z62_8028', 'z62_8064', 'z62_8107', 'z62_8110', 'z62_8119', 'z62_8124', 'z62_8171', 'z62_8173', 'z62_8204', 'z62_8215', 'z62_8218', 'z62_8227', 'z62_8230', 'z62_8257', 'z62_8274', 'z62_8280', 'z62_8282', 'z62_8286', 'z62_8299'
-        ];
-        
+        // Load gallery photos from JSON
+        let allPhotos = [];
         const GALLERY_COUNT = 8;
         let currentGalleryPhotos = [];
         let currentLightboxIndex = 0;
+        
+        async function loadGallery() {
+            try {
+                const response = await fetch('data/photos.json');
+                const data = await response.json();
+                allPhotos = data.photos;
+                
+                const shuffled = shuffleArray(allPhotos);
+                currentGalleryPhotos = shuffled.slice(0, GALLERY_COUNT);
+                
+                const container = document.getElementById('gallery-swiper');
+                container.innerHTML = currentGalleryPhotos.map((photo, i) => `
+                    <div class="swiper-slide">
+                        <div class="photo-card" onclick="openLightbox(${i})">
+                            <img src="assets/2025/thumb/${photo}.jpg" alt="Saan Kaa Laa 2025" loading="lazy">
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Initialize Swiper
+                new Swiper('.photoSwiper', {
+                    slidesPerView: 2,
+                    spaceBetween: 16,
+                    pagination: { el: '.swiper-pagination', clickable: true },
+                    breakpoints: {
+                        640: { slidesPerView: 3 },
+                        1024: { slidesPerView: 4 }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading gallery photos:', error);
+            }
+        }
         
         function shuffleArray(arr) {
             const a = [...arr];
@@ -1645,31 +1676,6 @@
                 [a[i], a[j]] = [a[j], a[i]];
             }
             return a;
-        }
-        
-        function loadGallery() {
-            const shuffled = shuffleArray(allPhotos);
-            currentGalleryPhotos = shuffled.slice(0, GALLERY_COUNT);
-            
-            const container = document.getElementById('gallery-swiper');
-            container.innerHTML = currentGalleryPhotos.map((photo, i) => `
-                <div class="swiper-slide">
-                    <div class="photo-card" onclick="openLightbox(${i})">
-                        <img src="assets/2025/thumb/${photo}.jpg" alt="Saan Kaa Laa 2025" loading="lazy">
-                    </div>
-                </div>
-            `).join('');
-            
-            // Initialize Swiper
-            new Swiper('.photoSwiper', {
-                slidesPerView: 2,
-                spaceBetween: 16,
-                pagination: { el: '.swiper-pagination', clickable: true },
-                breakpoints: {
-                    640: { slidesPerView: 3 },
-                    1024: { slidesPerView: 4 }
-                }
-            });
         }
         
         function openLightbox(index) {

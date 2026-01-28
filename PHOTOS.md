@@ -88,6 +88,40 @@ You can create simple placeholders or leave them until photos are ready.
 
 ---
 
+## Gallery Photos (2025)
+
+**Location:** `assets/2025/full/` and `assets/2025/thumb/`
+
+### How to Add/Remove Gallery Photos
+
+**Option 1: Automatic (Recommended)**
+1. Add or remove photos in `assets/2025/full/` and `assets/2025/thumb/`
+2. Push to GitHub
+3. GitHub Actions automatically regenerates `data/photos.json`
+4. Gallery updates automatically!
+
+**Option 2: Manual**
+1. Add/remove photos from both folders
+2. Run: `./scripts/generate-photos-json.sh`
+3. Commit: `git add data/photos.json && git commit -m "Update gallery photos"`
+4. Push to GitHub
+
+### Photo Requirements
+- **Full size:** Place in `assets/2025/full/` (1600px recommended)
+- **Thumbnail:** Place in `assets/2025/thumb/` (400px recommended)
+- **Naming:** Both files must have the same name (e.g., `z62_8299.jpg`)
+- **Format:** JPG
+
+### How It Works
+- Gallery photos are dynamically loaded from `data/photos.json`
+- No hardcoded lists in HTML!
+- Script scans `assets/2025/full/` and generates JSON
+- Website shows 8 random photos from the available pool
+
+See `scripts/README.md` for more details on the automation.
+
+---
+
 ## Quick Commands
 
 ```bash
