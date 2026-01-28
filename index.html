@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaanKaaLaa 山卡旯 - Trail Challenge 2026</title>
+    <title>Saan Kaa Laa 山卡旯 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -12,290 +12,424 @@
     <script src="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/2.1.2/gpx.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Swiper for carousels -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'race-red': '#dc2626',
-                        'race-blue': '#2563eb',
-                        'race-yellow': '#eab308',
+                        'skl-primary': '#0d9488',    // Teal - main brand
+                        'skl-accent': '#f59e0b',     // Amber - accent  
+                        'skl-dark': '#0a0a0a',
+                        'skl-light': '#14b8a6',      // Lighter teal
+                        'skl-rose': '#e11d48',       // Rose - for variety
+                        'skl-violet': '#7c3aed',     // Violet - for variety
                     },
                     fontFamily: {
                         'sans': ['Inter', 'ui-sans-serif', 'system-ui'],
+                        'display': ['Oswald', 'sans-serif'],
                     },
                 }
             }
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
             scroll-behavior: smooth;
+            background: #0a0a0a;
+            color: white;
+            overflow-x: hidden;
         }
         
         .chinese-font {
             font-family: 'Noto Sans TC', sans-serif;
         }
         
+        .font-display {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0d9488;
+            border-radius: 4px;
+        }
+        
+        /* Hero section */
+        .hero {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        
+        .hero-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.4);
+        }
+        
+        .hero-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 50%, #0a0a0a 100%);
+        }
+        
+        /* Gradient border - subtle single color */
+        .gradient-border {
+            position: relative;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+        }
+        
+        /* Glowing button */
+        .btn-glow {
+            position: relative;
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .btn-glow::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #0d9488, #f59e0b, #0d9488);
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            filter: blur(10px);
+        }
+        
+        .btn-glow:hover::before {
+            opacity: 1;
+        }
+        
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(220, 38, 38, 0.4);
+        }
+        
+        /* Stats counter animation */
+        .stat-number {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Section styling */
+        .section-dark {
+            background: linear-gradient(180deg, #0a0a0a 0%, #171717 100%);
+        }
+        
+        .section-light {
+            background: linear-gradient(180deg, #171717 0%, #1f1f1f 100%);
+        }
+        
+        /* Card styling */
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+        
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(220, 38, 38, 0.5);
+            transform: translateY(-8px);
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #0d9488, transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        
+        /* Photo card with hover effect */
+        .photo-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            aspect-ratio: 1;
+            cursor: pointer;
+        }
+        
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .photo-card:hover img {
+            transform: scale(1.1);
+        }
+        
+        .photo-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .photo-card:hover::after {
+            opacity: 1;
+        }
+        
+        /* Timeline modern */
+        .timeline-modern {
+            position: relative;
+            padding-left: 2.5rem;
+        }
+        
+        .timeline-modern::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 8px;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #0d9488, #14b8a6);
+        }
+        
+        .timeline-item-modern {
+            position: relative;
+            padding-bottom: 2rem;
+            padding-left: 0.5rem;
+        }
+        
+        .timeline-item-modern::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 6px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #0d9488;
+            border: 3px solid #0a0a0a;
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
+        }
+        
+        /* Distance toggle modern */
+        .toggle-modern {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50px;
+            padding: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .toggle-btn {
+            padding: 12px 32px;
+            border-radius: 50px;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .toggle-btn.active {
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
+        }
+        
+        .toggle-btn:hover:not(.active) {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Map container */
         .map-container {
             height: 400px;
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .map-container {
+                height: 300px;
+            }
         }
         
         .elevation-profile {
-            height: 250px;
-            position: relative;
-            border-radius: 0.5rem;
+            height: 200px;
+            border-radius: 12px;
+            overflow: hidden;
         }
         
-        .timeline {
-            position: relative;
-            padding-left: 3rem;
-        }
-        
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 1.5rem;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: linear-gradient(to bottom, #3b82f6, #10b981);
-            border-radius: 2px;
-        }
-        
-        .timeline-item {
-            position: relative;
-            margin-bottom: 2rem;
-        }
-        
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -3rem;
-            top: 0.5rem;
-            width: 1.5rem;
-            height: 1.5rem;
-            border-radius: 50%;
-            background-color: #3b82f6;
-            border: 4px solid #eff6ff;
-        }
-        
-        .route-difficulty-easy {
-            background-color: #10b981;
-        }
-        
-        .route-difficulty-medium {
-            background-color: #f59e0b;
-        }
-        
-        .route-difficulty-hard {
-            background-color: #ef4444;
-        }
-        
-        .gradient-text {
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            background-image: linear-gradient(90deg, #dc2626, #2563eb);
-        }
-        
-        .parallax {
-            background-attachment: fixed;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-        }
-        
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        
+        /* Language switch */
         .language-switch {
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 1000;
-            background-color: white;
-            border-radius: 9999px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            display: flex;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             overflow: hidden;
+            transition: opacity 0.3s ease;
+        }
+        
+        .language-switch.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
         
         .language-btn {
-            padding: 8px 16px;
+            padding: 10px 18px;
             border: none;
             background: none;
             cursor: pointer;
             font-weight: 600;
+            font-size: 0.875rem;
             transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.5);
         }
         
         .language-btn.active {
-            background-color: #2563eb;
+            background: #0d9488;
             color: white;
         }
         
-        /* Gallery styles */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-        
-        @media (min-width: 768px) {
-            .gallery-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        
-        @media (min-width: 1024px) {
-            .gallery-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-        
-        .gallery-item {
-            aspect-ratio: 1;
-            overflow: hidden;
-            border-radius: 0.5rem;
+        /* Nav language toggle */
+        .nav-lang-btn {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.5);
+            border: none;
             cursor: pointer;
-            transition: transform 0.3s ease;
         }
         
-        .gallery-item:hover {
-            transform: scale(1.02);
+        .nav-lang-btn.active {
+            background: #0d9488;
+            color: white;
         }
         
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .gallery-placeholder {
-            background: linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #9ca3af;
-        }
-        
-        /* Video container */
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 */
-            height: 0;
-            overflow: hidden;
-            border-radius: 0.75rem;
-            background: #1f2937;
-        }
-        
-        .video-container iframe,
-        .video-container video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .video-placeholder {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #9ca3af;
-            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
-        }
-        
-        /* Testimonial cards */
-        .testimonial-card {
-            background: white;
-            border-radius: 1rem;
-            padding: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
-        
-        .testimonial-card::before {
-            content: '"';
-            position: absolute;
-            top: 1rem;
-            left: 1.5rem;
-            font-size: 4rem;
-            color: #e5e7eb;
-            font-family: Georgia, serif;
-            line-height: 1;
-        }
-        
-        /* Mobile improvements */
-        @media (max-width: 768px) {
-            .parallax {
-                background-attachment: scroll;
-            }
-            
-            .language-switch {
-                top: 10px;
-                right: 10px;
-            }
-            
-            .language-btn {
-                padding: 6px 12px;
-                font-size: 0.875rem;
-            }
-            
-            .timeline {
-                padding-left: 2rem;
-            }
-            
-            .timeline::before {
-                left: 1rem;
-            }
-            
-            .timeline-item::before {
-                left: -2rem;
-                width: 1rem;
-                height: 1rem;
-            }
-            
-            .map-container {
-                height: 300px;
-            }
-            
-            .elevation-profile {
-                height: 200px;
-            }
-        }
-        
-        /* Hide content by language */
+        /* Content visibility */
         .chinese-content {
             display: none;
+        }
+        
+        .distance-content {
+            display: none;
+        }
+        
+        .distance-content.active {
+            display: block;
+        }
+        
+        .details-content {
+            display: none;
+        }
+        
+        .details-content.active {
+            display: block;
+        }
+        
+        /* Coming soon overlay */
+        .coming-soon-overlay {
+            position: relative;
+        }
+        
+        .coming-soon-overlay .overlay-content {
+            filter: blur(4px);
+            pointer-events: none;
+            user-select: none;
+        }
+        
+        .coming-soon-overlay .overlay-banner {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(10, 10, 10, 0.8);
+            z-index: 10;
+            border-radius: 16px;
+        }
+        
+        .coming-soon-badge {
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            color: white;
+            padding: 1.5rem 3rem;
+            border-radius: 12px;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            box-shadow: 0 20px 50px rgba(37, 99, 235, 0.4);
+            text-align: center;
         }
         
         /* Lightbox */
         .lightbox {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: rgba(0, 0, 0, 0.95);
             z-index: 2000;
             align-items: center;
@@ -307,64 +441,38 @@
         }
         
         .lightbox img {
-            max-width: 85%;
-            max-height: 85%;
+            max-width: 90%;
+            max-height: 90%;
             object-fit: contain;
-            border-radius: 4px;
+            border-radius: 8px;
         }
         
-        .lightbox-close {
+        .lightbox-close, .lightbox-nav {
             position: absolute;
-            top: 20px;
-            right: 20px;
             color: white;
-            font-size: 2rem;
             cursor: pointer;
-            z-index: 2001;
             width: 50px;
             height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0,0,0,0.5);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
         }
         
-        .lightbox-close:hover {
-            background: rgba(255,255,255,0.2);
-        }
-        
-        .lightbox-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            color: white;
-            font-size: 2.5rem;
-            cursor: pointer;
-            z-index: 2001;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0,0,0,0.5);
-            border-radius: 50%;
-            transition: background 0.3s;
-            user-select: none;
-        }
-        
-        .lightbox-nav:hover {
-            background: rgba(255,255,255,0.2);
-        }
-        
-        .lightbox-prev {
-            left: 20px;
-        }
-        
-        .lightbox-next {
+        .lightbox-close {
+            top: 20px;
             right: 20px;
         }
+        
+        .lightbox-nav:hover, .lightbox-close:hover {
+            background: rgba(220, 38, 38, 0.8);
+        }
+        
+        .lightbox-prev { left: 20px; top: 50%; transform: translateY(-50%); }
+        .lightbox-next { right: 20px; top: 50%; transform: translateY(-50%); }
         
         .lightbox-counter {
             position: absolute;
@@ -372,362 +480,516 @@
             left: 50%;
             transform: translateX(-50%);
             color: white;
-            font-size: 0.9rem;
-            background: rgba(0,0,0,0.5);
-            padding: 8px 16px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 20px;
             border-radius: 20px;
+            font-size: 0.9rem;
         }
         
-        /* Distance toggle */
-        .distance-toggle {
-            display: inline-flex;
-            background-color: #f3f4f6;
-            border-radius: 9999px;
-            padding: 4px;
-            gap: 4px;
+        /* Swiper customization */
+        .swiper {
+            width: 100%;
+            padding-bottom: 50px;
         }
         
-        .distance-btn {
-            padding: 10px 24px;
-            border-radius: 9999px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            background: none;
-            color: #6b7280;
+        .swiper-pagination-bullet {
+            background: rgba(255, 255, 255, 0.3);
+            opacity: 1;
         }
         
-        .distance-btn.active {
-            background-color: #2563eb;
+        .swiper-pagination-bullet-active {
+            background: #0d9488;
+        }
+        
+        /* Form styling */
+        .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
             color: white;
-            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+            font-size: 1rem;
+            transition: all 0.3s ease;
         }
         
-        .distance-btn:hover:not(.active) {
-            background-color: #e5e7eb;
+        .form-input:focus {
+            outline: none;
+            border-color: #0d9488;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
         }
         
-        /* Content containers for distance toggle */
-        .distance-content {
-            display: none;
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
         }
         
-        .distance-content.active {
-            display: block;
+        /* Parallax sections */
+        .parallax-section {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
         }
         
-        /* Content containers for details toggle */
-        .details-content {
-            display: none;
+        @media (max-width: 768px) {
+            .parallax-section {
+                background-attachment: scroll;
+            }
         }
         
-        .details-content.active {
-            display: block;
+        /* Marquee animation */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
         
-        /* Coming soon overlay for 100K */
-        .coming-soon-overlay {
-            position: relative;
+        .marquee {
+            display: flex;
+            animation: marquee 30s linear infinite;
         }
         
-        .coming-soon-overlay .overlay-content {
-            filter: blur(3px);
-            pointer-events: none;
-            user-select: none;
+        .marquee:hover {
+            animation-play-state: paused;
         }
         
-        .coming-soon-overlay .overlay-banner {
-            position: absolute;
+        /* Floating animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Pulse animation */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(220, 38, 38, 0.8); }
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        /* Nav sticky */
+        .nav-sticky {
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.7);
-            z-index: 10;
-            border-radius: 0.75rem;
+            z-index: 900;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
         }
         
-        .coming-soon-badge {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        .nav-sticky.visible {
+            transform: translateY(0);
+        }
+        
+        /* Mobile menu */
+        .mobile-menu {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 10, 10, 0.98);
+            z-index: 950;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mobile-menu.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .mobile-menu a {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             color: white;
-            padding: 1rem 2rem;
-            border-radius: 0.5rem;
-            font-weight: 700;
-            font-size: 1.25rem;
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
-            text-align: center;
+            padding: 1rem;
+            transition: color 0.3s ease;
+        }
+        
+        .mobile-menu a:hover {
+            color: #0d9488;
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body>
     <!-- Language Switch -->
-    <div class="language-switch flex">
+    <div class="language-switch">
         <button id="englishBtn" class="language-btn">EN</button>
         <button id="chineseBtn" class="language-btn active">中文</button>
     </div>
 
-    <!-- Hero Section -->
-    <header class="relative overflow-hidden text-white bg-gray-900">
-        <div class="absolute inset-0">
-            <img src="./assets/head1.jpg" alt="Mountain Range" class="object-cover w-full h-full opacity-50">
-        </div>
-        <div class="relative z-10 px-4 py-16 mx-auto max-w-7xl sm:px-6 lg:px-8 sm:py-24">
-            <div class="text-center">
-                <!-- Year Badge -->
-                <span class="inline-block px-4 py-1 mb-4 text-sm font-bold text-white bg-race-red rounded-full english-content">2026 EDITION</span>
-                <span class="inline-block px-4 py-1 mb-4 text-sm font-bold text-white bg-race-red rounded-full chinese-content chinese-font" style="display: none;">2026 年度</span>
-                
-                <!-- Logo -->
-                <div class="mb-6">
-                    <img src="./assets/SKL_Logo.png" alt="SaanKaaLaa 山卡旯" class="h-32 md:h-40 mx-auto">
+    <!-- Sticky Navigation -->
+    <nav class="nav-sticky" id="stickyNav">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3">
+                <img src="./assets/SKL_Logo.png" alt="SKL" class="h-8">
+                <span class="font-display text-lg hidden sm:block">Saan Kaa Laa</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#recap" class="text-sm font-medium hover:text-skl-primary transition-colors english-content">2025 Recap</a>
+                <a href="#recap" class="text-sm font-medium hover:text-skl-primary transition-colors chinese-content chinese-font" style="display:none;">上屆回顧</a>
+                <a href="#route" class="text-sm font-medium hover:text-skl-primary transition-colors english-content">Route</a>
+                <a href="#route" class="text-sm font-medium hover:text-skl-primary transition-colors chinese-content chinese-font" style="display:none;">路線</a>
+                <a href="#details" class="text-sm font-medium hover:text-skl-primary transition-colors english-content">Details</a>
+                <a href="#details" class="text-sm font-medium hover:text-skl-primary transition-colors chinese-content chinese-font" style="display:none;">詳情</a>
+                <a href="#register" class="btn-glow px-5 py-2 rounded-full text-sm font-semibold english-content">Register</a>
+                <a href="#register" class="btn-glow px-5 py-2 rounded-full text-sm font-semibold chinese-content chinese-font" style="display:none;">報名</a>
+                <!-- Language toggle in nav -->
+                <div class="nav-lang-switch flex border border-white/20 rounded-full overflow-hidden">
+                    <button class="nav-lang-btn px-3 py-1 text-xs font-semibold transition-all" data-lang="english">EN</button>
+                    <button class="nav-lang-btn px-3 py-1 text-xs font-semibold transition-all active" data-lang="chinese">中</button>
                 </div>
-
-                <p class="mb-4 text-xl font-bold tracking-tight md:text-2xl">
-                    <span class="english-content">If you want to go far, go together.</span>
-                    <span class="chinese-content chinese-font" style="display: none;">一個人走得快，一班人走得遠</span>
-                </p>
-
-                <p class="max-w-2xl mx-auto text-lg text-gray-300 md:text-xl english-content">
-                    A self-organized team challenge on August 29, 2026
-                </p>
-                <p class="max-w-2xl mx-auto text-lg text-gray-300 md:text-xl chinese-content chinese-font" style="display: none;">
-                    2026年8月29日，自組團隊挑戰
-                </p>
-                
-                <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-4 mt-8">
-                    <a href="#register" class="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white transition duration-300 transform border border-transparent rounded-md shadow-sm bg-race-red hover:bg-red-800 hover:scale-105 english-content">
-                        <i class="mr-2 fas fa-edit"></i> Register Your Team
-                    </a>
-                    <a href="#register" class="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white transition duration-300 transform border border-transparent rounded-md shadow-sm bg-race-red hover:bg-red-800 hover:scale-105 chinese-content chinese-font" style="display: none;">
-                        <i class="mr-2 fas fa-edit"></i> 團隊報名
-                    </a>
-                    <a href="#details" class="inline-flex items-center justify-center px-6 py-3 text-base font-medium transition duration-300 transform bg-white border border-transparent rounded-md shadow-sm text-race-blue hover:bg-gray-100 hover:scale-105 english-content">
-                        <i class="mr-2 fas fa-info-circle"></i> Challenge Details
-                    </a>
-                    <a href="#details" class="inline-flex items-center justify-center px-6 py-3 text-base font-medium transition duration-300 transform bg-white border border-transparent rounded-md shadow-sm text-race-blue hover:bg-gray-100 hover:scale-105 chinese-content chinese-font" style="display: none;">
-                        <i class="mr-2 fas fa-info-circle"></i> 挑戰詳情
-                    </a>
-                </div>
-                
-                <!-- Registration deadline notice -->
-                <p class="mt-6 text-sm text-gray-400 english-content">
-                    <i class="mr-1 fas fa-clock"></i> Registration closes July 29, 2026
-                </p>
-                <p class="mt-6 text-sm text-gray-400 chinese-content chinese-font" style="display: none;">
-                    <i class="mr-1 fas fa-clock"></i> 報名截止日期：2026年7月29日
-                </p>
             </div>
+            <button class="md:hidden text-2xl" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="absolute top-6 right-6 text-3xl" id="closeMobileMenu">
+            <i class="fas fa-times"></i>
+        </button>
+        <a href="#recap" class="english-content">2025 Recap</a>
+        <a href="#recap" class="chinese-content chinese-font" style="display:none;">上屆回顧</a>
+        <a href="#route" class="english-content">Route</a>
+        <a href="#route" class="chinese-content chinese-font" style="display:none;">路線</a>
+        <a href="#details" class="english-content">Details</a>
+        <a href="#details" class="chinese-content chinese-font" style="display:none;">詳情</a>
+        <a href="#register" class="text-skl-primary english-content">Register Now</a>
+        <a href="#register" class="text-skl-primary chinese-content chinese-font" style="display:none;">立即報名</a>
+        <!-- Language toggle in mobile menu -->
+        <div class="mt-8 flex border border-white/20 rounded-full overflow-hidden">
+            <button class="nav-lang-btn px-6 py-2 text-sm font-semibold transition-all" data-lang="english">EN</button>
+            <button class="nav-lang-btn px-6 py-2 text-sm font-semibold transition-all active" data-lang="chinese">中文</button>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-bg">
+            <img src="./assets/head1.jpg" alt="Mountains">
+        </div>
+        <div class="relative z-10 px-4 text-center max-w-5xl mx-auto">
+            <!-- Year - Modern vertical style -->
+            <div data-aos="fade-down" data-aos-delay="100" class="absolute top-8 left-8 hidden md:block">
+                <div class="font-display text-8xl font-bold text-white/10 leading-none">
+                    20
+                </div>
+                <div class="font-display text-8xl font-bold text-skl-primary leading-none -mt-4">
+                    26
+                </div>
+            </div>
+            
+            <!-- Logo -->
+            <div data-aos="zoom-in" data-aos-delay="200" class="mb-8">
+                <img src="./assets/SKL_Logo.png" alt="Saan Kaa Laa 山卡旯" class="h-40 md:h-56 mx-auto float-animation">
+            </div>
+
+            <!-- Tagline -->
+            <p data-aos="fade-up" data-aos-delay="400" class="mb-6 text-2xl md:text-4xl font-bold tracking-tight">
+                <span class="english-content">If you want to go far, go together.</span>
+                <span class="chinese-content chinese-font" style="display: none;">一個人走得快，一班人走得遠</span>
+            </p>
+
+            <!-- Subtitle with year for mobile -->
+            <p data-aos="fade-up" data-aos-delay="500" class="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                <span class="english-content">A self-organized team trail challenge • <span class="text-skl-primary font-semibold">August 29, 2026</span></span>
+                <span class="chinese-content chinese-font" style="display: none;">自組團隊越野挑戰 • <span class="text-skl-primary font-semibold">2026年8月29日</span></span>
+            </p>
+            
+            <!-- CTA Buttons -->
+            <div data-aos="fade-up" data-aos-delay="600" class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#register" class="btn-glow inline-flex items-center justify-center px-8 py-4 rounded-full text-lg font-semibold english-content">
+                    <i class="mr-2 fas fa-edit"></i> Register Your Team
+                </a>
+                <a href="#register" class="btn-glow inline-flex items-center justify-center px-8 py-4 rounded-full text-lg font-semibold chinese-content chinese-font" style="display: none;">
+                    <i class="mr-2 fas fa-edit"></i> 團隊報名
+                </a>
+                <a href="#details" class="inline-flex items-center justify-center px-8 py-4 rounded-full text-lg font-semibold border border-white/30 hover:bg-white/10 transition-all english-content">
+                    <i class="mr-2 fas fa-info-circle"></i> Learn More
+                </a>
+                <a href="#details" class="inline-flex items-center justify-center px-8 py-4 rounded-full text-lg font-semibold border border-white/30 hover:bg-white/10 transition-all chinese-content chinese-font" style="display: none;">
+                    <i class="mr-2 fas fa-info-circle"></i> 了解更多
+                </a>
+            </div>
+            
+            <!-- Countdown hint -->
+            <p data-aos="fade-up" data-aos-delay="700" class="mt-10 text-sm text-gray-400">
+                <span class="english-content"><i class="mr-1 fas fa-clock"></i> Registration closes July 29, 2026</span>
+                <span class="chinese-content chinese-font" style="display: none;"><i class="mr-1 fas fa-clock"></i> 報名截止日期：2026年7月29日</span>
+            </p>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+            <a href="#stats" class="text-white/50 hover:text-white transition-colors">
+                <i class="fas fa-chevron-down text-2xl animate-bounce"></i>
+            </a>
         </div>
     </header>
 
-    <!-- 2025 Recap Section -->
-    <section id="recap" class="py-16 bg-white">
-        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="mb-12 text-center">
-                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-red bg-red-50 english-content">LAST YEAR</span>
-                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-red bg-red-50 chinese-content chinese-font" style="display: none;">上屆回顧</span>
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl english-content">
-                    SaanKaaLaa 2025
-                </h2>
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl chinese-content chinese-font" style="display: none;">
-                    山卡旯 2025
-                </h2>
-                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 english-content">
-                    2 teams conquered the challenge together
-                </p>
-                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 chinese-content chinese-font" style="display: none;">
-                    2隊成功完成挑戰
-                </p>
-            </div>
-            
-            <!-- Promo Video -->
-            <div class="max-w-4xl mx-auto mb-12">
-                <div class="video-container">
-                    <iframe src="https://player.vimeo.com/video/1141338574?title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    <!-- Stats Section -->
+    <section id="stats" class="py-16 section-dark">
+        <div class="max-w-7xl mx-auto px-4">
+            <!-- Mini toggle in stats -->
+            <div class="text-center mb-8">
+                <div class="toggle-modern inline-flex">
+                    <button id="stats-btn50k" class="toggle-btn active" onclick="setDistance('50k')">SKL50</button>
+                    <button id="stats-btn100k" class="toggle-btn" onclick="setDistance('100k')">SKL100</button>
                 </div>
             </div>
             
-            <!-- Photo Gallery -->
-            <div class="mb-12">
-                <h3 class="mb-6 text-xl font-semibold text-center text-gray-900 english-content">
-                    <i class="mr-2 fas fa-images text-race-blue"></i> Race Day Photos
-                </h3>
-                <h3 class="mb-6 text-xl font-semibold text-center text-gray-900 chinese-content chinese-font" style="display: none;">
-                    <i class="mr-2 fas fa-images text-race-blue"></i> 比賽日相片
-                </h3>
-                
-                <div id="gallery-grid" class="gallery-grid">
-                    <!-- Photos will be loaded dynamically by JavaScript -->
+            <!-- 50K Stats -->
+            <div class="distance-content distance-50k active">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                    <div data-aos="fade-up" data-aos-delay="100">
+                        <div class="stat-number">54<span class="text-skl-primary">K</span></div>
+                        <p class="text-gray-400 mt-2 english-content">Distance</p>
+                        <p class="text-gray-400 mt-2 chinese-content chinese-font" style="display:none;">距離</p>
+                    </div>
+                    <div data-aos="fade-up" data-aos-delay="200">
+                        <div class="stat-number">1950<span class="text-skl-primary">m</span></div>
+                        <p class="text-gray-400 mt-2 english-content">Elevation Gain</p>
+                        <p class="text-gray-400 mt-2 chinese-content chinese-font" style="display:none;">總爬升</p>
+                    </div>
+                    <div data-aos="fade-up" data-aos-delay="300">
+                        <div class="stat-number">4</div>
+                        <p class="text-gray-400 mt-2 english-content">Team Members</p>
+                        <p class="text-gray-400 mt-2 chinese-content chinese-font" style="display:none;">隊員人數</p>
+                    </div>
+                    <div data-aos="fade-up" data-aos-delay="400">
+                        <div class="stat-number">14<span class="text-skl-primary">h</span></div>
+                        <p class="text-gray-400 mt-2 english-content">Time Limit</p>
+                        <p class="text-gray-400 mt-2 chinese-content chinese-font" style="display:none;">時間限制</p>
+                    </div>
                 </div>
             </div>
             
-            <!-- Testimonials -->
-            <div>
-                <h3 class="mb-6 text-xl font-semibold text-center text-gray-900 english-content">
-                    <i class="mr-2 fas fa-quote-left text-race-blue"></i> What Participants Said
-                </h3>
-                <h3 class="mb-6 text-xl font-semibold text-center text-gray-900 chinese-content chinese-font" style="display: none;">
-                    <i class="mr-2 fas fa-quote-left text-race-blue"></i> 參加者感想
-                </h3>
-                
-                <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    <!-- Testimonial 1 -->
-                    <div class="testimonial-card">
-                        <p class="relative z-10 mb-4 text-gray-700 english-content">
-                            "Testimonial placeholder - participant quote coming soon."
-                        </p>
-                        <p class="relative z-10 mb-4 text-gray-700 chinese-content chinese-font" style="display: none;">
-                            「參加者感想即將更新」
-                        </p>
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-gray-400"></i>
-                            </div>
-                            <div class="ml-3">
-                                <p class="font-medium text-gray-900">Participant Name</p>
-                                <p class="text-sm text-gray-500">Team Name</p>
-                            </div>
-                        </div>
+            <!-- 100K Stats -->
+            <div class="distance-content distance-100k">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                    <div>
+                        <div class="stat-number">100<span class="text-skl-primary">K</span></div>
+                        <p class="text-gray-400 mt-2 english-content">Distance</p>
+                        <p class="text-gray-400 mt-2 chinese-content chinese-font" style="display:none;">距離</p>
                     </div>
-                    
-                    <!-- Testimonial 2 -->
-                    <div class="testimonial-card">
-                        <p class="relative z-10 mb-4 text-gray-700 english-content">
-                            "Testimonial placeholder - participant quote coming soon."
-                        </p>
-                        <p class="relative z-10 mb-4 text-gray-700 chinese-content chinese-font" style="display: none;">
-                            「參加者感想即將更新」
-                        </p>
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-gray-400"></i>
-                            </div>
-                            <div class="ml-3">
-                                <p class="font-medium text-gray-900">Participant Name</p>
-                                <p class="text-sm text-gray-500">Team Name</p>
-                            </div>
-                        </div>
+                    <div>
+                        <div class="stat-number">TBD</div>
+                        <p class="text-gray-400 mt-2 english-content">Elevation Gain</p>
+                        <p class="text-gray-400 mt-2 chinese-content chinese-font" style="display:none;">總爬升</p>
                     </div>
-                    
-                    <!-- Testimonial 3 -->
-                    <div class="testimonial-card">
-                        <p class="relative z-10 mb-4 text-gray-700 english-content">
-                            "Testimonial placeholder - participant quote coming soon."
-                        </p>
-                        <p class="relative z-10 mb-4 text-gray-700 chinese-content chinese-font" style="display: none;">
-                            「參加者感想即將更新」
-                        </p>
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-gray-400"></i>
-                            </div>
-                            <div class="ml-3">
-                                <p class="font-medium text-gray-900">Participant Name</p>
-                                <p class="text-sm text-gray-500">Team Name</p>
-                            </div>
-                        </div>
+                    <div>
+                        <div class="stat-number">4</div>
+                        <p class="text-gray-400 mt-2 english-content">Team Members</p>
+                        <p class="text-gray-400 mt-2 chinese-content chinese-font" style="display:none;">隊員人數</p>
+                    </div>
+                    <div>
+                        <div class="stat-number">30<span class="text-skl-primary">h</span></div>
+                        <p class="text-gray-400 mt-2 english-content">Time Limit</p>
+                        <p class="text-gray-400 mt-2 chinese-content chinese-font" style="display:none;">時間限制</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Inspiration Section -->
-    <section class="py-12 bg-gradient-to-r from-gray-800 to-gray-900">
-        <div class="px-4 mx-auto max-w-4xl sm:px-6 lg:px-8">
-            <div class="text-center">
-                <p class="text-lg text-gray-300 english-content">
-                    <i class="mr-2 fas fa-mountain text-race-yellow"></i>
-                    Inspired by <span class="font-semibold text-white">Trailwalker Hong Kong</span> — we're bringing the team challenge spirit to Calgary. Experience what it's like to conquer a long-distance trail race together, 香港人style.
+    <!-- 2025 Recap Section -->
+    <section id="recap" class="py-20 section-light">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <span data-aos="fade-down" class="inline-block px-4 py-1 mb-4 text-sm font-display tracking-widest text-skl-rose border border-skl-rose rounded-full english-content">
+                    LAST YEAR
+                </span>
+                <span data-aos="fade-down" class="inline-block px-4 py-1 mb-4 text-sm font-display tracking-widest text-skl-rose border border-skl-rose rounded-full chinese-content chinese-font" style="display: none;">
+                    上屆回顧
+                </span>
+                <h2 data-aos="fade-up" class="text-4xl md:text-5xl font-display font-bold mb-4">
+                    <span class="english-content">Saan Kaa Laa 2025</span>
+                    <span class="chinese-content chinese-font" style="display: none;">山卡旯 2025</span>
+                </h2>
+                <!-- Teams counter -->
+                <div data-aos="fade-up" data-aos-delay="100" class="flex items-center justify-center gap-3 mb-4">
+                    <div class="stat-number text-5xl md:text-6xl" id="finisher-count">0</div>
+                    <div class="text-left">
+                        <p class="text-xl text-gray-300 font-semibold english-content">Teams</p>
+                        <p class="text-xl text-gray-300 font-semibold chinese-content chinese-font" style="display:none;">隊伍</p>
+                        <p class="text-sm text-skl-primary english-content">Conquered the Challenge</p>
+                        <p class="text-sm text-skl-primary chinese-content chinese-font" style="display:none;">成功完成挑戰</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video -->
+            <div data-aos="fade-up" class="max-w-4xl mx-auto mb-16">
+                <div class="relative rounded-2xl overflow-hidden" style="padding-bottom: 56.25%;">
+                    <iframe src="https://player.vimeo.com/video/1141338574?title=0&byline=0&portrait=0" 
+                        class="absolute inset-0 w-full h-full"
+                        frameborder="0" 
+                        allow="autoplay; fullscreen; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+            
+            <!-- Hall of Finishers (loaded from JSON) -->
+            <div data-aos="fade-up" class="max-w-4xl mx-auto mb-16">
+                <h3 class="text-xl font-display text-center mb-8 english-content">
+                    <i class="mr-2 fas fa-trophy text-skl-accent"></i> HALL OF FINISHERS
+                </h3>
+                <h3 class="text-xl font-display text-center mb-8 chinese-content chinese-font" style="display: none;">
+                    <i class="mr-2 fas fa-trophy text-skl-accent"></i> 完成者榜
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="finishers-grid">
+                    <!-- Loaded dynamically from data/finishers.json -->
+                </div>
+            </div>
+            
+            <!-- Testimonials -->
+            <div data-aos="fade-up" class="max-w-4xl mx-auto mb-16">
+                <h3 class="text-xl font-display text-center mb-8 english-content">
+                    <i class="mr-2 fas fa-quote-left text-skl-violet"></i> CHALLENGER STORIES
+                </h3>
+                <h3 class="text-xl font-display text-center mb-8 chinese-content chinese-font" style="display: none;">
+                    <i class="mr-2 fas fa-quote-left text-skl-violet"></i> 挑戰者心聲
+                </h3>
+                
+                <div id="testimonials-container">
+                    <!-- Loaded dynamically from data/testimonials.json -->
+                </div>
+            </div>
+            
+            <!-- Photo Gallery Swiper -->
+            <div data-aos="fade-up" class="mb-16">
+                <h3 class="text-xl font-semibold text-center mb-8 english-content">
+                    <i class="mr-2 fas fa-images text-skl-primary"></i> Challenge Day Photos
+                </h3>
+                <h3 class="text-xl font-semibold text-center mb-8 chinese-content chinese-font" style="display: none;">
+                    <i class="mr-2 fas fa-images text-skl-primary"></i> 比賽日相片
+                </h3>
+                
+                <div class="swiper photoSwiper">
+                    <div class="swiper-wrapper" id="gallery-swiper">
+                        <!-- Photos loaded by JS -->
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inspiration Banner -->
+    <section class="py-20 parallax-section relative" style="background-image: url('./assets/banner2.jpg');">
+        <div class="absolute inset-0 bg-black/70"></div>
+        <div class="relative z-10 max-w-4xl mx-auto px-4 text-center">
+            <div data-aos="fade-up">
+                <i class="fas fa-mountain text-skl-accent text-4xl mb-6"></i>
+                <p class="text-xl md:text-2xl leading-relaxed english-content">
+                    Inspired by <span class="font-bold text-white">Trailwalker Hong Kong</span> — we're bringing the team challenge spirit to Calgary. Experience what it's like to conquer a long-distance trail challenge together, <span class="text-skl-accent">香港人style</span>.
                 </p>
-                <p class="text-lg text-gray-300 chinese-content chinese-font" style="display: none;">
-                    <i class="mr-2 fas fa-mountain text-race-yellow"></i>
-                    受 <span class="font-semibold text-white">毅行者</span> 啟發 — 我哋將團隊挑戰精神帶嚟 Calgary。一齊體驗長距離團隊越野賽嘅感覺，香港人style。
+                <p class="text-xl md:text-2xl leading-relaxed chinese-content chinese-font" style="display: none;">
+                    受 <span class="font-bold text-white">毅行者</span> 啟發 — 我哋將團隊挑戰精神帶嚟 Calgary。一齊體驗長距離團隊越野賽嘅感覺，<span class="text-skl-accent">香港人style</span>。
                 </p>
             </div>
         </div>
     </section>
 
     <!-- Event Highlights -->
-    <section class="py-16 bg-gray-50">
-        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="mb-12 text-center">
-                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-blue bg-blue-50 english-content">THE CHALLENGE</span>
-                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-blue bg-blue-50 chinese-content chinese-font" style="display: none;">挑戰內容</span>
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl english-content">
-                    Team Up & Conquer Together
+    <section class="py-20 section-dark">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <span data-aos="fade-down" class="inline-block px-4 py-1 mb-4 text-sm font-display tracking-widest text-skl-violet border border-skl-violet rounded-full english-content">
+                    THE CHALLENGE
+                </span>
+                <span data-aos="fade-down" class="inline-block px-4 py-1 mb-4 text-sm font-display tracking-widest text-skl-violet border border-skl-violet rounded-full chinese-content chinese-font" style="display: none;">
+                    挑戰內容
+                </span>
+                <h2 data-aos="fade-up" class="text-4xl md:text-5xl font-display font-bold mb-4">
+                    <span class="english-content">Team Up & Conquer Together</span>
+                    <span class="chinese-content chinese-font" style="display: none;">組隊出發 一齊征服</span>
                 </h2>
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl chinese-content chinese-font" style="display: none;">
-                    組隊出發 一齊征服
-                </h2>
-                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 english-content">
+                <p data-aos="fade-up" data-aos-delay="100" class="text-xl text-gray-400 max-w-2xl mx-auto english-content">
                     A 54K or 100K trail challenge where teams of 4 must start and finish together
                 </p>
-                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 chinese-content chinese-font" style="display: none;">
+                <p data-aos="fade-up" data-aos-delay="100" class="text-xl text-gray-400 max-w-2xl mx-auto chinese-content chinese-font" style="display: none;">
                     4人團隊必須一齊起步同完成嘅54K / 100K越野挑戰
                 </p>
             </div>
             
-            <div class="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-3">
-                <div class="relative overflow-hidden rounded-xl card-hover" style="min-height: 280px;">
-                    <div class="absolute inset-0">
-                        <img src="./assets/banner1.jpg" alt="Team Challenge" class="object-cover w-full h-full">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div data-aos="fade-up" data-aos-delay="100" class="feature-card relative group" style="min-height: 350px;">
+                    <div class="absolute inset-0 rounded-2xl overflow-hidden">
+                        <img src="./assets/banner1.jpg" alt="Team" class="w-full h-full object-cover opacity-30 group-hover:opacity-50 transition-opacity">
                     </div>
-                    <div class="relative p-6 sm:p-8 flex flex-col justify-end h-full">
-                        <div class="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 mb-4 bg-white/20 backdrop-blur-sm rounded-full text-white">
-                            <i class="text-xl sm:text-2xl fas fa-users"></i>
+                    <div class="relative p-8 h-full flex flex-col justify-end">
+                        <div class="w-16 h-16 mb-6 rounded-full bg-skl-primary/20 flex items-center justify-center">
+                            <i class="fas fa-users text-2xl text-skl-primary"></i>
                         </div>
-                        <h3 class="text-lg sm:text-xl font-semibold text-white english-content">Team Challenge</h3>
-                        <h3 class="text-lg sm:text-xl font-semibold text-white chinese-content chinese-font" style="display: none;">團隊挑戰</h3>
-                        <p class="mt-2 text-gray-200 english-content">
+                        <h3 class="text-2xl font-display font-bold mb-3 english-content">Team Challenge</h3>
+                        <h3 class="text-2xl font-display font-bold mb-3 chinese-content chinese-font" style="display: none;">團隊挑戰</h3>
+                        <p class="text-gray-300 english-content">
                             Teams of 4 must start and finish together. Test your teamwork on rugged trails.
                         </p>
-                        <p class="mt-2 text-gray-200 chinese-content chinese-font" style="display: none;">
+                        <p class="text-gray-300 chinese-content chinese-font" style="display: none;">
                             4人一隊必須一齊起步同完成。喺崎嶇山徑上考驗團隊精神。
                         </p>
                     </div>
                 </div>
                 
-                <div class="relative overflow-hidden rounded-xl card-hover" style="min-height: 280px;">
-                    <div class="absolute inset-0">
-                        <img src="./assets/banner2.jpg" alt="Self-Supported" class="object-cover w-full h-full">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                <!-- Card 2 -->
+                <div data-aos="fade-up" data-aos-delay="200" class="feature-card relative group" style="min-height: 350px;">
+                    <div class="absolute inset-0 rounded-2xl overflow-hidden">
+                        <img src="./assets/banner2.jpg" alt="Route" class="w-full h-full object-cover opacity-30 group-hover:opacity-50 transition-opacity">
                     </div>
-                    <div class="relative p-6 sm:p-8 flex flex-col justify-end h-full">
-                        <div class="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 mb-4 bg-white/20 backdrop-blur-sm rounded-full text-white">
-                            <i class="text-xl sm:text-2xl fas fa-route"></i>
+                    <div class="relative p-8 h-full flex flex-col justify-end">
+                        <div class="w-16 h-16 mb-6 rounded-full bg-skl-light/20 flex items-center justify-center">
+                            <i class="fas fa-route text-2xl text-skl-light"></i>
                         </div>
-                        <h3 class="text-lg sm:text-xl font-semibold text-white english-content">Self-Supported</h3>
-                        <h3 class="text-lg sm:text-xl font-semibold text-white chinese-content chinese-font" style="display: none;">自主挑戰</h3>
-                        <p class="mt-2 text-gray-200 english-content">
+                        <h3 class="text-2xl font-display font-bold mb-3 english-content">Self-Supported</h3>
+                        <h3 class="text-2xl font-display font-bold mb-3 chinese-content chinese-font" style="display: none;">自主挑戰</h3>
+                        <p class="text-gray-300 english-content">
                             Basic aid stations with water and snacks provided by volunteers along the route.
                         </p>
-                        <p class="mt-2 text-gray-200 chinese-content chinese-font" style="display: none;">
+                        <p class="text-gray-300 chinese-content chinese-font" style="display: none;">
                             沿途由義工提供基本補給站。
                         </p>
                     </div>
                 </div>
                 
-                <div class="relative overflow-hidden rounded-xl card-hover" style="min-height: 280px;">
-                    <div class="absolute inset-0">
-                        <img src="./assets/banner3.jpg" alt="Personal Achievement" class="object-cover w-full h-full">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                <!-- Card 3 -->
+                <div data-aos="fade-up" data-aos-delay="300" class="feature-card relative group" style="min-height: 350px;">
+                    <div class="absolute inset-0 rounded-2xl overflow-hidden">
+                        <img src="./assets/banner3.jpg" alt="Achievement" class="w-full h-full object-cover opacity-30 group-hover:opacity-50 transition-opacity">
                     </div>
-                    <div class="relative p-6 sm:p-8 flex flex-col justify-end h-full">
-                        <div class="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 mb-4 bg-white/20 backdrop-blur-sm rounded-full text-white">
-                            <i class="text-xl sm:text-2xl fas fa-medal"></i>
+                    <div class="relative p-8 h-full flex flex-col justify-end">
+                        <div class="w-16 h-16 mb-6 rounded-full bg-skl-accent/20 flex items-center justify-center">
+                            <i class="fas fa-medal text-2xl text-skl-accent"></i>
                         </div>
-                        <h3 class="text-lg sm:text-xl font-semibold text-white english-content">Personal Achievement</h3>
-                        <h3 class="text-lg sm:text-xl font-semibold text-white chinese-content chinese-font" style="display: none;">個人成就</h3>
-                        <p class="mt-2 text-gray-200 english-content">
-                            The reward is the challenge itself - push your limits with your teammates and earn this life-changing experience.
+                        <h3 class="text-2xl font-display font-bold mb-3 english-content">Personal Achievement</h3>
+                        <h3 class="text-2xl font-display font-bold mb-3 chinese-content chinese-font" style="display: none;">個人成就</h3>
+                        <p class="text-gray-300 english-content">
+                            The reward is the challenge itself - push your limits and earn this life-changing experience.
                         </p>
-                        <p class="mt-2 text-gray-200 chinese-content chinese-font" style="display: none;">
+                        <p class="text-gray-300 chinese-content chinese-font" style="display: none;">
                             挑戰本身就係獎勵 - 同隊友一齊突破極限，獲得畢生難忘嘅體驗。
                         </p>
                     </div>
@@ -736,157 +998,111 @@
         </div>
     </section>
 
-    <!-- Distance Toggle Section -->
-    <section class="py-8 bg-gray-100">
-        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="text-center">
-                <p class="mb-4 text-lg text-gray-600 english-content">
-                    <i class="mr-2 fas fa-route text-race-blue"></i> Select your challenge distance
-                </p>
-                <p class="mb-4 text-lg text-gray-600 chinese-content chinese-font" style="display: none;">
-                    <i class="mr-2 fas fa-route text-race-blue"></i> 選擇你嘅挑戰距離
-                </p>
-                <div class="distance-toggle">
-                    <button id="btn50k" class="distance-btn active" onclick="setDistance('50k')">SKL50</button>
-                    <button id="btn100k" class="distance-btn" onclick="setDistance('100k')">SKL100</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Route Section -->
-    <section id="route" class="py-16 bg-white">
-        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="mb-12 text-center">
-                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-blue bg-blue-50 english-content">THE COURSE</span>
-                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-blue bg-blue-50 chinese-content chinese-font" style="display: none;">路線</span>
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl english-content">
-                    Challenge Route
-                </h2>
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl chinese-content chinese-font" style="display: none;">
-                    挑戰路線
+    <section id="route" class="py-20 section-dark">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <span data-aos="fade-down" class="inline-block px-4 py-1 mb-4 text-sm font-display tracking-widest text-skl-primary border border-skl-primary rounded-full english-content">
+                    THE COURSE
+                </span>
+                <span data-aos="fade-down" class="inline-block px-4 py-1 mb-4 text-sm font-display tracking-widest text-skl-primary border border-skl-primary rounded-full chinese-content chinese-font" style="display: none;">
+                    路線
+                </span>
+                <h2 data-aos="fade-up" class="text-4xl md:text-5xl font-display font-bold mb-4">
+                    <span class="english-content">Challenge Route</span>
+                    <span class="chinese-content chinese-font" style="display: none;">挑戰路線</span>
                 </h2>
                 
-                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 english-content distance-content distance-50k active">
+                <p data-aos="fade-up" data-aos-delay="100" class="text-xl text-gray-400 max-w-2xl mx-auto english-content distance-content distance-50k active">
                     A challenging 54K with diverse terrain and stunning views
                 </p>
-                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 chinese-content chinese-font distance-content distance-50k active" style="display: none;">
+                <p data-aos="fade-up" data-aos-delay="100" class="text-xl text-gray-400 max-w-2xl mx-auto chinese-content chinese-font distance-content distance-50k active" style="display: none;">
                     多樣地形同靚景嘅54公里挑戰賽道
                 </p>
-                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 english-content distance-content distance-100k">
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto english-content distance-content distance-100k">
                     The ultimate 100K challenge — same epic finish, longer journey
                 </p>
-                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 chinese-content chinese-font distance-content distance-100k" style="display: none;">
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto chinese-content chinese-font distance-content distance-100k" style="display: none;">
                     終極100公里挑戰 — 同一終點，更長旅程
                 </p>
             </div>
             
             <!-- 50K Content -->
             <div class="distance-content distance-50k active">
-                <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                    <div>
-                        <div class="mb-8 shadow-xl map-container" id="map-container"></div>
-
-                        <div class="p-6 sm:p-8 bg-white shadow-sm rounded-xl card-hover">
-                            <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 english-content">
-                                <i class="mr-2 fas fa-chart-line text-race-blue"></i> Elevation Profile
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div data-aos="fade-right">
+                        <div class="map-container mb-6" id="map-container"></div>
+                        <div class="gradient-border p-6">
+                            <h3 class="flex items-center mb-4 text-lg font-display english-content">
+                                <i class="mr-2 fas fa-chart-line text-skl-light"></i> ELEVATION PROFILE
                             </h3>
-                            <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 chinese-content chinese-font" style="display: none;">
-                                <i class="mr-2 fas fa-chart-line text-race-blue"></i> 攀升圖
+                            <h3 class="flex items-center mb-4 text-lg font-display chinese-content chinese-font" style="display: none;">
+                                <i class="mr-2 fas fa-chart-line text-skl-light"></i> 攀升圖
                             </h3>
-                            <div id="elevation-profile" class="mb-4 rounded-lg elevation-profile">
-                            </div>
+                            <div id="elevation-profile" class="elevation-profile"></div>
                         </div>
-                        <div class="p-6 sm:p-8 flex justify-center">
-                            <a href="https://www.strava.com/routes/3366873795108428114" target="_blank" rel="noopener" class="inline-flex items-center px-4 py-2 text-base font-medium text-white bg-race-blue rounded-md shadow-sm hover:bg-blue-700 transition duration-300 english-content">
-                                <i class="fab fa-strava mr-2"></i> View on Strava
-                            </a>
-                            <a href="https://www.strava.com/routes/3366873795108428114" target="_blank" rel="noopener" class="inline-flex items-center px-4 py-2 text-base font-medium text-white bg-race-blue rounded-md shadow-sm hover:bg-blue-700 transition duration-300 chinese-content chinese-font" style="display: none;">
-                                <i class="fab fa-strava mr-2"></i> 喺 Strava 睇路線
+                        <div class="mt-6 text-center">
+                            <a href="https://www.strava.com/routes/3366873795108428114" target="_blank" rel="noopener" 
+                               class="inline-flex items-center px-6 py-3 rounded-full bg-[#FC4C02] hover:bg-[#e04400] transition-colors font-semibold">
+                                <i class="fab fa-strava mr-2"></i> 
+                                <span class="english-content">View on Strava</span>
+                                <span class="chinese-content chinese-font" style="display:none;">喺 Strava 睇路線</span>
                             </a>
                         </div>
                     </div>
                     
-                    <div>
-                        <div class="p-6 sm:p-8 bg-white shadow-sm rounded-xl card-hover">
-                            <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 english-content">
-                                <i class="mr-2 fas fa-route text-race-blue"></i> Course Details
+                    <div data-aos="fade-left">
+                        <div class="gradient-border p-6">
+                            <h3 class="flex items-center mb-6 text-lg font-display english-content">
+                                <i class="mr-2 fas fa-route text-skl-light"></i> COURSE DETAILS
                             </h3>
-                            <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 chinese-content chinese-font" style="display: none;">
-                                <i class="mr-2 fas fa-route text-race-blue"></i> 賽道詳情
+                            <h3 class="flex items-center mb-6 text-lg font-display chinese-content chinese-font" style="display: none;">
+                                <i class="mr-2 fas fa-route text-skl-light"></i> 賽道詳情
                             </h3>
                             
-                            <div class="timeline">
-                                <div class="timeline-item">
-                                    <h4 class="font-medium text-gray-900 english-content">Start to Aid Station 1 (Powderface Ridge Trailhead)</h4>
-                                    <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">起點至補給站1 (Powderface Ridge Trailhead)</h4>
-                                    <p class="text-sm text-gray-600">15 km • 500m elevation gain</p>
-                                    <p class="mt-2 text-gray-700 english-content">
-                                        Gentle climb through forest trails with some rocky sections, descending to the plains and follow trail back to trailhead.
-                                    </p>
-                                    <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                        穿過森林小徑嘅緩坡，小部分碎石路段，最後落斜至平原。
-                                    </p>
-                                    <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-easy english-content">
-                                        <i class="mr-1 fas fa-leaf"></i> Easy
-                                    </span>
-                                    <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-easy chinese-content chinese-font" style="display: none;">
-                                        <i class="mr-1 fas fa-leaf"></i> 簡單
-                                    </span>
+                            <div class="timeline-modern">
+                                <div class="timeline-item-modern">
+                                    <div class="ml-4">
+                                        <h4 class="font-semibold text-white english-content">Start to Aid Station 1</h4>
+                                        <h4 class="font-semibold text-white chinese-content chinese-font" style="display: none;">起點至補給站1</h4>
+                                        <p class="text-sm text-gray-400">Powderface Ridge Trailhead</p>
+                                        <p class="text-skl-primary font-display mt-1">15 km • 500m ↑</p>
+                                        <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold rounded-full bg-yellow-500/20 text-yellow-400 english-content">Moderate</span>
+                                        <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold rounded-full bg-yellow-500/20 text-yellow-400 chinese-content chinese-font" style="display:none;">中等</span>
+                                    </div>
                                 </div>
                                 
-                                <div class="timeline-item">
-                                    <h4 class="font-medium text-gray-900 english-content">Aid Station 1 to 2 (Elbow Fall Parking Lot)</h4>
-                                    <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">補給站1至2 (Elbow Fall Parking)</h4>
-                                    <p class="text-sm text-gray-600">14 km • 680m elevation gain</p>
-                                    <p class="mt-2 text-gray-700 english-content">
-                                        Steep climb with switchback.
-                                    </p>
-                                    <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                        陡峭嘅攀升。
-                                    </p>
-                                    <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-hard english-content">
-                                        <i class="mr-1 fas fa-exclamation-triangle"></i> Difficult
-                                    </span>
-                                    <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-hard chinese-content chinese-font" style="display: none;">
-                                        <i class="mr-1 fas fa-exclamation-triangle"></i> 困難
-                                    </span>
+                                <div class="timeline-item-modern">
+                                    <div class="ml-4">
+                                        <h4 class="font-semibold text-white english-content">Aid Station 1 to 2</h4>
+                                        <h4 class="font-semibold text-white chinese-content chinese-font" style="display: none;">補給站1至2</h4>
+                                        <p class="text-sm text-gray-400">Elbow Fall Parking Lot</p>
+                                        <p class="text-skl-primary font-display mt-1">14 km • 680m ↑</p>
+                                        <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold rounded-full bg-red-500/20 text-red-400 english-content">Difficult</span>
+                                        <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold rounded-full bg-red-500/20 text-red-400 chinese-content chinese-font" style="display:none;">困難</span>
+                                    </div>
                                 </div>
                                 
-                                <div class="timeline-item">
-                                    <h4 class="font-medium text-gray-900 english-content">Aid Station 2 to 3 (Moose Mountain Trailhead Parking)</h4>
-                                    <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">補給站2至3 (Moose Mountain Trailhead Parking)</h4>
-                                    <p class="text-sm text-gray-600">10.5 km • 600m elevation gain</p>
-                                    <p class="mt-2 text-gray-700 english-content">
-                                        Climb on well paved road and trail to last aid station.
-                                    </p>
-                                    <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                        沿鋪好嘅道路同步道爬升至最後一個補給站。
-                                    </p>
-                                    <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-medium english-content">
-                                        <i class="mr-1 fas fa-hiking"></i> Moderate
-                                    </span>
-                                    <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-medium chinese-content chinese-font" style="display: none;">
-                                        <i class="mr-1 fas fa-hiking"></i> 中等難度
-                                    </span>
+                                <div class="timeline-item-modern">
+                                    <div class="ml-4">
+                                        <h4 class="font-semibold text-white english-content">Aid Station 2 to 3</h4>
+                                        <h4 class="font-semibold text-white chinese-content chinese-font" style="display: none;">補給站2至3</h4>
+                                        <p class="text-sm text-gray-400">Moose Mountain Trailhead</p>
+                                        <p class="text-skl-primary font-display mt-1">10.5 km • 600m ↑</p>
+                                        <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold rounded-full bg-green-500/20 text-green-400 english-content">Easy</span>
+                                        <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold rounded-full bg-green-500/20 text-green-400 chinese-content chinese-font" style="display:none;">簡單</span>
+                                    </div>
                                 </div>
                                 
-                                <div class="timeline-item">
-                                    <h4 class="font-medium text-gray-900 english-content">Aid Station 3 to Finish (Allen Bill Day Use Area)</h4>
-                                    <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">補給站3至終點 (Allen Bill Day Use Area)</h4>
-                                    <p class="text-sm text-gray-600">14.5 km • 170m elevation gain • 750m elevation loss</p>
-                                    <p class="mt-2 text-gray-700 english-content">
-                                        Flowing single-track through forest trails down with some climbs.
-                                    </p>
-                                    <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                        穿越森林小徑落山，有少少上斜。
-                                    </p>
-                                    <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-medium english-content">
-                                        <i class="mr-1 fas fa-hiking"></i> Moderate
-                                    </span>
-                                    <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-medium chinese-content chinese-font" style="display: none;">
-                                        <i class="mr-1 fas fa-hiking"></i> 中等難度
-                                    </span>
+                                <div class="timeline-item-modern">
+                                    <div class="ml-4">
+                                        <h4 class="font-semibold text-white english-content">Aid Station 3 to Finish</h4>
+                                        <h4 class="font-semibold text-white chinese-content chinese-font" style="display: none;">補給站3至終點</h4>
+                                        <p class="text-sm text-gray-400">Allen Bill Day Use Area</p>
+                                        <p class="text-skl-primary font-display mt-1">14.5 km • 170m ↑ • 750m ↓</p>
+                                        <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold rounded-full bg-green-500/20 text-green-400 english-content">Easy</span>
+                                        <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold rounded-full bg-green-500/20 text-green-400 chinese-content chinese-font" style="display:none;">簡單</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -894,84 +1110,22 @@
                 </div>
             </div>
             
-            <!-- 100K Content (Coming Soon with blur overlay) -->
+            <!-- 100K Content (Coming Soon) -->
             <div class="distance-content distance-100k">
                 <div class="coming-soon-overlay">
                     <div class="overlay-banner">
-                        <div class="coming-soon-badge">
+                        <div class="coming-soon-badge pulse-glow">
                             <i class="fas fa-hourglass-half mr-2"></i>
                             <span class="english-content">Coming Soon</span>
                             <span class="chinese-content chinese-font" style="display: none;">即將公佈</span>
-                            <p class="text-sm font-normal mt-1 english-content">Route details will be announced soon</p>
-                            <p class="text-sm font-normal mt-1 chinese-content chinese-font" style="display: none;">路線詳情即將公佈</p>
+                            <p class="text-sm font-normal mt-2 opacity-80 english-content">Route details will be announced soon</p>
+                            <p class="text-sm font-normal mt-2 opacity-80 chinese-content chinese-font" style="display: none;">路線詳情即將公佈</p>
                         </div>
                     </div>
                     <div class="overlay-content">
-                        <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                            <div>
-                                <div class="mb-8 shadow-xl map-container bg-gray-200" style="height: 400px;"></div>
-
-                                <div class="p-6 sm:p-8 bg-white shadow-sm rounded-xl card-hover">
-                                    <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900">
-                                        <i class="mr-2 fas fa-chart-line text-race-blue"></i> Elevation Profile
-                                    </h3>
-                                    <div class="mb-4 rounded-lg elevation-profile bg-gray-100" style="height: 250px;">
-                                    </div>
-                                </div>
-                                <div class="p-6 sm:p-8 flex justify-center">
-                                    <span class="inline-flex items-center px-4 py-2 text-base font-medium text-gray-400 bg-gray-200 rounded-md">
-                                        <i class="fab fa-strava mr-2"></i> Strava Link TBD
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <div class="p-6 sm:p-8 bg-white shadow-sm rounded-xl card-hover">
-                                    <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900">
-                                        <i class="mr-2 fas fa-route text-race-blue"></i> Course Details
-                                    </h3>
-                                    
-                                    <div class="timeline">
-                                        <div class="timeline-item">
-                                            <h4 class="font-medium text-gray-900">100K Start to 50K Start Point</h4>
-                                            <p class="text-sm text-gray-600">~46 km • Elevation TBD</p>
-                                            <p class="mt-2 text-gray-700">
-                                                Extended route before joining the 50K course. Different start point, same epic finish.
-                                            </p>
-                                            <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full bg-gray-400">
-                                                <i class="mr-1 fas fa-question"></i> TBD
-                                            </span>
-                                        </div>
-                                        
-                                        <div class="timeline-item">
-                                            <h4 class="font-medium text-gray-900">Aid Station 1 (Powderface Ridge Trailhead)</h4>
-                                            <p class="text-sm text-gray-600">15 km • 500m elevation gain</p>
-                                            <p class="mt-2 text-gray-700">
-                                                Same as SKL50 route from this point onwards.
-                                            </p>
-                                            <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-easy">
-                                                <i class="mr-1 fas fa-leaf"></i> Easy
-                                            </span>
-                                        </div>
-                                        
-                                        <div class="timeline-item">
-                                            <h4 class="font-medium text-gray-900">Aid Station 2 (Elbow Fall Parking Lot)</h4>
-                                            <p class="text-sm text-gray-600">14 km • 680m elevation gain</p>
-                                            <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-hard">
-                                                <i class="mr-1 fas fa-exclamation-triangle"></i> Difficult
-                                            </span>
-                                        </div>
-                                        
-                                        <div class="timeline-item">
-                                            <h4 class="font-medium text-gray-900">Finish (Allen Bill Day Use Area)</h4>
-                                            <p class="text-sm text-gray-600">Same finish as SKL50</p>
-                                            <span class="inline-block px-3 py-1 mt-2 text-xs font-semibold text-white rounded-full route-difficulty-medium">
-                                                <i class="mr-1 fas fa-flag-checkered"></i> Finish
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="gradient-border p-6 h-[400px]"></div>
+                            <div class="gradient-border p-6 h-[400px]"></div>
                         </div>
                     </div>
                 </div>
@@ -979,364 +1133,202 @@
         </div>
     </section>
 
-    <!-- Event Details -->
-    <section id="details" class="py-16 bg-gray-50">
-        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="mb-12 text-center">
-                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-blue bg-blue-50 english-content">THE PREPARATION</span>
-                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-blue bg-blue-50 chinese-content chinese-font" style="display: none;">準備就緒</span>
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl english-content">
-                    Challenge Details
+    <!-- Challenge Details -->
+    <section id="details" class="py-20 section-light">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <span data-aos="fade-down" class="inline-block px-4 py-1 mb-4 text-sm font-display tracking-widest text-skl-accent border border-skl-accent rounded-full english-content">
+                    THE PREPARATION
+                </span>
+                <span data-aos="fade-down" class="inline-block px-4 py-1 mb-4 text-sm font-display tracking-widest text-skl-accent border border-skl-accent rounded-full chinese-content chinese-font" style="display: none;">
+                    準備就緒
+                </span>
+                <h2 data-aos="fade-up" class="text-4xl md:text-5xl font-display font-bold mb-4">
+                    <span class="english-content">Challenge Details</span>
+                    <span class="chinese-content chinese-font" style="display: none;">挑戰詳情</span>
                 </h2>
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl chinese-content chinese-font" style="display: none;">
-                    挑戰詳情
-                </h2>
-                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 english-content">
-                    What you need to know about this self-organized team challenge
-                </p>
-                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 chinese-content chinese-font" style="display: none;">
-                    關於呢場自組團隊挑戰嘅資訊
-                </p>
             </div>
             
             <!-- 50K Schedule -->
             <div class="details-content details-50k active">
-                <div class="grid gap-8 grid-cols-1">
-                    <div class="p-6 sm:p-8 shadow-sm bg-white rounded-xl card-hover">
-                        <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 english-content">
-                            <i class="mr-2 far fa-calendar-alt text-race-blue"></i> SKL50 Schedule
-                        </h3>
-                        <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 chinese-content chinese-font" style="display: none;">
-                            <i class="mr-2 far fa-calendar-alt text-race-blue"></i> SKL50 時間表
-                        </h3>
+                <div data-aos="fade-up" class="gradient-border p-8 mb-8">
+                    <h3 class="text-2xl font-display font-bold mb-8 english-content">
+                        <i class="mr-2 far fa-calendar-alt text-skl-primary"></i> SKL50 SCHEDULE
+                    </h3>
+                    <h3 class="text-2xl font-display font-bold mb-8 chinese-content chinese-font" style="display: none;">
+                        <i class="mr-2 far fa-calendar-alt text-skl-primary"></i> SKL50 時間表
+                    </h3>
+                    
+                    <div class="timeline-modern">
+                        <div class="timeline-item-modern">
+                            <p class="text-xs text-yellow-400 font-display tracking-wider mb-1">JULY 29, 2026</p>
+                            <h4 class="font-semibold english-content">Registration Deadline</h4>
+                            <h4 class="font-semibold chinese-content chinese-font" style="display:none;">報名截止</h4>
+                            <p class="text-sm text-gray-400 mt-1 english-content">Team registration closes one month before the challenge</p>
+                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">團隊報名於挑戰前一個月截止</p>
+                        </div>
                         
-                        <div class="space-y-6">
-                            <div class="p-4 bg-gray-50 border-l-4 border-yellow-500 rounded-lg">
-                                <h4 class="font-medium text-gray-900 english-content">Registration Deadline</h4>
-                                <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">報名截止</h4>
-                                <p class="text-sm text-gray-600">July 29, 2026</p>
-                                <p class="mt-2 text-gray-700 english-content">
-                                    Team registration closes one month before the challenge.
-                                </p>
-                                <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                    團隊報名於挑戰前一個月截止。
-                                </p>
-                            </div>
-                            
-                            <div class="p-4 bg-gray-50 border-l-4 border-blue-500 rounded-lg">
-                                <h4 class="font-medium text-gray-900 english-content">Online Info Session</h4>
-                                <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">網上簡介會</h4>
-                                <p class="text-sm text-gray-600 english-content">July 29 & 30, 2026 • 8:00 PM (MDT)</p>
-                                <p class="text-sm text-gray-600 chinese-content chinese-font" style="display: none;">2026年7月29及30日 • 晚上8:00 (MDT)</p>
-                                <p class="mt-2 text-gray-700 english-content">
-                                    Challenge briefing online with information about the route and challenge. Two sessions available to accommodate participants.
-                                </p>
-                                <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                    網上挑戰簡介會，講解路線及挑戰。提供兩晚方便參加者。
-                                </p>
-                            </div>
-
-                            <div class="p-4 bg-gray-50 border-l-4 border-blue-500 rounded-lg">
-                                <h4 class="font-medium text-gray-900 english-content">Check-in</h4>
-                                <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">報到</h4>
-                                <p class="text-sm text-gray-600">August 29, 2026 • 5:00 AM</p>
-                                <p class="mt-2 text-gray-700 english-content">
-                                    Team check-in and safety briefing at the start point. Volunteer will shuttle teams to the start line.
-                                </p>
-                                <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                    團隊報到及起點安全簡報。義工會接載團隊去起點。
-                                </p>
-                            </div>
-                            
-                            <div class="p-4 bg-gray-50 border-l-4 border-green-500 rounded-lg">
-                                <h4 class="font-medium text-gray-900 english-content">Challenge Begin</h4>
-                                <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">挑戰開始</h4>
-                                <p class="text-sm text-gray-600">August 29, 2026 • 6:00 AM</p>
-                                <p class="mt-2 text-gray-700 english-content">
-                                    54K challenge begins at dawn. Teams must stay together throughout.
-                                </p>
-                                <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                    54公里挑戰於黎明開始。團隊必須全程一齊行動。
-                                </p>
-                            </div>
-
-                            <div class="p-4 bg-gray-50 border-l-4 border-yellow-500 rounded-lg">
-                                <h4 class="font-medium text-gray-900 english-content">Suggested Cutoff at Aid Station 2 (Elbow Fall Parking Lot)</h4>
-                                <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">建議關門時間</h4>
-                                <p class="text-sm text-gray-600">August 29, 2026 • 2:00 PM</p>
-                                <p class="mt-2 text-gray-700 english-content">
-                                    Suggest teams that did not make it to Aid Station 2 (Elbow Fall Parking Lot) in time to drop out of the challenge.
-                                </p>
-                                <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                    建議未能喺限時內到達第二補給站（Elbow Fall Parking Lot）嘅團隊提早完成挑戰。
-                                </p>
-                            </div>
-
-                            <div class="p-4 bg-gray-50 border-l-4 border-green-500 rounded-lg">
-                                <h4 class="font-medium text-gray-900 english-content">Challenge Finish</h4>
-                                <h4 class="font-medium text-gray-900 chinese-content chinese-font" style="display: none;">挑戰結束</h4>
-                                <p class="text-sm text-gray-600">August 29, 2026 • 8:00 PM</p>
-                                <p class="mt-2 text-gray-700 english-content">
-                                    Finish challenge at finish line and enjoy some food and drinks.
-                                </p>
-                                <p class="mt-2 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                    於終點完成挑戰，享用美食同飲品。
-                                </p>
-                            </div>
+                        <div class="timeline-item-modern">
+                            <p class="text-xs text-blue-400 font-display tracking-wider mb-1">JULY 29-30, 2026 • 8PM MDT</p>
+                            <h4 class="font-semibold english-content">Online Info Session</h4>
+                            <h4 class="font-semibold chinese-content chinese-font" style="display:none;">網上簡介會</h4>
+                            <p class="text-sm text-gray-400 mt-1 english-content">Challenge briefing with route info. Two sessions available.</p>
+                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">網上挑戰簡介會，講解路線及挑戰。提供兩晚方便參加者。</p>
+                        </div>
+                        
+                        <div class="timeline-item-modern">
+                            <p class="text-xs text-blue-400 font-display tracking-wider mb-1">AUG 29, 2026 • 5:00 AM</p>
+                            <h4 class="font-semibold english-content">Check-in</h4>
+                            <h4 class="font-semibold chinese-content chinese-font" style="display:none;">報到</h4>
+                            <p class="text-sm text-gray-400 mt-1 english-content">Team check-in and safety briefing at start point</p>
+                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">團隊報到及起點安全簡報</p>
+                        </div>
+                        
+                        <div class="timeline-item-modern">
+                            <p class="text-xs text-green-400 font-display tracking-wider mb-1">AUG 29, 2026 • 6:00 AM</p>
+                            <h4 class="font-semibold english-content">Challenge Begins</h4>
+                            <h4 class="font-semibold chinese-content chinese-font" style="display:none;">挑戰開始</h4>
+                            <p class="text-sm text-gray-400 mt-1 english-content">54K challenge begins at dawn. Teams stay together throughout.</p>
+                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">54公里挑戰於黎明開始。團隊必須全程一齊行動。</p>
+                        </div>
+                        
+                        <div class="timeline-item-modern">
+                            <p class="text-xs text-yellow-400 font-display tracking-wider mb-1">AUG 29, 2026 • 2:00 PM</p>
+                            <h4 class="font-semibold english-content">Suggested Cutoff at Aid Station 2</h4>
+                            <h4 class="font-semibold chinese-content chinese-font" style="display:none;">建議關門時間（補給站2）</h4>
+                            <p class="text-sm text-gray-400 mt-1 english-content">Teams not reaching Elbow Fall by this time may consider stopping</p>
+                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">未能喺限時內到達Elbow Fall嘅團隊建議提早完成</p>
+                        </div>
+                        
+                        <div class="timeline-item-modern" style="padding-bottom: 0;">
+                            <p class="text-xs text-green-400 font-display tracking-wider mb-1">AUG 29, 2026 • 8:00 PM</p>
+                            <h4 class="font-semibold english-content">Challenge Finish</h4>
+                            <h4 class="font-semibold chinese-content chinese-font" style="display:none;">挑戰結束</h4>
+                            <p class="text-sm text-gray-400 mt-1 english-content">Celebrate at the finish line with food and drinks!</p>
+                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">於終點完成挑戰，享用美食同飲品！</p>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- 100K Schedule (Coming Soon with blur) -->
+            <!-- 100K Schedule -->
             <div class="details-content details-100k">
                 <div class="coming-soon-overlay">
                     <div class="overlay-banner">
-                        <div class="coming-soon-badge">
+                        <div class="coming-soon-badge pulse-glow">
                             <i class="fas fa-hourglass-half mr-2"></i>
                             <span class="english-content">Coming Soon</span>
                             <span class="chinese-content chinese-font" style="display: none;">即將公佈</span>
-                            <p class="text-sm font-normal mt-1 english-content">Schedule details will be announced soon</p>
-                            <p class="text-sm font-normal mt-1 chinese-content chinese-font" style="display: none;">時間表詳情即將公佈</p>
                         </div>
                     </div>
                     <div class="overlay-content">
-                        <div class="grid gap-8 grid-cols-1">
-                            <div class="p-6 sm:p-8 shadow-sm bg-white rounded-xl card-hover">
-                                <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900">
-                                    <i class="mr-2 far fa-calendar-alt text-race-blue"></i> SKL100 Schedule
-                                </h3>
-                                
-                                <div class="space-y-6">
-                                    <div class="p-4 bg-gray-50 border-l-4 border-yellow-500 rounded-lg">
-                                        <h4 class="font-medium text-gray-900">Registration Deadline</h4>
-                                        <p class="text-sm text-gray-600">July 29, 2026</p>
-                                        <p class="mt-2 text-gray-700">Team registration closes one month before the challenge.</p>
-                                    </div>
-                                    
-                                    <div class="p-4 bg-gray-50 border-l-4 border-blue-500 rounded-lg">
-                                        <h4 class="font-medium text-gray-900">Online Info Session</h4>
-                                        <p class="text-sm text-gray-600">July 29 & 30, 2026 • 8:00 PM (MDT)</p>
-                                        <p class="mt-2 text-gray-700">Challenge briefing online with information about the route and challenge.</p>
-                                    </div>
-
-                                    <div class="p-4 bg-gray-50 border-l-4 border-blue-500 rounded-lg">
-                                        <h4 class="font-medium text-gray-900">Check-in (100K Start)</h4>
-                                        <p class="text-sm text-gray-600">August 28, 2026 • TBD</p>
-                                        <p class="mt-2 text-gray-700">100K starts earlier from a different location.</p>
-                                    </div>
-                                    
-                                    <div class="p-4 bg-gray-50 border-l-4 border-green-500 rounded-lg">
-                                        <h4 class="font-medium text-gray-900">100K Challenge Begin</h4>
-                                        <p class="text-sm text-gray-600">August 28-29, 2026 • TBD</p>
-                                        <p class="mt-2 text-gray-700">100K challenge begins before 50K. Teams must stay together throughout.</p>
-                                    </div>
-
-                                    <div class="p-4 bg-gray-50 border-l-4 border-green-500 rounded-lg">
-                                        <h4 class="font-medium text-gray-900">Challenge Finish</h4>
-                                        <p class="text-sm text-gray-600">August 29, 2026 • Same as SKL50</p>
-                                        <p class="mt-2 text-gray-700">Same finish line as SKL50 at Allen Bill Day Use Area.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="gradient-border p-8 h-[300px]"></div>
                     </div>
                 </div>
             </div>
             
-            <!-- Shared content (Important Notes, Gear) -->
-            <div class="grid gap-8 grid-cols-1 mt-8">
-                <div class="p-6 sm:p-8 shadow-sm bg-white rounded-xl card-hover">
-                    <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 english-content">
-                        <i class="mr-2 fas fa-info-circle text-race-blue"></i> Important Notes
+            <!-- Important Notes & Gear -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+                <div data-aos="fade-right" class="gradient-border p-8">
+                    <h3 class="text-xl font-display font-bold mb-6 english-content">
+                        <i class="mr-2 fas fa-exclamation-circle text-skl-primary"></i> IMPORTANT NOTES
                     </h3>
-                    <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 chinese-content chinese-font" style="display: none;">
-                        <i class="mr-2 fas fa-info-circle text-race-blue"></i> 重要事項
+                    <h3 class="text-xl font-display font-bold mb-6 chinese-content chinese-font" style="display: none;">
+                        <i class="mr-2 fas fa-exclamation-circle text-skl-primary"></i> 重要事項
                     </h3>
                     
-                    <div class="space-y-4">
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-6 h-6 mt-1 text-blue-500">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </div>
-                            <p class="ml-3 text-gray-700 english-content">
-                                This is a <span class="font-medium">self-supported challenge</span>, not an organized race
-                            </p>
-                            <p class="ml-3 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                呢個係<span class="font-medium">自主挑戰</span>，唔係正式比賽
-                            </p>
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
+                            <i class="fas fa-exclamation-triangle text-skl-accent mt-1"></i>
+                            <p class="text-gray-300 text-sm english-content">This is a <strong>self-supported challenge</strong>, not an organized race</p>
+                            <p class="text-gray-300 text-sm chinese-content chinese-font" style="display:none;">呢個係<strong>自主挑戰</strong>，唔係正式比賽</p>
                         </div>
-
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-6 h-6 mt-1 text-blue-500">
-                                <i class="fas fa-running"></i>
-                            </div>
-                            <p class="ml-3 text-gray-700 english-content">
-                                Challengers are responsible for their own safety and personal equipment
-                            </p>
-                            <p class="ml-3 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                挑戰者需自行負責安全同個人裝備
-                            </p>
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
+                            <i class="fas fa-users text-skl-light mt-1"></i>
+                            <p class="text-gray-300 text-sm english-content">Teams of <strong>exactly 4 members</strong> must start and finish together</p>
+                            <p class="text-gray-300 text-sm chinese-content chinese-font" style="display:none;"><strong>4人團隊</strong>必須一齊起步同完成挑戰</p>
                         </div>
-                        
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-6 h-6 mt-1 text-blue-500">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <p class="ml-3 text-gray-700 english-content">
-                                Teams of <span class="font-medium">exactly 4 members</span> must start and finish together (3-member teams can register but do not qualify as finishing teams)
-                            </p>
-                            <p class="ml-3 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                <span class="font-medium">4人團隊</span>必須一齊起步同完成挑戰（三人團隊可以報名，但唔符合資格成為完成團隊）
-                            </p>
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
+                            <i class="fas fa-running text-skl-primary mt-1"></i>
+                            <p class="text-gray-300 text-sm english-content">Challengers are responsible for their own safety and equipment</p>
+                            <p class="text-gray-300 text-sm chinese-content chinese-font" style="display:none;">挑戰者需自行負責安全同個人裝備</p>
                         </div>
-
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-6 h-6 mt-1 text-blue-500">
-                                <i class="fas fa-person-walking-arrow-right"></i>
-                            </div>
-                            <p class="ml-3 text-gray-700 english-content">
-                                If one team member cannot complete the challenge, the 3-member team can continue to finish as survivors but does not qualify as a finishing team, while a 2-member team must abandon the challenge.
-                            </p>
-                            <p class="ml-3 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                如團隊其中一員未能完成挑戰，三人團隊可以繼續完成挑戰成為生還者，但唔符合資格成為完成團隊；二人團隊則必須放棄挑戰。
-                            </p>
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
+                            <i class="fas fa-route text-green-400 mt-1"></i>
+                            <p class="text-gray-300 text-sm english-content">All team members need to record with watch/Strava</p>
+                            <p class="text-gray-300 text-sm chinese-content chinese-font" style="display:none;">每位隊員要各自用手錶或Strava記錄全程</p>
                         </div>
-
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-6 h-6 mt-1 text-blue-500">
-                                <i class="fas fa-route"></i>
-                            </div>
-                            <p class="ml-3 text-gray-700 english-content">
-                                All team members need to record the challenge with any watch/Strava on their own
-                            </p>
-                            <p class="ml-3 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                每位隊員要各自用任何手錶或Strava記錄全程挑戰
-                            </p>
-                        </div>
-                        
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-6 h-6 mt-1 text-blue-500">
-                                <i class="fas fa-utensils"></i>
-                            </div>
-                            <p class="ml-3 text-gray-700 english-content">
-                                Basic aid stations provided by volunteers (with water/snacks/hot meals/first aid kit)
-                            </p>
-                            <p class="ml-3 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                義工會提供基本補給站（可能包括水/小食/少量熱食/急救包）
-                            </p>
-                        </div>
-                        
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-6 h-6 mt-1 text-blue-500">
-                                <i class="fas fa-camera"></i>
-                            </div>
-                            <p class="ml-3 text-gray-700 english-content">
-                                Take photos at checkpoints and share on social media with #SaanKaaLaa
-                            </p>
-                            <p class="ml-3 text-gray-700 chinese-content chinese-font" style="display: none;">
-                                喺檢查點影相並喺社交媒體分享 #SaanKaaLaa
-                            </p>
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
+                            <i class="fas fa-camera text-purple-400 mt-1"></i>
+                            <p class="text-gray-300 text-sm english-content">Share photos with <strong>#SaanKaaLaa</strong></p>
+                            <p class="text-gray-300 text-sm chinese-content chinese-font" style="display:none;">喺社交媒體分享 <strong>#SaanKaaLaa</strong></p>
                         </div>
                     </div>
                 </div>
-                </div>
                 
-                <div class="p-6 sm:p-8 shadow-sm bg-white rounded-xl card-hover mt-8">
-                    <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 english-content">
-                        <i class="mr-2 fas fa-running text-race-blue"></i> Recommended Gear
+                <div data-aos="fade-left" class="gradient-border p-8">
+                    <h3 class="text-xl font-display font-bold mb-6 english-content">
+                        <i class="mr-2 fas fa-hiking text-skl-light"></i> RECOMMENDED GEAR
                     </h3>
-                    <h3 class="flex items-center mb-6 text-xl font-semibold text-gray-900 chinese-content chinese-font" style="display: none;">
-                        <i class="mr-2 fas fa-running text-race-blue"></i> 建議裝備
+                    <h3 class="text-xl font-display font-bold mb-6 chinese-content chinese-font" style="display: none;">
+                        <i class="mr-2 fas fa-hiking text-skl-light"></i> 建議裝備
                     </h3>
                     
-                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
-                                <i class="fas fa-shoe-prints"></i>
-                            </div>
-                            <p class="ml-2 text-gray-700 english-content">Trail running shoes</p>
-                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">越野跑鞋</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="flex items-center gap-2 text-sm text-gray-300">
+                            <i class="fas fa-shoe-prints text-skl-primary w-5"></i>
+                            <span class="english-content">Trail shoes</span>
+                            <span class="chinese-content chinese-font" style="display:none;">越野跑鞋</span>
                         </div>
-                        
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
-                                <i class="fas fa-tshirt"></i>
-                            </div>
-                            <p class="ml-2 text-gray-700 english-content">Moisture-wicking layers</p>
-                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">吸濕排汗衣物</p>
+                        <div class="flex items-center gap-2 text-sm text-gray-300">
+                            <i class="fas fa-tshirt text-skl-primary w-5"></i>
+                            <span class="english-content">Layers</span>
+                            <span class="chinese-content chinese-font" style="display:none;">排汗衣物</span>
                         </div>
-                        
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
-                                <i class="fas fa-wind"></i>
-                            </div>
-                            <p class="ml-2 text-gray-700 english-content">Wind/Rain jacket</p>
-                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">防風/雨褸</p>
+                        <div class="flex items-center gap-2 text-sm text-gray-300">
+                            <i class="fas fa-wind text-skl-primary w-5"></i>
+                            <span class="english-content">Rain jacket</span>
+                            <span class="chinese-content chinese-font" style="display:none;">防風雨褸</span>
                         </div>
-                        
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
-                                <i class="fas fa-sun"></i>
-                            </div>
-                            <p class="ml-2 text-gray-700 english-content">Sun protection (hat, sunscreen)</p>
-                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">防曬裝備（帽、太陽油）</p>
+                        <div class="flex items-center gap-2 text-sm text-gray-300">
+                            <i class="fas fa-sun text-skl-primary w-5"></i>
+                            <span class="english-content">Sun protection</span>
+                            <span class="chinese-content chinese-font" style="display:none;">防曬裝備</span>
                         </div>
-                        
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
-                                <i class="fas fa-bottle-water"></i>
-                            </div>
-                            <p class="ml-2 text-gray-700 english-content">Water (1L minimum) / water filter</p>
-                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">水（至少1升）及/或濾水器</p>
+                        <div class="flex items-center gap-2 text-sm text-gray-300">
+                            <i class="fas fa-bottle-water text-skl-primary w-5"></i>
+                            <span class="english-content">Water (1L+)</span>
+                            <span class="chinese-content chinese-font" style="display:none;">水（至少1升）</span>
                         </div>
-                        
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
-                                <i class="fas fa-utensils"></i>
-                            </div>
-                            <p class="ml-2 text-gray-700 english-content">Energy gels / Snacks</p>
-                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">能量膠/零食</p>
+                        <div class="flex items-center gap-2 text-sm text-gray-300">
+                            <i class="fas fa-cookie text-skl-primary w-5"></i>
+                            <span class="english-content">Snacks/Gels</span>
+                            <span class="chinese-content chinese-font" style="display:none;">零食/能量膠</span>
                         </div>
-                        
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
-                                <i class="fas fa-spray-can"></i>
-                            </div>
-                            <p class="ml-2 text-gray-700 english-content">Bear Spray (min. two per team)</p>
-                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">熊噴霧（最少每隊兩支）</p>
+                        <div class="flex items-center gap-2 text-sm text-gray-300">
+                            <i class="fas fa-spray-can text-skl-primary w-5"></i>
+                            <span class="english-content">Bear Spray</span>
+                            <span class="chinese-content chinese-font" style="display:none;">熊噴霧</span>
                         </div>
-
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
-                                <i class="fas fa-first-aid"></i>
-                            </div>
-                            <p class="ml-2 text-gray-700 english-content">Basic first aid kit (including blister kit)</p>
-                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">基本急救包（包括水泡急救包）</p>
+                        <div class="flex items-center gap-2 text-sm text-gray-300">
+                            <i class="fas fa-first-aid text-skl-primary w-5"></i>
+                            <span class="english-content">First aid kit</span>
+                            <span class="chinese-content chinese-font" style="display:none;">急救包</span>
                         </div>
-                        
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
-                                <i class="fas fa-mobile-alt"></i>
-                            </div>
-                            <p class="ml-2 text-gray-700 english-content">Fully charged phone</p>
-                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">充滿電嘅手機</p>
+                        <div class="flex items-center gap-2 text-sm text-gray-300">
+                            <i class="fas fa-mobile-alt text-skl-primary w-5"></i>
+                            <span class="english-content">Charged phone</span>
+                            <span class="chinese-content chinese-font" style="display:none;">充滿電手機</span>
                         </div>
-
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
-                                <i class="fas fa-satellite-dish"></i>
-                            </div>
-                            <p class="ml-2 text-gray-700 english-content">Satellite communication (inReach...)</p>
-                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">衛星通訊裝置（inReach / iPhone 15/16...）</p>
+                        <div class="flex items-center gap-2 text-sm text-gray-300">
+                            <i class="fas fa-satellite-dish text-skl-primary w-5"></i>
+                            <span class="english-content">Sat comm</span>
+                            <span class="chinese-content chinese-font" style="display:none;">衛星通訊</span>
                         </div>
-
-                        <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                            <div class="flex-shrink-0 w-5 h-5 mt-1 text-blue-500">
-                                <i class="fas fa-lightbulb"></i>
-                            </div>
-                            <p class="ml-2 text-gray-700 english-content">Lighting equipment (headlamp)</p>
-                            <p class="ml-2 text-gray-700 chinese-content chinese-font" style="display: none;">照明裝備（頭燈）</p>
+                        <div class="flex items-center gap-2 text-sm text-gray-300">
+                            <i class="fas fa-lightbulb text-skl-primary w-5"></i>
+                            <span class="english-content">Headlamp</span>
+                            <span class="chinese-content chinese-font" style="display:none;">頭燈</span>
                         </div>
                     </div>
                 </div>
@@ -1345,265 +1337,163 @@
     </section>
 
     <!-- Registration Form -->
-    <section id="register" class="py-16 bg-white">
-        <div class="max-w-3xl px-4 mx-auto sm:px-6 lg:px-8">
-            <div class="overflow-hidden bg-white shadow-xl rounded-xl card-hover">
-                <div class="px-6 sm:px-8 py-6 bg-gradient-to-r from-race-blue to-blue-600">
-                    <h2 class="text-2xl font-bold text-white english-content">Team Registration</h2>
-                    <h2 class="text-2xl font-bold text-white chinese-content chinese-font" style="display: none;">團隊報名</h2>
-                    <p class="text-blue-100 english-content">Register your team for this free challenge • Limited spots available</p>
-                    <p class="text-blue-100 chinese-content chinese-font" style="display: none;">為你嘅團隊報名參加挑戰 • 名額有限</p>
+    <section id="register" class="py-20 section-dark">
+        <div class="max-w-2xl mx-auto px-4">
+            <div data-aos="fade-up" class="gradient-border overflow-hidden">
+                <div class="p-8 bg-gradient-to-r from-skl-primary to-red-700">
+                    <h2 class="text-3xl font-display font-bold english-content">TEAM REGISTRATION</h2>
+                    <h2 class="text-3xl font-display font-bold chinese-content chinese-font" style="display: none;">團隊報名</h2>
+                    <p class="text-red-100 mt-2 english-content">Register your team • Limited spots available</p>
+                    <p class="text-red-100 mt-2 chinese-content chinese-font" style="display: none;">為你嘅團隊報名 • 名額有限</p>
                 </div>
                 
-                <form class="p-6 sm:p-8 space-y-6" id="registrationForm">
+                <form class="p-8 space-y-6" id="registrationForm">
                     <div>
-                        <label for="teamName" class="block text-sm font-medium text-gray-700 english-content">Team Name *</label>
-                        <label for="teamName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">團隊名稱 *</label>
-                        <input type="text" id="teamName" name="teamName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                        <label class="block text-sm font-medium text-gray-300 mb-2 english-content">Team Name *</label>
+                        <label class="block text-sm font-medium text-gray-300 mb-2 chinese-content chinese-font" style="display: none;">團隊名稱 *</label>
+                        <input type="text" id="teamName" name="teamName" required class="form-input">
                     </div>
                     
                     <div>
-                        <h3 class="mb-4 text-lg font-medium text-gray-900 english-content">Team Contact Point</h3>
-                        <h3 class="mb-4 text-lg font-medium text-gray-900 chinese-content chinese-font" style="display: none;">團隊聯絡人</h3>
-                        <div class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2">
+                        <h3 class="text-lg font-display mb-4 english-content">TEAM CONTACT</h3>
+                        <h3 class="text-lg font-display mb-4 chinese-content chinese-font" style="display: none;">團隊聯絡人</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label for="captainFirstName" class="block text-sm font-medium text-gray-700 english-content">First Name *</label>
-                                <label for="captainFirstName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">名字 *</label>
-                                <input type="text" id="captainFirstName" name="captainFirstName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                <label class="block text-sm text-gray-400 mb-1 english-content">First Name *</label>
+                                <label class="block text-sm text-gray-400 mb-1 chinese-content chinese-font" style="display: none;">名字 *</label>
+                                <input type="text" id="captainFirstName" name="captainFirstName" required class="form-input">
                             </div>
-                            
                             <div>
-                                <label for="captainLastName" class="block text-sm font-medium text-gray-700 english-content">Last Name *</label>
-                                <label for="captainLastName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">姓氏 *</label>
-                                <input type="text" id="captainLastName" name="captainLastName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                <label class="block text-sm text-gray-400 mb-1 english-content">Last Name *</label>
+                                <label class="block text-sm text-gray-400 mb-1 chinese-content chinese-font" style="display: none;">姓氏 *</label>
+                                <input type="text" id="captainLastName" name="captainLastName" required class="form-input">
                             </div>
-                            
                             <div>
-                                <label for="captainPhone" class="block text-sm font-medium text-gray-700 english-content">Phone *</label>
-                                <label for="captainPhone" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電話 *</label>
-                                <input type="tel" id="captainPhone" name="captainPhone" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                <label class="block text-sm text-gray-400 mb-1 english-content">Phone *</label>
+                                <label class="block text-sm text-gray-400 mb-1 chinese-content chinese-font" style="display: none;">電話 *</label>
+                                <input type="tel" id="captainPhone" name="captainPhone" required class="form-input">
                             </div>
-
                             <div>
-                                <label for="captainEmail" class="block text-sm font-medium text-gray-700 english-content">Email *</label>
-                                <label for="captainEmail" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電郵 *</label>
-                                <input type="email" id="captainEmail" name="captainEmail" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
+                                <label class="block text-sm text-gray-400 mb-1 english-content">Email *</label>
+                                <label class="block text-sm text-gray-400 mb-1 chinese-content chinese-font" style="display: none;">電郵 *</label>
+                                <input type="email" id="captainEmail" name="captainEmail" required class="form-input">
                             </div>
                         </div>
                     </div>
                     
+                    <!-- Team Members (simplified for brevity - add member 1, 2, 3) -->
                     <div>
-                        <h3 class="mb-4 text-lg font-medium text-gray-900 english-content">Team Members</h3>
-                        <h3 class="mb-4 text-lg font-medium text-gray-900 chinese-content chinese-font" style="display: none;">團隊成員</h3>
-                        <div class="space-y-6">
-                            <!-- Member 1 -->
-                            <div class="p-4 bg-gray-50 rounded-lg">
-                                <h4 class="mb-3 font-medium text-gray-900 english-content">Member 1</h4>
-                                <h4 class="mb-3 font-medium text-gray-900 chinese-content chinese-font" style="display: none;">成員1</h4>
-                                <div class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2">
-                                    <div>
-                                        <label for="member1FirstName" class="block text-sm font-medium text-gray-700 english-content">First Name *</label>
-                                        <label for="member1FirstName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">名字 *</label>
-                                        <input type="text" id="member1FirstName" name="member1FirstName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="member1LastName" class="block text-sm font-medium text-gray-700 english-content">Last Name *</label>
-                                        <label for="member1LastName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">姓氏 *</label>
-                                        <input type="text" id="member1LastName" name="member1LastName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
-                                    </div>
-                                    <div>
-                                        <label for="member1Phone" class="block text-sm font-medium text-gray-700 english-content">Phone *</label>
-                                        <label for="member1Phone" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電話 *</label>
-                                        <input type="tel" id="member1Phone" name="member1Phone" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
-                                    </div>
-
-                                    <div>
-                                        <label for="member1Email" class="block text-sm font-medium text-gray-700 english-content">Email</label>
-                                        <label for="member1Email" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電郵</label>
-                                        <input type="email" id="member1Email" name="member1Email" class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
-                                    </div>                                    
-                                </div>
+                        <h3 class="text-lg font-display mb-4 english-content">TEAM MEMBERS</h3>
+                        <h3 class="text-lg font-display mb-4 chinese-content chinese-font" style="display: none;">團隊成員</h3>
+                        
+                        <!-- Member 1 -->
+                        <div class="p-4 rounded-xl bg-white/5 mb-4">
+                            <p class="text-sm font-semibold mb-3 english-content">Member 1 *</p>
+                            <p class="text-sm font-semibold mb-3 chinese-content chinese-font" style="display:none;">成員1 *</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <input type="text" id="member1FirstName" name="member1FirstName" placeholder="First Name" required class="form-input text-sm">
+                                <input type="text" id="member1LastName" name="member1LastName" placeholder="Last Name" required class="form-input text-sm">
+                                <input type="tel" id="member1Phone" name="member1Phone" placeholder="Phone" required class="form-input text-sm">
+                                <input type="email" id="member1Email" name="member1Email" placeholder="Email" class="form-input text-sm">
                             </div>
-                            
-                            <!-- Member 2 -->
-                            <div class="p-4 bg-gray-50 rounded-lg">
-                                <h4 class="mb-3 font-medium text-gray-900 english-content">Member 2</h4>
-                                <h4 class="mb-3 font-medium text-gray-900 chinese-content chinese-font" style="display: none;">成員2</h4>
-                                <div class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2">
-                                    <div>
-                                        <label for="member2FirstName" class="block text-sm font-medium text-gray-700 english-content">First Name *</label>
-                                        <label for="member2FirstName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">名字 *</label>
-                                        <input type="text" id="member2FirstName" name="member2FirstName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="member2LastName" class="block text-sm font-medium text-gray-700 english-content">Last Name *</label>
-                                        <label for="member2LastName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">姓氏 *</label>
-                                        <input type="text" id="member2LastName" name="member2LastName" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
-                                    </div>
-
-                                    <div>
-                                        <label for="member2Phone" class="block text-sm font-medium text-gray-700 english-content">Phone *</label>
-                                        <label for="member2Phone" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電話 *</label>
-                                        <input type="tel" id="member2Phone" name="member2Phone" required class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
-                                    </div>
-
-                                    <div>
-                                        <label for="member2Email" class="block text-sm font-medium text-gray-700 english-content">Email</label>
-                                        <label for="member2Email" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電郵</label>
-                                        <input type="email" id="member2Email" name="member2Email" class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
-                                    </div>                                    
-                                </div>
+                        </div>
+                        
+                        <!-- Member 2 -->
+                        <div class="p-4 rounded-xl bg-white/5 mb-4">
+                            <p class="text-sm font-semibold mb-3 english-content">Member 2 *</p>
+                            <p class="text-sm font-semibold mb-3 chinese-content chinese-font" style="display:none;">成員2 *</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <input type="text" id="member2FirstName" name="member2FirstName" placeholder="First Name" required class="form-input text-sm">
+                                <input type="text" id="member2LastName" name="member2LastName" placeholder="Last Name" required class="form-input text-sm">
+                                <input type="tel" id="member2Phone" name="member2Phone" placeholder="Phone" required class="form-input text-sm">
+                                <input type="email" id="member2Email" name="member2Email" placeholder="Email" class="form-input text-sm">
                             </div>
-                            
-                            <!-- Member 3 -->
-                            <div class="p-4 bg-gray-50 rounded-lg">
-                                <h4 class="mb-3 font-medium text-gray-900 english-content">Member 3 (Optional)</h4>
-                                <h4 class="mb-3 font-medium text-gray-900 chinese-content chinese-font" style="display: none;">成員3（選填）</h4>
-                                <div class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2">
-                                    <div>
-                                        <label for="member3FirstName" class="block text-sm font-medium text-gray-700 english-content">First Name</label>
-                                        <label for="member3FirstName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">名字</label>
-                                        <input type="text" id="member3FirstName" name="member3FirstName" class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="member3LastName" class="block text-sm font-medium text-gray-700 english-content">Last Name</label>
-                                        <label for="member3LastName" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">姓氏</label>
-                                        <input type="text" id="member3LastName" name="member3LastName" class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
-                                    </div>                                
-                                    
-                                    <div>
-                                        <label for="member3Phone" class="block text-sm font-medium text-gray-700 english-content">Phone</label>
-                                        <label for="member3Phone" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電話</label>
-                                        <input type="tel" id="member3Phone" name="member3Phone" class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
-                                    </div>
-
-                                    <div>
-                                        <label for="member3Email" class="block text-sm font-medium text-gray-700 english-content">Email</label>
-                                        <label for="member3Email" class="block text-sm font-medium text-gray-700 chinese-content chinese-font" style="display: none;">電郵</label>
-                                        <input type="email" id="member3Email" name="member3Email" class="block w-full px-4 py-3 mt-1 transition duration-300 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-race-blue focus:border-race-blue">
-                                    </div>
-                                </div>
+                        </div>
+                        
+                        <!-- Member 3 (Optional) -->
+                        <div class="p-4 rounded-xl bg-white/5">
+                            <p class="text-sm font-semibold mb-3 english-content">Member 3 (Optional)</p>
+                            <p class="text-sm font-semibold mb-3 chinese-content chinese-font" style="display:none;">成員3（選填）</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <input type="text" id="member3FirstName" name="member3FirstName" placeholder="First Name" class="form-input text-sm">
+                                <input type="text" id="member3LastName" name="member3LastName" placeholder="Last Name" class="form-input text-sm">
+                                <input type="tel" id="member3Phone" name="member3Phone" placeholder="Phone" class="form-input text-sm">
+                                <input type="email" id="member3Email" name="member3Email" placeholder="Email" class="form-input text-sm">
                             </div>
                         </div>
                     </div>
                     
-                    <div class="pt-4">
-                        <div class="flex items-start">
-                            <div class="flex items-center h-5">
-                                <input id="terms" name="terms" type="checkbox" required class="w-4 h-4 text-race-blue border-gray-300 rounded focus:ring-race-blue">
-                            </div>
-                            <div class="ml-3 text-sm">
-                                <label for="terms" class="font-medium text-gray-700 english-content">
-                                    I confirm that all team members understand this is a self-supported challenge and we are responsible for our own safety
-                                </label>
-                                <label for="terms" class="font-medium text-gray-700 chinese-content chinese-font" style="display: none;">
-                                    我確認所有團隊成員了解呢個係自主挑戰，我哋需自行負責安全
-                                </label>
-                            </div>
-                        </div>
+                    <div class="flex items-start gap-3">
+                        <input id="terms" name="terms" type="checkbox" required class="mt-1 w-5 h-5 rounded border-gray-600 bg-white/5 text-skl-primary focus:ring-skl-primary">
+                        <label for="terms" class="text-sm text-gray-300 english-content">
+                            I confirm that all team members understand this is a self-supported challenge and we are responsible for our own safety
+                        </label>
+                        <label for="terms" class="text-sm text-gray-300 chinese-content chinese-font" style="display: none;">
+                            我確認所有團隊成員了解呢個係自主挑戰，我哋需自行負責安全
+                        </label>
                     </div>
                     
-                    <div>
-                        <button type="submit" class="flex justify-center w-full px-6 py-4 text-base font-medium text-white transition duration-300 transform bg-race-blue border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-race-blue hover:scale-105 english-content">
-                            Submit Team Registration
-                        </button>
-                        <button type="submit" class="flex justify-center w-full px-6 py-4 text-base font-medium text-white transition duration-300 transform bg-race-blue border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-race-blue hover:scale-105 chinese-content chinese-font" style="display: none;">
-                            提交團隊報名
-                        </button>
-                    </div>
+                    <button type="submit" class="btn-glow w-full py-4 rounded-xl text-lg font-display tracking-wider">
+                        <span class="english-content">SUBMIT REGISTRATION</span>
+                        <span class="chinese-content chinese-font" style="display: none;">提交報名</span>
+                    </button>
                 </form>
             </div>
         </div>
     </section>
 
-    <!-- Sponsors Section (Hidden - uncomment when sponsors confirmed) -->
-    <!--
-    <section id="sponsors" class="py-16 bg-gray-50">
-        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="mb-12 text-center">
-                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-blue bg-blue-50 english-content">OUR PARTNERS</span>
-                <span class="inline-block px-3 py-1 mb-2 text-sm font-semibold rounded-full text-race-blue bg-blue-50 chinese-content chinese-font">合作夥伴</span>
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl english-content">
-                    Sponsors & Partners
-                </h2>
-                <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl chinese-content chinese-font">
-                    贊助商及合作夥伴
-                </h2>
-                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 english-content">
-                    Thank you to our supporters who make this challenge possible
-                </p>
-                <p class="max-w-2xl mx-auto mt-4 text-xl text-gray-600 chinese-content chinese-font">
-                    感謝支持呢個挑戰嘅贊助商
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-8 md:grid-cols-4">
-                <div class="flex items-center justify-center p-6 bg-white rounded-lg shadow-sm">
-                    <img src="assets/sponsors/sponsor1.png" alt="Sponsor 1" class="max-h-16">
-                </div>
-                <div class="flex items-center justify-center p-6 bg-white rounded-lg shadow-sm">
-                    <img src="assets/sponsors/sponsor2.png" alt="Sponsor 2" class="max-h-16">
-                </div>
-                <div class="flex items-center justify-center p-6 bg-white rounded-lg shadow-sm">
-                    <img src="assets/sponsors/sponsor3.png" alt="Sponsor 3" class="max-h-16">
-                </div>
-                <div class="flex items-center justify-center p-6 bg-white rounded-lg shadow-sm">
-                    <img src="assets/sponsors/sponsor4.png" alt="Sponsor 4" class="max-h-16">
-                </div>
-            </div>
-        </div>
-    </section>
-    -->
-
     <!-- Footer -->
-    <footer class="py-12 bg-gray-900">
-        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+    <footer class="py-16 bg-black border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                 <div>
-                    <h3 class="mb-4 text-lg font-medium text-white english-content">About the Challenge</h3>
-                    <h3 class="mb-4 text-lg font-medium text-white chinese-content chinese-font" style="display: none;">關於挑戰</h3>
-                    <p class="text-gray-400 english-content">
-                        A self-organized team trail challenge (SKL50 / SKL100) where groups of 4 must start and finish together. Basic aid stations provided by volunteers.
+                    <img src="./assets/SKL_Logo.png" alt="Saan Kaa Laa" class="h-16 mb-4">
+                    <p class="text-gray-400 text-sm english-content">
+                        A self-organized team trail challenge where groups of 4 must start and finish together.
                     </p>
-                    <p class="text-gray-400 chinese-content chinese-font" style="display: none;">
-                        自組嘅團隊越野挑戰（SKL50 / SKL100），4人團隊必須一齊起步同完成。義工提供基本補給站。
+                    <p class="text-gray-400 text-sm chinese-content chinese-font" style="display: none;">
+                        自組嘅團隊越野挑戰，4人團隊必須一齊起步同完成。
                     </p>
                 </div>
                 
                 <div>
-                    <h3 class="mb-4 text-lg font-medium text-white english-content">Contact</h3>
-                    <h3 class="mb-4 text-lg font-medium text-white chinese-content chinese-font" style="display: none;">聯絡我哋</h3>
-                    <ul class="space-y-2 text-gray-400">
-                        <li class="flex items-start">
-                            <i class="mt-1 mr-3 text-gray-400 fas fa-envelope"></i>
+                    <h3 class="font-display text-lg mb-4 english-content">CONTACT</h3>
+                    <h3 class="font-display text-lg mb-4 chinese-content chinese-font" style="display: none;">聯絡我哋</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3">
+                            <i class="fab fa-telegram text-skl-light mt-1"></i>
+                            <div>
+                                <a href="https://t.me/yycOutdoorHK" target="_blank" class="text-white hover:text-skl-light transition-colors font-medium">Telegram Channel</a>
+                                <p class="text-sm text-gray-400 english-content">Main communication channel - join for updates!</p>
+                                <p class="text-sm text-gray-400 chinese-content chinese-font" style="display:none;">主要溝通渠道 - 加入獲取最新消息！</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 text-gray-400">
+                            <i class="fas fa-envelope text-skl-primary"></i>
                             <span>brknveggie@gmail.com</span>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
                 
                 <div>
-                    <h3 class="mb-4 text-lg font-medium text-white english-content">Follow Us</h3>
-                    <h3 class="mb-4 text-lg font-medium text-white chinese-content chinese-font" style="display: none;">關注我哋</h3>
-                    <div class="flex space-x-4">
-                        <a href="https://www.instagram.com/yycoutdoorhker" target="_blank" rel="noopener" class="text-gray-400 hover:text-white">
-                            <i class="text-xl fab fa-instagram"></i>
+                    <h3 class="font-display text-lg mb-4 english-content">FOLLOW US</h3>
+                    <h3 class="font-display text-lg mb-4 chinese-content chinese-font" style="display: none;">關注我哋</h3>
+                    <div class="flex gap-4">
+                        <a href="https://www.instagram.com/yycoutdoorhker" target="_blank" rel="noopener" 
+                           class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-skl-primary transition-colors">
+                            <i class="fab fa-instagram text-xl"></i>
                         </a>
-                        <a href="https://t.me/yycOutdoorHK" target="_blank" rel="noopener" class="text-gray-400 hover:text-white">
-                            <i class="text-xl fab fa-telegram"></i>
+                        <a href="https://t.me/yycOutdoorHK" target="_blank" rel="noopener" 
+                           class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-skl-light transition-colors">
+                            <i class="fab fa-telegram text-xl"></i>
                         </a>
                     </div>
                 </div>
             </div>
             
-            <div class="pt-8 mt-8 border-t border-gray-800">
-                <p class="text-sm text-center text-gray-400 english-content">
-                    &copy; 2026 SaanKaaLaa 山卡旯. All rights reserved.
-                </p>
-                <p class="text-sm text-center text-gray-400 chinese-content chinese-font" style="display: none;">
-                    &copy; 2026 SaanKaaLaa 山卡旯。保留所有權利。
+            <div class="mt-12 pt-8 border-t border-white/10 text-center">
+                <p class="text-sm text-gray-500">
+                    © 2026 Saan Kaa Laa 山卡旯. All rights reserved.
                 </p>
             </div>
         </div>
@@ -1611,7 +1501,7 @@
 
     <!-- Lightbox -->
     <div id="lightbox" class="lightbox" onclick="handleLightboxClick(event)">
-        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <span class="lightbox-close" onclick="closeLightbox()"><i class="fas fa-times"></i></span>
         <span class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)"><i class="fas fa-chevron-left"></i></span>
         <img id="lightbox-img" src="" alt="">
         <span class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)"><i class="fas fa-chevron-right"></i></span>
@@ -1619,51 +1509,65 @@
     </div>
 
     <script>
-        // Distance toggle function - controls BOTH Route and Schedule sections
-        function setDistance(distance) {
-            // Update buttons
-            document.getElementById('btn50k').classList.remove('active');
-            document.getElementById('btn100k').classList.remove('active');
-            document.getElementById('btn' + distance).classList.add('active');
-            
-            // Update Route section content visibility
-            document.querySelectorAll('.distance-50k').forEach(el => {
-                el.classList.remove('active');
-            });
-            document.querySelectorAll('.distance-100k').forEach(el => {
-                el.classList.remove('active');
-            });
-            document.querySelectorAll('.distance-' + distance).forEach(el => {
-                el.classList.add('active');
-            });
-            
-            // Update Schedule/Details section content visibility
-            document.querySelectorAll('.details-50k').forEach(el => {
-                el.classList.remove('active');
-            });
-            document.querySelectorAll('.details-100k').forEach(el => {
-                el.classList.remove('active');
-            });
-            document.querySelectorAll('.details-' + distance).forEach(el => {
-                el.classList.add('active');
-            });
-            
-            // Re-apply language settings after toggle
-            const isChineseActive = document.getElementById('chineseBtn').classList.contains('active');
-            if (isChineseActive) {
-                document.querySelectorAll('.distance-content.active .english-content').forEach(el => el.style.display = 'none');
-                document.querySelectorAll('.distance-content.active .chinese-content').forEach(el => el.style.display = 'block');
-                document.querySelectorAll('.details-content.active .english-content').forEach(el => el.style.display = 'none');
-                document.querySelectorAll('.details-content.active .chinese-content').forEach(el => el.style.display = 'block');
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+        
+        // Sticky nav on scroll
+        const stickyNav = document.getElementById('stickyNav');
+        const languageSwitch = document.querySelector('.language-switch');
+        let lastScroll = 0;
+        
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > 500) {
+                stickyNav.classList.add('visible');
+                languageSwitch.classList.add('hidden');
             } else {
-                document.querySelectorAll('.distance-content.active .english-content').forEach(el => el.style.display = 'block');
-                document.querySelectorAll('.distance-content.active .chinese-content').forEach(el => el.style.display = 'none');
-                document.querySelectorAll('.details-content.active .english-content').forEach(el => el.style.display = 'block');
-                document.querySelectorAll('.details-content.active .chinese-content').forEach(el => el.style.display = 'none');
+                stickyNav.classList.remove('visible');
+                languageSwitch.classList.remove('hidden');
             }
+            lastScroll = currentScroll;
+        });
+        
+        // Mobile menu
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const closeMobileMenu = document.getElementById('closeMobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.add('active'));
+        closeMobileMenu.addEventListener('click', () => mobileMenu.classList.remove('active'));
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.remove('active'));
+        });
+        
+        // Distance toggle - controls BOTH Route and Schedule sections
+        function setDistance(distance) {
+            // Update all toggle buttons (stats + route section)
+            document.querySelectorAll('[id$="-btn50k"], [id="btn50k"]').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('[id$="-btn100k"], [id="btn100k"]').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('[id$="-btn' + distance + '"], [id="btn' + distance + '"]').forEach(el => el.classList.add('active'));
+            
+            // Route section
+            document.querySelectorAll('.distance-50k').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.distance-100k').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.distance-' + distance).forEach(el => el.classList.add('active'));
+            
+            // Details section
+            document.querySelectorAll('.details-50k').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.details-100k').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.details-' + distance).forEach(el => el.classList.add('active'));
+            
+            // Re-apply language
+            const isChineseActive = document.getElementById('chineseBtn').classList.contains('active');
+            applyLanguage(isChineseActive ? 'chinese' : 'english');
         }
         
-        function setLanguage(lang) {
+        // Language toggle
+        function applyLanguage(lang) {
             if (lang === 'chinese') {
                 document.querySelectorAll('.english-content').forEach(el => el.style.display = 'none');
                 document.querySelectorAll('.chinese-content').forEach(el => el.style.display = 'block');
@@ -1675,24 +1579,21 @@
                 document.getElementById('englishBtn').classList.add('active');
                 document.getElementById('chineseBtn').classList.remove('active');
             }
+            // Sync all nav language buttons
+            document.querySelectorAll('.nav-lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
         }
-
-        // Set Chinese as default on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            setLanguage('chinese');
-        });
-
-        document.getElementById('englishBtn').addEventListener('click', function() {
-            setLanguage('english');
-        });
-
-        document.getElementById('chineseBtn').addEventListener('click', function() {
-            setLanguage('chinese');
-        });
-
-        // ========== GALLERY & LIGHTBOX ==========
         
-        // All 2025 photos (will be shuffled on load)
+        document.getElementById('englishBtn').addEventListener('click', () => applyLanguage('english'));
+        document.getElementById('chineseBtn').addEventListener('click', () => applyLanguage('chinese'));
+        // Nav language buttons
+        document.querySelectorAll('.nav-lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
+        });
+        document.addEventListener('DOMContentLoaded', () => applyLanguage('chinese'));
+        
+        // Gallery photos
         const allPhotos = [
             'z62_7488', 'z62_7505', 'z62_7519', 'z62_7523', 'z62_7531', 'z62_7537', 'z62_7540',
             'z62_7551', 'z62_7556', 'z62_7566', 'z62_7686', 'z62_7696', 'z62_7745', 'z62_7761',
@@ -1701,57 +1602,57 @@
             'z62_7913', 'z62_7916', 'z62_7921', 'z62_7923', 'z62_8015', 'z62_8028', 'z62_8064',
             'z62_8107', 'z62_8110', 'z62_8119', 'z62_8124', 'z62_8171', 'z62_8173', 'z62_8204',
             'z62_8215', 'z62_8218', 'z62_8227', 'z62_8230', 'z62_8257', 'z62_8274', 'z62_8280',
-            'z62_8282', 'z62_8286', 'z62_8299', 'z62_8313'
+            'z62_8282', 'z62_8286', 'z62_8299'
         ];
         
-        const GALLERY_DISPLAY_COUNT = 8; // Number of photos to show in gallery
-        let currentGalleryPhotos = []; // Photos currently displayed
+        const GALLERY_COUNT = 8;
+        let currentGalleryPhotos = [];
         let currentLightboxIndex = 0;
         
-        // Fisher-Yates shuffle
-        function shuffleArray(array) {
-            const arr = [...array];
-            for (let i = arr.length - 1; i > 0; i--) {
+        function shuffleArray(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
+                [a[i], a[j]] = [a[j], a[i]];
             }
-            return arr;
+            return a;
         }
         
-        // Load gallery with random photos
         function loadGallery() {
             const shuffled = shuffleArray(allPhotos);
-            currentGalleryPhotos = shuffled.slice(0, GALLERY_DISPLAY_COUNT);
+            currentGalleryPhotos = shuffled.slice(0, GALLERY_COUNT);
             
-            const grid = document.getElementById('gallery-grid');
-            grid.innerHTML = '';
+            const container = document.getElementById('gallery-swiper');
+            container.innerHTML = currentGalleryPhotos.map((photo, i) => `
+                <div class="swiper-slide">
+                    <div class="photo-card" onclick="openLightbox(${i})">
+                        <img src="assets/2025/thumb/${photo}.jpg" alt="Saan Kaa Laa 2025" loading="lazy">
+                    </div>
+                </div>
+            `).join('');
             
-            currentGalleryPhotos.forEach((photo, index) => {
-                const item = document.createElement('div');
-                item.className = 'gallery-item';
-                item.onclick = () => openLightbox(index);
-                
-                const img = document.createElement('img');
-                img.src = `assets/2025/thumb/${photo}.jpg`;
-                img.alt = 'SaanKaaLaa 2025';
-                img.loading = 'lazy';
-                
-                item.appendChild(img);
-                grid.appendChild(item);
+            // Initialize Swiper
+            new Swiper('.photoSwiper', {
+                slidesPerView: 2,
+                spaceBetween: 16,
+                pagination: { el: '.swiper-pagination', clickable: true },
+                breakpoints: {
+                    640: { slidesPerView: 3 },
+                    1024: { slidesPerView: 4 }
+                }
             });
         }
         
-        // Lightbox functions
         function openLightbox(index) {
             currentLightboxIndex = index;
             updateLightboxImage();
             document.getElementById('lightbox').classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent background scroll
+            document.body.style.overflow = 'hidden';
         }
         
         function closeLightbox() {
             document.getElementById('lightbox').classList.remove('active');
-            document.body.style.overflow = ''; // Restore scroll
+            document.body.style.overflow = '';
         }
         
         function updateLightboxImage() {
@@ -1761,148 +1662,177 @@
             document.getElementById('lightbox-total').textContent = currentGalleryPhotos.length;
         }
         
-        function navigateLightbox(direction) {
-            currentLightboxIndex += direction;
-            if (currentLightboxIndex < 0) currentLightboxIndex = currentGalleryPhotos.length - 1;
-            if (currentLightboxIndex >= currentGalleryPhotos.length) currentLightboxIndex = 0;
+        function navigateLightbox(dir) {
+            currentLightboxIndex = (currentLightboxIndex + dir + currentGalleryPhotos.length) % currentGalleryPhotos.length;
             updateLightboxImage();
         }
         
         function handleLightboxClick(e) {
-            // Close if clicking on background (not on image or controls)
-            if (e.target.classList.contains('lightbox')) {
-                closeLightbox();
-            }
+            if (e.target.classList.contains('lightbox')) closeLightbox();
         }
         
-        // Keyboard navigation
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', (e) => {
             if (!document.getElementById('lightbox').classList.contains('active')) return;
-            
             if (e.key === 'Escape') closeLightbox();
             if (e.key === 'ArrowLeft') navigateLightbox(-1);
             if (e.key === 'ArrowRight') navigateLightbox(1);
         });
         
-        // Load gallery on page load
         document.addEventListener('DOMContentLoaded', loadGallery);
         
-        // Initialize map
+        // Load finishers from JSON
+        async function loadFinishers() {
+            try {
+                const response = await fetch('data/finishers.json');
+                const data = await response.json();
+                const teams = data.teams;
+                
+                // Update counter
+                document.getElementById('finisher-count').textContent = teams.length;
+                
+                // Render teams
+                const grid = document.getElementById('finishers-grid');
+                const isChineseActive = document.getElementById('chineseBtn').classList.contains('active');
+                
+                grid.innerHTML = teams.map(team => `
+                    <div class="gradient-border p-6 text-center">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-skl-primary/20 flex items-center justify-center">
+                            <i class="fas fa-${team.icon || 'users'} text-3xl text-skl-primary"></i>
+                        </div>
+                        <h4 class="text-xl font-bold mb-1">${team.name_zh}</h4>
+                        <p class="text-sm text-gray-400 mb-3">${team.name_en}</p>
+                        <div class="flex items-center justify-center gap-4 text-sm flex-wrap">
+                            <span class="text-skl-accent"><i class="fas fa-clock mr-1"></i> ${team.time}</span>
+                            <span class="text-gray-400 hidden sm:inline">|</span>
+                            <span class="text-gray-300">${team.category} • ${team.year}</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-3">${team.members.join(' • ')}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading finishers:', error);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadFinishers);
+        
+        // Load testimonials from JSON
+        async function loadTestimonials() {
+            try {
+                const response = await fetch('data/testimonials.json');
+                const data = await response.json();
+                const testimonials = data.testimonials;
+                
+                const container = document.getElementById('testimonials-container');
+                const isChineseActive = document.getElementById('chineseBtn').classList.contains('active');
+                
+                container.innerHTML = testimonials.map(t => `
+                    <div class="gradient-border p-6 md:p-8 mb-6">
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 rounded-full bg-skl-violet/20 flex items-center justify-center">
+                                    <i class="fas fa-user text-xl text-skl-violet"></i>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <span class="font-bold text-lg">${t.name}</span>
+                                    <span class="text-xs px-2 py-1 rounded-full bg-skl-primary/20 text-skl-primary">${t.category} ${t.year}</span>
+                                </div>
+                                <p class="text-gray-300 leading-relaxed chinese-content chinese-font" style="display: ${isChineseActive ? 'block' : 'none'};">${t.quote_zh}</p>
+                                <p class="text-gray-300 leading-relaxed english-content" style="display: ${isChineseActive ? 'none' : 'block'};">${t.quote_en}</p>
+                                <div class="mt-4 pt-4 border-t border-white/10">
+                                    <p class="text-skl-accent italic text-sm chinese-content chinese-font" style="display: ${isChineseActive ? 'block' : 'none'};">"${t.highlight_zh}"</p>
+                                    <p class="text-skl-accent italic text-sm english-content" style="display: ${isChineseActive ? 'none' : 'block'};">"${t.highlight_en}"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading testimonials:', error);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadTestimonials);
+        
+        // Map initialization
         document.addEventListener('DOMContentLoaded', function() {
             const map = L.map('map-container').setView([50.8, -114.9], 12);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                attribution: '© OpenStreetMap'
             }).addTo(map);
 
             const elevationControl = L.control.elevation({
                 theme: "lime-theme",
                 width: '100%',
-                height: 250,
-                margins: {
-                    top: 40,
-                    right: 30,
-                    bottom: 40,
-                    left: 30
-                },
+                height: 200,
+                margins: { top: 30, right: 20, bottom: 30, left: 40 },
                 elevationDiv: "#elevation-profile",
                 detached: true,
                 closeBtn: false,
                 legend: false,
-                followMarker: true,
-                hoveringLegend: true,
                 autofitBounds: true,
                 imperial: false,
                 speed: false,
-                time: false,
-                highlightStyle: {
-                    color: '#3b82f6',
-                    weight: 3,
-                    opacity: 0.9
-                },
+                time: false
             });
             elevationControl.addTo(map);
 
-            const gpx = new L.GPX('assets/YYCHKWalker.gpx', {
+            new L.GPX('assets/YYCHKWalker.gpx', {
                 async: true,
-                markers: {
-                    startIcon: 'assets/start.png',
-                    endIcon: 'assets/end.png'
-                },
-                polyline_options: {
-                    color: '#FFA500',
-                    opacity: 0.90,
-                    weight: 4,
-                    lineCap: 'round'
-                }
+                markers: { startIcon: 'assets/start.png', endIcon: 'assets/end.png' },
+                polyline_options: { color: '#0d9488', opacity: 0.9, weight: 4 }
             })
-            .on('loaded', function(e) {
-                map.fitBounds(e.target.getBounds());
-            })
-            .on('addline', function(e) {
-                elevationControl.addData(e.line);
-            })
-            .on("error", function(e) {
-                console.error("Failed to load GPX:", e);
-            })
+            .on('loaded', (e) => map.fitBounds(e.target.getBounds()))
+            .on('addline', (e) => elevationControl.addData(e.line))
             .addTo(map);
         });
-
-        // Initialize EmailJS
-        (function() {
-            emailjs.init({publicKey: "4HZmWHrDr_85loz1y"});
-        })();
-
-        // Form submission
+        
+        // EmailJS
+        (function() { emailjs.init({publicKey: "4HZmWHrDr_85loz1y"}); })();
+        
         document.getElementById('registrationForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const submitButton = this.querySelector('button[type="submit"]');
-            const originalText = submitButton.innerHTML;
-            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
-            submitButton.disabled = true;
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            btn.disabled = true;
             
-            const today = new Date();
-            const formattedDate = today.toISOString().split('T')[0];
-
             const templateParams = {
                 team_name: document.getElementById('teamName').value,
-                
                 captain_first_name: document.getElementById('captainFirstName').value,
                 captain_last_name: document.getElementById('captainLastName').value,
                 captain_email: document.getElementById('captainEmail').value,
                 captain_phone: document.getElementById('captainPhone').value,
-                
                 member1_first_name: document.getElementById('member1FirstName').value,
                 member1_last_name: document.getElementById('member1LastName').value,
                 member1_email: document.getElementById('member1Email').value,
                 member1_phone: document.getElementById('member1Phone').value,
-                
                 member2_first_name: document.getElementById('member2FirstName').value,
                 member2_last_name: document.getElementById('member2LastName').value,
                 member2_email: document.getElementById('member2Email').value,
                 member2_phone: document.getElementById('member2Phone').value,
-                
                 member3_first_name: document.getElementById('member3FirstName').value,
                 member3_last_name: document.getElementById('member3LastName').value,
                 member3_email: document.getElementById('member3Email').value,
                 member3_phone: document.getElementById('member3Phone').value,
-                
-                registration_date: formattedDate
+                registration_date: new Date().toISOString().split('T')[0]
             };
             
             emailjs.send('service_ggipkj8', 'template_t6njbi4', templateParams)
-                .then(function() {
-                    alert('Thank you for registering your team! We will contact you with further details.\n\n多謝報名！我哋會盡快聯絡你確認詳情。');
-                    submitButton.innerHTML = originalText;
-                    submitButton.disabled = false;
-                }, function(error) {
-                    alert('There was a problem with your submission. Please try again.\n\n提交時出現問題，請再試一次。');
-                    console.error('Error:', error);
-                    submitButton.innerHTML = originalText;
-                    submitButton.disabled = false;
+                .then(() => {
+                    alert('Thank you for registering!\n\n多謝報名！我哋會盡快聯絡你。');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }, (error) => {
+                    alert('Submission error. Please try again.\n\n提交錯誤，請再試。');
+                    console.error(error);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
                 });
         });
     </script>
-
 </body>
 </html>

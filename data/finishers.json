@@ -1,0 +1,24 @@
+{
+  "teams": [
+    {
+      "id": 1,
+      "name_zh": "四Hike佬",
+      "name_en": "Four Hikers",
+      "time": "13:34:30",
+      "year": 2025,
+      "category": "SKL50",
+      "members": ["Ben", "Gabbie", "Johnny", "Tin"],
+      "icon": "users"
+    },
+    {
+      "id": 2,
+      "name_zh": "樹懶小隊",
+      "name_en": "Team Sloth", 
+      "time": "14:52:00",
+      "year": 2025,
+      "category": "SKL50",
+      "members": ["Angel", "Gordon", "Julia", "Natalie"],
+      "icon": "users"
+    }
+  ]
+}
