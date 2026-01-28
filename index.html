@@ -1695,18 +1695,19 @@
                 const isChineseActive = document.getElementById('chineseBtn').classList.contains('active');
                 
                 grid.innerHTML = teams.map(team => `
-                    <div class="gradient-border p-6 text-center">
-                        <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-skl-primary/20 flex items-center justify-center">
-                            <i class="fas fa-${team.icon || 'users'} text-3xl text-skl-primary"></i>
+                    <div class="gradient-border p-0 overflow-hidden group">
+                        <div class="relative h-64 bg-cover bg-center transition-transform duration-300 group-hover:scale-105" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('${team.photo || 'assets/placeholder.jpg'}');">
+                            <div class="absolute inset-0 flex flex-col justify-end p-6 text-white">
+                                <h4 class="text-2xl font-bold mb-1 drop-shadow-lg">${team.name_zh}</h4>
+                                <p class="text-sm text-gray-200 mb-3 drop-shadow">${team.name_en}</p>
+                                <div class="flex items-center justify-start gap-4 text-sm flex-wrap mb-2">
+                                    <span class="text-skl-accent font-bold"><i class="fas fa-clock mr-1"></i> ${team.time}</span>
+                                    <span class="text-gray-300 hidden sm:inline">|</span>
+                                    <span class="text-gray-200">${team.category} • ${team.year}</span>
+                                </div>
+                                <p class="text-xs text-gray-300 drop-shadow">${team.members.join(' • ')}</p>
+                            </div>
                         </div>
-                        <h4 class="text-xl font-bold mb-1">${team.name_zh}</h4>
-                        <p class="text-sm text-gray-400 mb-3">${team.name_en}</p>
-                        <div class="flex items-center justify-center gap-4 text-sm flex-wrap">
-                            <span class="text-skl-accent"><i class="fas fa-clock mr-1"></i> ${team.time}</span>
-                            <span class="text-gray-400 hidden sm:inline">|</span>
-                            <span class="text-gray-300">${team.category} • ${team.year}</span>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-3">${team.members.join(' • ')}</p>
                     </div>
                 `).join('');
             } catch (error) {
@@ -1730,9 +1731,7 @@
                     <div class="gradient-border p-6 md:p-8 mb-6">
                         <div class="flex items-start gap-4">
                             <div class="flex-shrink-0">
-                                <div class="w-12 h-12 rounded-full bg-skl-violet/20 flex items-center justify-center">
-                                    <i class="fas fa-user text-xl text-skl-violet"></i>
-                                </div>
+                                <div class="w-12 h-12 rounded-full bg-cover bg-center ring-2 ring-skl-violet/50" style="background-image: url('${t.photo || 'assets/placeholder-avatar.jpg'}');"></div>
                             </div>
                             <div class="flex-1">
                                 <div class="flex items-center gap-3 mb-3">
