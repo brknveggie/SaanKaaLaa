@@ -8,7 +8,7 @@
       "year": 2025,
       "category": "SKL50",
       "members": ["Ben", "Gabbie", "Johnny", "Tin"],
-      "icon": "users"
+      "photo": "four-hikers.jpg"
     },
     {
       "id": 2,
@@ -18,7 +18,7 @@
       "year": 2025,
       "category": "SKL50",
       "members": ["Angel", "Gordon", "Julia", "Natalie"],
-      "icon": "users"
+      "photo": "team-sloth.jpg"
     }
   ]
 }
