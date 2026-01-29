@@ -84,32 +84,23 @@
             letter-spacing: 0.05em;
         }
         
-        /* Main page scrollbar ONLY - keep visible */
-        html::-webkit-scrollbar,
-        body::-webkit-scrollbar {
-            display: block !important;
+        /* Main page scrollbar */
+        ::-webkit-scrollbar {
             width: 8px;
         }
-        html::-webkit-scrollbar-track,
-        body::-webkit-scrollbar-track {
+        ::-webkit-scrollbar-track {
             background: #1a1a1a;
         }
-        html::-webkit-scrollbar-thumb,
-        body::-webkit-scrollbar-thumb {
+        ::-webkit-scrollbar-thumb {
             background: #0d9488;
             border-radius: 4px;
         }
-        html, body {
-            scrollbar-width: thin !important; /* Firefox */
-        }
 
-        /* HIDE scrollbars on ALL other elements */
-        *::-webkit-scrollbar {
-            display: none !important;
-        }
-        *:not(html):not(body) {
-            scrollbar-width: none !important; /* Firefox */
-            -ms-overflow-style: none !important; /* IE/Edge */
+        /* Components should not overflow - size content to fit */
+        * {
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow: visible;
         }
         
         /* Hero section */
@@ -148,8 +139,11 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            max-width: 100%;
+            width: 100%;
             overflow: visible;
+            /* Allow flex sizing */
+            flex-shrink: 1;
+            min-width: 0;
         }
         
         /* Glowing button */
@@ -310,8 +304,8 @@
         /* Route Timeline - Single continuous vertical line */
         .route-timeline-container {
             position: relative;
-            max-width: 100%;
-            overflow-x: hidden;
+            width: 100%;
+            overflow: visible;
         }
         
         /* Single continuous vertical line from Start to Finish */
@@ -371,11 +365,18 @@
             margin-left: 2.5rem;
             margin-top: 0.75rem;
             margin-bottom: 0.75rem;
-            max-width: calc(100% - 2.5rem);
+            /* Use flex to allow content to fit dynamically */
+            width: auto;
+            max-width: none;
+            overflow: visible;
         }
-        
+
         .segment-info > div {
-            /* Allow wrapping on small screens instead of horizontal scroll */
+            /* Ensure flex items wrap properly on small screens */
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: inherit;
         }
         
         /* Distance toggle modern */
@@ -1395,8 +1396,8 @@
                     </div>
                     <div class="overlay-content">
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            <div class="gradient-border p-6 min-h-[400px]"></div>
-                            <div class="gradient-border p-6 min-h-[400px]"></div>
+                            <div class="gradient-border p-6"></div>
+                            <div class="gradient-border p-6"></div>
                         </div>
                     </div>
                 </div>
@@ -1493,7 +1494,7 @@
                         </div>
                     </div>
                     <div class="overlay-content">
-                        <div class="gradient-border p-8 min-h-[300px]"></div>
+                        <div class="gradient-border p-8"></div>
                     </div>
                 </div>
             </div>
@@ -1970,7 +1971,7 @@
                     const photoPath = team.photo ? `assets/finishers/${team.photo}` : 'assets/placeholder.jpg';
                     return `
                     <div class="gradient-border p-0 overflow-hidden group">
-                        <div class="relative min-h-64 bg-cover bg-center transition-transform duration-300 group-hover:scale-105" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('${photoPath}');">
+                        <div class="relative aspect-[4/3] bg-cover bg-center transition-transform duration-300 group-hover:scale-105" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('${photoPath}');">
                             <div class="absolute inset-0 flex flex-col justify-end p-6 text-white">
                                 <h4 class="text-2xl font-bold mb-1 drop-shadow-lg">${team.name_zh}</h4>
                                 <p class="text-sm text-gray-200 mb-3 drop-shadow">${team.name_en}</p>
