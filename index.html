@@ -84,7 +84,7 @@
             letter-spacing: 0.05em;
         }
         
-        /* Custom scrollbar for main page scroll */
+        /* Custom scrollbar for main page */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -96,13 +96,10 @@
             border-radius: 4px;
         }
 
-        /* Hide scrollbars from individual text elements/containers, but keep main scrollbar */
-        p, span, div:not(.swiper):not(.swiper-wrapper):not(.swiper-slide):not(.lightobox):not(.lightbox-content) {
-            scrollbar-width: none !important;
-        }
-        p::-webkit-scrollbar, span::-webkit-scrollbar, div::-webkit-scrollbar {
-            width: 0px !important;
-            display: none !important;
+        /* Prevent individual text elements from scrolling/overflowing */
+        p, span, li, a {
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
         }
         
         /* Hero section */
