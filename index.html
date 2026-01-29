@@ -47,12 +47,18 @@
             box-sizing: border-box;
         }
         
+        html {
+            overflow-x: hidden;
+        }
+        
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
             scroll-behavior: smooth;
             background: #0a0a0a;
             color: white;
             overflow-x: hidden;
+            max-width: 100vw;
+            position: relative;
         }
         
         .chinese-font {
@@ -113,6 +119,8 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
+            max-width: 100%;
+            overflow: hidden;
         }
         
         /* Glowing button */
@@ -158,10 +166,14 @@
         /* Section styling */
         .section-dark {
             background: linear-gradient(180deg, #0a0a0a 0%, #171717 100%);
+            overflow-x: hidden;
+            max-width: 100%;
         }
         
         .section-light {
             background: linear-gradient(180deg, #171717 0%, #1f1f1f 100%);
+            overflow-x: hidden;
+            max-width: 100%;
         }
         
         /* Card styling */
@@ -203,6 +215,7 @@
             border-radius: 12px;
             aspect-ratio: 1;
             cursor: pointer;
+            max-width: 100%;
         }
         
         .photo-card img {
@@ -210,6 +223,7 @@
             height: 100%;
             object-fit: cover;
             transition: transform 0.5s ease;
+            max-width: 100%;
         }
         
         .photo-card:hover img {
@@ -267,6 +281,8 @@
         /* Route Timeline - Single continuous vertical line */
         .route-timeline-container {
             position: relative;
+            max-width: 100%;
+            overflow-x: hidden;
         }
         
         /* Single continuous vertical line from Start to Finish */
@@ -326,6 +342,12 @@
             margin-left: 2.5rem;
             margin-top: 0.75rem;
             margin-bottom: 0.75rem;
+            max-width: calc(100% - 2.5rem);
+            overflow-x: auto;
+        }
+        
+        .segment-info > div {
+            min-width: max-content;
         }
         
         /* Distance toggle modern */
@@ -369,6 +391,8 @@
             border-radius: 16px;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 100%;
+            width: 100%;
         }
         
         @media (max-width: 768px) {
@@ -381,6 +405,8 @@
             height: 200px;
             border-radius: 12px;
             overflow: hidden;
+            max-width: 100%;
+            width: 100%;
         }
         
         /* Language switch */
@@ -396,6 +422,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             overflow: hidden;
             transition: opacity 0.3s ease;
+            max-width: calc(100vw - 40px);
         }
         
         .language-switch.hidden {
@@ -553,7 +580,16 @@
         /* Swiper customization */
         .swiper {
             width: 100%;
+            max-width: 100%;
             padding-bottom: 50px;
+        }
+        
+        .swiper-wrapper {
+            max-width: 100%;
+        }
+        
+        .swiper-slide {
+            max-width: 100%;
         }
         
         .swiper-pagination-bullet {
@@ -596,9 +632,39 @@
             background-size: cover;
         }
         
+        /* Fix AOS animations causing horizontal overflow */
+        [data-aos="fade-left"],
+        [data-aos="fade-right"],
+        [data-aos].aos-animate {
+            overflow-x: hidden;
+        }
+        
+        section {
+            overflow-x: hidden;
+            max-width: 100%;
+        }
+        
+        /* Ensure all containers don't overflow */
+        .max-w-7xl,
+        .max-w-5xl,
+        .max-w-4xl,
+        .max-w-2xl {
+            max-width: min(var(--tw-max-width, 100%), calc(100vw - 2rem));
+        }
+        
         @media (max-width: 768px) {
             .parallax-section {
                 background-attachment: scroll;
+            }
+            
+            /* Extra mobile safety */
+            * {
+                max-width: 100%;
+            }
+            
+            img, video, iframe {
+                max-width: 100%;
+                height: auto;
             }
         }
         
