@@ -84,20 +84,25 @@
             letter-spacing: 0.05em;
         }
         
-        /* Custom scrollbar - hidden visually but scroll works */
+        /* Custom scrollbar for main page scroll */
         ::-webkit-scrollbar {
-            width: 0px;
+            width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: transparent;
+            background: #1a1a1a;
         }
         ::-webkit-scrollbar-thumb {
-            background: transparent;
+            background: #0d9488;
+            border-radius: 4px;
         }
 
-        /* Firefox scrollbar */
-        * {
-            scrollbar-width: none;
+        /* Hide scrollbars from individual text elements/containers, but keep main scrollbar */
+        p, span, div:not(.swiper):not(.swiper-wrapper):not(.swiper-slide):not(.lightobox):not(.lightbox-content) {
+            scrollbar-width: none !important;
+        }
+        p::-webkit-scrollbar, span::-webkit-scrollbar, div::-webkit-scrollbar {
+            width: 0px !important;
+            display: none !important;
         }
         
         /* Hero section */
