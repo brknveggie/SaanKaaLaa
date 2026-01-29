@@ -84,22 +84,32 @@
             letter-spacing: 0.05em;
         }
         
-        /* Custom scrollbar for main page */
-        ::-webkit-scrollbar {
+        /* Main page scrollbar ONLY - keep visible */
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            display: block !important;
             width: 8px;
         }
-        ::-webkit-scrollbar-track {
+        html::-webkit-scrollbar-track,
+        body::-webkit-scrollbar-track {
             background: #1a1a1a;
         }
-        ::-webkit-scrollbar-thumb {
+        html::-webkit-scrollbar-thumb,
+        body::-webkit-scrollbar-thumb {
             background: #0d9488;
             border-radius: 4px;
         }
+        html, body {
+            scrollbar-width: thin !important; /* Firefox */
+        }
 
-        /* Prevent individual text elements from scrolling/overflowing */
-        p, span, li, a {
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
+        /* HIDE scrollbars on ALL other elements */
+        *::-webkit-scrollbar {
+            display: none !important;
+        }
+        *:not(html):not(body) {
+            scrollbar-width: none !important; /* Firefox */
+            -ms-overflow-style: none !important; /* IE/Edge */
         }
         
         /* Hero section */
@@ -875,16 +885,6 @@
             <img src="./assets/head1.jpg" alt="Mountains">
         </div>
         <div class="relative z-10 px-4 text-center max-w-5xl mx-auto">
-            <!-- Year - Modern vertical style -->
-            <div data-aos="fade-down" data-aos-delay="100" class="absolute top-8 left-8 hidden md:block">
-                <div class="font-display text-8xl font-bold text-white/10 leading-none">
-                    20
-                </div>
-                <div class="font-display text-8xl font-bold text-skl-primary leading-none -mt-4">
-                    26
-                </div>
-            </div>
-            
             <!-- Logo -->
             <div data-aos="zoom-in" data-aos-delay="200" class="mb-8">
                 <img src="./assets/SKL_Logo.png" alt="Saan Kaa Laa 山卡旯" class="h-40 md:h-56 mx-auto float-animation">
@@ -1509,30 +1509,30 @@
                     </h3>
                     
                     <div class="space-y-3">
-                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
-                            <i class="fas fa-exclamation-triangle text-skl-accent mt-1"></i>
-                            <p class="text-gray-300 text-sm english-content">This is a <strong>self-supported challenge</strong>, not an organized race</p>
-                            <p class="text-gray-300 text-sm chinese-content chinese-font" style="display:none;">呢個係<strong>自主挑戰</strong>，唔係正式比賽</p>
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5 overflow-hidden">
+                            <i class="fas fa-exclamation-triangle text-skl-accent mt-1 flex-shrink-0"></i>
+                            <p class="text-gray-300 text-sm english-content overflow-hidden">This is a <strong>self-supported challenge</strong>, not an organized race</p>
+                            <p class="text-gray-300 text-sm chinese-content chinese-font overflow-hidden" style="display:none;">呢個係<strong>自主挑戰</strong>，唔係正式比賽</p>
                         </div>
-                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
-                            <i class="fas fa-users text-skl-light mt-1"></i>
-                            <p class="text-gray-300 text-sm english-content">Teams of <strong>exactly 4 members</strong> must start and finish together</p>
-                            <p class="text-gray-300 text-sm chinese-content chinese-font" style="display:none;"><strong>4人團隊</strong>必須一齊起步同完成挑戰</p>
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5 overflow-hidden">
+                            <i class="fas fa-users text-skl-light mt-1 flex-shrink-0"></i>
+                            <p class="text-gray-300 text-sm english-content overflow-hidden">Teams of <strong>exactly 4 members</strong> must start and finish together</p>
+                            <p class="text-gray-300 text-sm chinese-content chinese-font overflow-hidden" style="display:none;"><strong>4人團隊</strong>必須一齊起步同完成挑戰</p>
                         </div>
-                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
-                            <i class="fas fa-running text-skl-primary mt-1"></i>
-                            <p class="text-gray-300 text-sm english-content">Challengers are responsible for their own safety and equipment</p>
-                            <p class="text-gray-300 text-sm chinese-content chinese-font" style="display:none;">挑戰者需自行負責安全同個人裝備</p>
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5 overflow-hidden">
+                            <i class="fas fa-running text-skl-primary mt-1 flex-shrink-0"></i>
+                            <p class="text-gray-300 text-sm english-content overflow-hidden">Challengers are responsible for their own safety and equipment</p>
+                            <p class="text-gray-300 text-sm chinese-content chinese-font overflow-hidden" style="display:none;">挑戰者需自行負責安全同個人裝備</p>
                         </div>
-                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
-                            <i class="fas fa-route text-green-400 mt-1"></i>
-                            <p class="text-gray-300 text-sm english-content">All team members need to record with watch/Strava</p>
-                            <p class="text-gray-300 text-sm chinese-content chinese-font" style="display:none;">每位隊員要各自用手錶或Strava記錄全程</p>
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5 overflow-hidden">
+                            <i class="fas fa-route text-green-400 mt-1 flex-shrink-0"></i>
+                            <p class="text-gray-300 text-sm english-content overflow-hidden">All team members need to record with watch/Strava</p>
+                            <p class="text-gray-300 text-sm chinese-content chinese-font overflow-hidden" style="display:none;">每位隊員要各自用手錶或Strava記錄全程</p>
                         </div>
-                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
-                            <i class="fas fa-camera text-purple-400 mt-1"></i>
-                            <p class="text-gray-300 text-sm english-content">Share photos with <strong>#SaanKaaLaa</strong></p>
-                            <p class="text-gray-300 text-sm chinese-content chinese-font" style="display:none;">喺社交媒體分享 <strong>#SaanKaaLaa</strong></p>
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5 overflow-hidden">
+                            <i class="fas fa-camera text-purple-400 mt-1 flex-shrink-0"></i>
+                            <p class="text-gray-300 text-sm english-content overflow-hidden">Share photos with <strong>#SaanKaaLaa</strong></p>
+                            <p class="text-gray-300 text-sm chinese-content chinese-font overflow-hidden" style="display:none;">喺社交媒體分享 <strong>#SaanKaaLaa</strong></p>
                         </div>
                     </div>
                 </div>
