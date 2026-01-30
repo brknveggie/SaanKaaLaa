@@ -24,7 +24,7 @@
                 extend: {
                     colors: {
                         'skl-primary': '#0d9488',    // Teal - main brand
-                        'skl-accent': '#f59e0b',     // Amber - accent  
+                        'skl-accent': '#f59e0b',     // Amber - accent
                         'skl-dark': '#0a0a0a',
                         'skl-light': '#14b8a6',      // Lighter teal
                         'skl-rose': '#e11d48',       // Rose - for variety
@@ -40,13 +40,13 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         html {
             overflow-x: hidden;
             width: 100%;
@@ -73,17 +73,20 @@
             overflow-x: hidden !important;
             max-width: 100vw;
         }
-        
+
         .chinese-font {
             font-family: 'Noto Sans TC', sans-serif;
         }
-        
+
         .font-display {
             font-family: 'Oswald', sans-serif;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            min-width: 0;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
-        
+
         /* Main page scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -102,7 +105,7 @@
             box-sizing: border-box;
             overflow: visible;
         }
-        
+
         /* Hero section */
         .hero {
             min-height: 100vh;
@@ -112,27 +115,27 @@
             justify-content: center;
             overflow: hidden;
         }
-        
+
         .hero-bg {
             position: absolute;
             inset: 0;
             z-index: 0;
         }
-        
+
         .hero-bg img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             filter: brightness(0.4);
         }
-        
+
         .hero-bg::after {
             content: '';
             position: absolute;
             inset: 0;
             background: linear-gradient(to bottom, transparent 50%, #0a0a0a 100%);
         }
-        
+
         /* Gradient border - subtle single color */
         .gradient-border {
             position: relative;
@@ -140,12 +143,20 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             width: 100%;
-            overflow: visible;
+            overflow: hidden;
             /* Allow flex sizing */
             flex-shrink: 1;
             min-width: 0;
         }
-        
+
+        /* Ensure content inside gradient-border doesn't overflow */
+        .gradient-border > * {
+            min-width: 0;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+
         /* Glowing button */
         .btn-glow {
             position: relative;
@@ -153,7 +164,7 @@
             transition: all 0.3s ease;
             overflow: hidden;
         }
-        
+
         .btn-glow::before {
             content: '';
             position: absolute;
@@ -165,40 +176,43 @@
             transition: opacity 0.3s ease;
             filter: blur(10px);
         }
-        
+
         .btn-glow:hover::before {
             opacity: 1;
         }
-        
+
         .btn-glow:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 40px rgba(220, 38, 38, 0.4);
         }
-        
+
         /* Stats counter animation */
         .stat-number {
             font-family: 'Oswald', sans-serif;
-            font-size: clamp(3rem, 8vw, 5rem);
+            font-size: clamp(2rem, 6vw, 4rem);
             font-weight: 700;
             background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            min-width: 0;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
-        
+
         /* Section styling */
         .section-dark {
             background: linear-gradient(180deg, #0a0a0a 0%, #171717 100%);
             overflow-x: hidden;
             max-width: 100%;
         }
-        
+
         .section-light {
             background: linear-gradient(180deg, #171717 0%, #1f1f1f 100%);
             overflow-x: hidden;
             max-width: 100%;
         }
-        
+
         /* Card styling */
         .feature-card {
             background: rgba(255, 255, 255, 0.03);
@@ -207,14 +221,21 @@
             border-radius: 16px;
             transition: all 0.4s ease;
             overflow: hidden;
+            min-width: 0;
         }
-        
+
+        .feature-card > * {
+            min-width: 0;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
         .feature-card:hover {
             background: rgba(255, 255, 255, 0.08);
             border-color: rgba(220, 38, 38, 0.5);
             transform: translateY(-8px);
         }
-        
+
         .feature-card::before {
             content: '';
             position: absolute;
@@ -226,11 +247,11 @@
             opacity: 0;
             transition: opacity 0.4s ease;
         }
-        
+
         .feature-card:hover::before {
             opacity: 1;
         }
-        
+
         /* Photo card with hover effect */
         .photo-card {
             position: relative;
@@ -240,7 +261,7 @@
             cursor: pointer;
             max-width: 100%;
         }
-        
+
         .photo-card img {
             width: 100%;
             height: 100%;
@@ -248,11 +269,11 @@
             transition: transform 0.5s ease;
             max-width: 100%;
         }
-        
+
         .photo-card:hover img {
             transform: scale(1.1);
         }
-        
+
         .photo-card::after {
             content: '';
             position: absolute;
@@ -261,17 +282,28 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        
+
         .photo-card:hover::after {
             opacity: 1;
         }
-        
+
         /* Timeline modern */
         .timeline-modern {
             position: relative;
             padding-left: 2.5rem;
+            min-width: 0;
+            overflow: hidden;
         }
-        
+
+        .timeline-item-modern {
+            position: relative;
+            padding-bottom: 2rem;
+            padding-left: 0.5rem;
+            min-width: 0;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
         .timeline-modern::before {
             content: '';
             position: absolute;
@@ -281,13 +313,13 @@
             width: 2px;
             background: linear-gradient(to bottom, #0d9488, #14b8a6);
         }
-        
+
         .timeline-item-modern {
             position: relative;
             padding-bottom: 2rem;
             padding-left: 0.5rem;
         }
-        
+
         .timeline-item-modern::before {
             content: '';
             position: absolute;
@@ -300,14 +332,14 @@
             border: 3px solid #0a0a0a;
             box-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
         }
-        
+
         /* Route Timeline - Single continuous vertical line */
         .route-timeline-container {
             position: relative;
             width: 100%;
             overflow: visible;
         }
-        
+
         /* Single continuous vertical line from Start to Finish */
         .route-timeline-container::before {
             content: '';
@@ -319,16 +351,16 @@
             background: #0d9488; /* Teal - primary brand color */
             z-index: 5;
         }
-        
+
         .route-checkpoint {
             position: relative;
             margin-bottom: 2rem;
         }
-        
+
         .route-checkpoint-finish {
             margin-bottom: 0;
         }
-        
+
         .checkpoint-dot {
             position: absolute;
             left: 0;
@@ -338,37 +370,42 @@
             border-radius: 50%;
             z-index: 10;
         }
-        
+
         /* Dot colors - exact as specified */
         .checkpoint-dot-start {
             background: #22c55e; /* Green */
             box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2), 0 4px 12px rgba(34, 197, 94, 0.5);
         }
-        
+
         .checkpoint-dot-cp {
             background: #eab308; /* Yellow */
             box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.2), 0 4px 12px rgba(234, 179, 8, 0.5);
         }
-        
+
         .checkpoint-dot-finish {
             background: #ef4444; /* Red */
             box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2), 0 4px 12px rgba(239, 68, 68, 0.5);
             animation: pulse-glow 2s ease-in-out infinite;
         }
-        
+
         .checkpoint-content {
             margin-left: 2.5rem;
+            min-width: 0;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
         }
-        
+
         /* Segment info styling */
         .segment-info {
             margin-left: 2.5rem;
             margin-top: 0.75rem;
             margin-bottom: 0.75rem;
             /* Use flex to allow content to fit dynamically */
-            width: auto;
-            max-width: none;
-            overflow: visible;
+            width: 100%;
+            max-width: calc(100% - 2.5rem);
+            overflow: hidden;
+            min-width: 0;
         }
 
         .segment-info > div {
@@ -377,8 +414,10 @@
             flex-wrap: wrap;
             align-items: center;
             gap: inherit;
+            min-width: 0;
+            max-width: 100%;
         }
-        
+
         /* Distance toggle modern */
         .toggle-modern {
             display: flex;
@@ -387,7 +426,7 @@
             padding: 4px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         .toggle-btn {
             padding: 12px 32px;
             border-radius: 50px;
@@ -402,18 +441,18 @@
             background: transparent;
             color: rgba(255, 255, 255, 0.5);
         }
-        
+
         .toggle-btn.active {
             background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
             color: white;
             box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
         }
-        
+
         .toggle-btn:hover:not(.active) {
             color: white;
             background: rgba(255, 255, 255, 0.1);
         }
-        
+
         /* Map container */
         .map-container {
             height: 400px;
@@ -423,13 +462,13 @@
             max-width: 100%;
             width: 100%;
         }
-        
+
         @media (max-width: 768px) {
             .map-container {
                 height: 300px;
             }
         }
-        
+
         .elevation-profile {
             height: 200px;
             border-radius: 12px;
@@ -437,7 +476,7 @@
             max-width: 100%;
             width: 100%;
         }
-        
+
         /* Language switch */
         .language-switch {
             position: fixed;
@@ -453,12 +492,12 @@
             transition: opacity 0.3s ease;
             max-width: calc(100% - 40px);
         }
-        
+
         .language-switch.hidden {
             opacity: 0;
             pointer-events: none;
         }
-        
+
         .language-btn {
             padding: 10px 18px;
             border: none;
@@ -469,12 +508,12 @@
             transition: all 0.3s ease;
             color: rgba(255, 255, 255, 0.5);
         }
-        
+
         .language-btn.active {
             background: #0d9488;
             color: white;
         }
-        
+
         /* Nav language toggle */
         .nav-lang-btn {
             background: transparent;
@@ -482,44 +521,44 @@
             border: none;
             cursor: pointer;
         }
-        
+
         .nav-lang-btn.active {
             background: #0d9488;
             color: white;
         }
-        
+
         /* Content visibility */
         .chinese-content {
             display: none;
         }
-        
+
         .distance-content {
             display: none;
         }
-        
+
         .distance-content.active {
             display: block;
         }
-        
+
         .details-content {
             display: none;
         }
-        
+
         .details-content.active {
             display: block;
         }
-        
+
         /* Coming soon overlay */
         .coming-soon-overlay {
             position: relative;
         }
-        
+
         .coming-soon-overlay .overlay-content {
             filter: blur(4px);
             pointer-events: none;
             user-select: none;
         }
-        
+
         .coming-soon-overlay .overlay-banner {
             position: absolute;
             inset: 0;
@@ -530,7 +569,7 @@
             z-index: 10;
             border-radius: 16px;
         }
-        
+
         .coming-soon-badge {
             background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
             color: white;
@@ -544,7 +583,7 @@
             box-shadow: 0 20px 50px rgba(37, 99, 235, 0.4);
             text-align: center;
         }
-        
+
         /* Lightbox */
         .lightbox {
             display: none;
@@ -555,18 +594,18 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .lightbox.active {
             display: flex;
         }
-        
+
         .lightbox img {
             max-width: 90%;
             max-height: 90%;
             object-fit: contain;
             border-radius: 8px;
         }
-        
+
         .lightbox-close, .lightbox-nav {
             position: absolute;
             color: white;
@@ -581,19 +620,19 @@
             transition: all 0.3s ease;
             font-size: 1.5rem;
         }
-        
+
         .lightbox-close {
             top: 20px;
             right: 20px;
         }
-        
+
         .lightbox-nav:hover, .lightbox-close:hover {
             background: rgba(220, 38, 38, 0.8);
         }
-        
+
         .lightbox-prev { left: 20px; top: 50%; transform: translateY(-50%); }
         .lightbox-next { right: 20px; top: 50%; transform: translateY(-50%); }
-        
+
         .lightbox-counter {
             position: absolute;
             bottom: 20px;
@@ -605,31 +644,31 @@
             border-radius: 20px;
             font-size: 0.9rem;
         }
-        
+
         /* Swiper customization */
         .swiper {
             width: 100%;
             max-width: 100%;
             padding-bottom: 50px;
         }
-        
+
         .swiper-wrapper {
             max-width: 100%;
         }
-        
+
         .swiper-slide {
             max-width: 100%;
         }
-        
+
         .swiper-pagination-bullet {
             background: rgba(255, 255, 255, 0.3);
             opacity: 1;
         }
-        
+
         .swiper-pagination-bullet-active {
             background: #0d9488;
         }
-        
+
         /* Form styling */
         .form-input {
             width: 100%;
@@ -641,18 +680,18 @@
             font-size: 1rem;
             transition: all 0.3s ease;
         }
-        
+
         .form-input:focus {
             outline: none;
             border-color: #0d9488;
             background: rgba(255, 255, 255, 0.08);
             box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
         }
-        
+
         .form-input::placeholder {
             color: rgba(255, 255, 255, 0.4);
         }
-        
+
         /* Parallax sections */
         .parallax-section {
             background-attachment: fixed;
@@ -660,13 +699,34 @@
             background-repeat: no-repeat;
             background-size: cover;
         }
-        
+
         /* Fix AOS animations causing horizontal overflow */
         [data-aos="fade-left"],
         [data-aos="fade-right"],
         [data-aos].aos-animate {
             overflow-x: hidden;
             position: relative;
+        }
+
+        /* Fix headline overflow - all heading elements */
+        h1, h2, h3, h4, h5, h6 {
+            min-width: 0;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+            hyphens: auto;
+        }
+
+        /* Fix chinese font headings overflow */
+        .chinese-font {
+            min-width: 0;
+            word-break: keep-all;
+            overflow-wrap: break-word;
+        }
+
+        /* Fix all text elements in flex containers */
+        .flex > *, .grid > *, .items-center > * {
+            min-width: 0;
         }
 
         section {
@@ -680,7 +740,7 @@
             overflow-x: hidden !important;
             width: 100%;
         }
-        
+
         /* Ensure all containers don't overflow */
         .max-w-7xl,
         .max-w-5xl,
@@ -688,58 +748,58 @@
         .max-w-2xl {
             max-width: min(var(--tw-max-width, 100%), calc(100% - 2rem));
         }
-        
+
         @media (max-width: 768px) {
             .parallax-section {
                 background-attachment: scroll;
             }
-            
+
             /* Extra mobile safety */
             * {
                 max-width: 100%;
             }
-            
+
             img, video, iframe {
                 max-width: 100%;
                 height: auto;
             }
         }
-        
+
         /* Marquee animation */
         @keyframes marquee {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
-        
+
         .marquee {
             display: flex;
             animation: marquee 30s linear infinite;
         }
-        
+
         .marquee:hover {
             animation-play-state: paused;
         }
-        
+
         /* Floating animation */
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
-        
+
         .float-animation {
             animation: float 3s ease-in-out infinite;
         }
-        
+
         /* Pulse animation */
         @keyframes pulse-glow {
             0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.4); }
             50% { box-shadow: 0 0 40px rgba(220, 38, 38, 0.8); }
         }
-        
+
         .pulse-glow {
             animation: pulse-glow 2s ease-in-out infinite;
         }
-        
+
         /* Nav sticky */
         .nav-sticky {
             position: fixed;
@@ -753,11 +813,11 @@
             transform: translateY(-100%);
             transition: transform 0.3s ease;
         }
-        
+
         .nav-sticky.visible {
             transform: translateY(0);
         }
-        
+
         /* Mobile menu */
         .mobile-menu {
             position: fixed;
@@ -772,12 +832,12 @@
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
-        
+
         .mobile-menu.active {
             opacity: 1;
             pointer-events: auto;
         }
-        
+
         .mobile-menu a {
             font-family: 'Oswald', sans-serif;
             font-size: 2rem;
@@ -788,11 +848,11 @@
             padding: 1rem;
             transition: color 0.3s ease;
         }
-        
+
         .mobile-menu a:hover {
             color: #0d9488;
         }
-        
+
         /* Testimonials swiper custom arrows */
         .testimonialsSwiper .swiper-button-next,
         .testimonialsSwiper .swiper-button-prev {
@@ -802,26 +862,79 @@
             height: 44px;
             border-radius: 50%;
             transition: all 0.3s ease;
+            flex-shrink: 0;
         }
-        
+
         .testimonialsSwiper .swiper-button-next:after,
         .testimonialsSwiper .swiper-button-prev:after {
             font-size: 20px;
         }
-        
+
         .testimonialsSwiper .swiper-button-next:hover,
         .testimonialsSwiper .swiper-button-prev:hover {
             background: rgba(124, 58, 237, 0.2);
             color: #a78bfa;
         }
-        
+
         .testimonialsSwiper .swiper-pagination-bullet {
             background: #7c3aed;
             opacity: 0.5;
         }
-        
+
         .testimonialsSwiper .swiper-pagination-bullet-active {
             opacity: 1;
+        }
+
+        /* ========================================
+           COMPREHENSIVE OVERFLOW FIXES
+           ======================================== */
+
+        /* Fix all text elements that could cause overflow */
+        p, span, div, a, li, td, th {
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+
+        /* Fix all button elements */
+        button, .btn-glow, .toggle-btn, .language-btn, .nav-lang-btn {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        /* Fix flex children globally */
+        .flex > *, .items-center > *, .justify-between > *, .gap-3 > *, .gap-4 > * {
+            min-width: 0;
+        }
+
+        /* Fix grid cells */
+        .grid > div, .grid-cols-1 > div, .grid-cols-2 > div,
+        .grid-cols-3 > div, .grid-cols-4 > div {
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        /* Fix any remaining overflow on key sections */
+        #finisher-count,
+        .stat-number,
+        .font-display {
+            display: inline-block;
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        /* Fix mobile menu links */
+        .mobile-menu a {
+            word-break: break-word;
+            text-align: center;
+            max-width: 90vw;
+        }
+
+        /* Fix form inputs */
+        input, textarea, select {
+            min-width: 0;
+            max-width: 100%;
         }
     </style>
 </head>
@@ -902,7 +1015,7 @@
                 <span class="english-content">A self-organized team trail challenge • <span class="text-skl-primary font-semibold">August 29, 2026</span></span>
                 <span class="chinese-content chinese-font" style="display: none;">自組團隊越野挑戰 • <span class="text-skl-primary font-semibold">2026年8月29日</span></span>
             </p>
-            
+
             <!-- CTA Buttons -->
             <div data-aos="fade-up" data-aos-delay="600" class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="#register" class="btn-glow inline-flex items-center justify-center px-8 py-4 rounded-full text-lg font-semibold english-content">
@@ -918,14 +1031,14 @@
                     <i class="mr-2 fas fa-info-circle"></i> 了解更多
                 </a>
             </div>
-            
+
             <!-- Countdown hint -->
             <p data-aos="fade-up" data-aos-delay="700" class="mt-10 text-sm text-gray-400">
                 <span class="english-content"><i class="mr-1 fas fa-clock"></i> Registration closes July 29, 2026</span>
                 <span class="chinese-content chinese-font" style="display: none;"><i class="mr-1 fas fa-clock"></i> 報名截止日期：2026年7月29日</span>
             </p>
         </div>
-        
+
         <!-- Scroll indicator -->
         <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
             <a href="#stats" class="text-white/50 hover:text-white transition-colors">
@@ -944,7 +1057,7 @@
                     <button id="stats-btn100k" class="toggle-btn" onclick="setDistance('100k')">SKL100</button>
                 </div>
             </div>
-            
+
             <!-- 50K Stats -->
             <div class="distance-content distance-50k active">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
@@ -970,7 +1083,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- 100K Stats -->
             <div class="distance-content distance-100k">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
@@ -1024,19 +1137,19 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Video -->
             <div data-aos="fade-up" class="max-w-4xl mx-auto mb-16">
                 <div class="relative rounded-2xl overflow-hidden" style="padding-bottom: 56.25%;">
-                    <iframe src="https://player.vimeo.com/video/1141338574?title=0&byline=0&portrait=0" 
+                    <iframe src="https://player.vimeo.com/video/1141338574?title=0&byline=0&portrait=0"
                         class="absolute inset-0 w-full h-full"
-                        frameborder="0" 
-                        allow="autoplay; fullscreen; picture-in-picture" 
+                        frameborder="0"
+                        allow="autoplay; fullscreen; picture-in-picture"
                         allowfullscreen>
                     </iframe>
                 </div>
             </div>
-            
+
             <!-- Hall of Finishers (loaded from JSON) -->
             <div data-aos="fade-up" class="max-w-4xl mx-auto mb-16">
                 <h3 class="text-xl font-display text-center mb-8 english-content">
@@ -1045,12 +1158,12 @@
                 <h3 class="text-xl font-display text-center mb-8 chinese-content chinese-font" style="display: none;">
                     <i class="mr-2 fas fa-trophy text-skl-accent"></i> 完成隊伍
                 </h3>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="finishers-grid">
                     <!-- Loaded dynamically from data/finishers.json -->
                 </div>
             </div>
-            
+
             <!-- Testimonials -->
             <div data-aos="fade-up" class="mb-16">
                 <h3 class="text-xl font-display text-center mb-8 english-content">
@@ -1059,7 +1172,7 @@
                 <h3 class="text-xl font-display text-center mb-8 chinese-content chinese-font" style="display: none;">
                     <i class="mr-2 fas fa-quote-left text-skl-violet"></i> 挑戰者心聲
                 </h3>
-                
+
                 <div class="swiper testimonialsSwiper">
                     <div class="swiper-wrapper" id="testimonials-container">
                         <!-- Loaded dynamically from data/testimonials.json -->
@@ -1069,7 +1182,7 @@
                     <div class="swiper-button-prev"></div>
                 </div>
             </div>
-            
+
             <!-- Photo Gallery Swiper -->
             <div data-aos="fade-up" class="mb-16">
                 <h3 class="text-xl font-semibold text-center mb-8 english-content">
@@ -1078,7 +1191,7 @@
                 <h3 class="text-xl font-semibold text-center mb-8 chinese-content chinese-font" style="display: none;">
                     <i class="mr-2 fas fa-images text-skl-primary"></i> 挑戰日照片
                 </h3>
-                
+
                 <div class="swiper photoSwiper">
                     <div class="swiper-wrapper" id="gallery-swiper">
                         <!-- Photos loaded by JS -->
@@ -1096,10 +1209,10 @@
             <div data-aos="fade-up">
                 <i class="fas fa-mountain text-skl-accent text-4xl mb-6"></i>
                 <p class="text-xl md:text-2xl leading-relaxed english-content">
-                    Inspired by <span class="font-bold text-white">Trailwalker Hong Kong</span> — we're bringing the team challenge spirit to Calgary. Experience what it's like to conquer a long-distance trail challenge together, <span class="text-skl-accent">香港人style</span>.
+                    Inspired by <span class="font-bold text-white">Trailwalker Hong Kong</span> - we're bringing the team challenge spirit to Calgary. Experience what it's like to conquer a long-distance trail challenge together, <span class="text-skl-accent">香港人style</span>.
                 </p>
                 <p class="text-xl md:text-2xl leading-relaxed chinese-content chinese-font" style="display: none;">
-                    受 <span class="font-bold text-white">毅行者</span> 啟發 — 我哋將團隊挑戰精神帶嚟 Calgary。一齊體驗長距離團隊越野賽嘅感覺，<span class="text-skl-accent">香港人style</span>。
+                    受 <span class="font-bold text-white">毅行者</span> 啟發 - 我哋將團隊挑戰精神帶嚟 Calgary。一齊體驗長距離團隊越野賽嘅感覺，<span class="text-skl-accent">香港人style</span>。
                 </p>
             </div>
         </div>
@@ -1126,7 +1239,7 @@
                     4人團隊必須一齊起步同完成嘅54K / 100K越野挑戰
                 </p>
             </div>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
                 <!-- Highlight 1 -->
                 <div data-aos="fade-up" data-aos-delay="100" class="text-center">
@@ -1142,7 +1255,7 @@
                         4人一隊必須一齊起步同完成。喺崎嶇山徑上考驗團隊精神。
                     </p>
                 </div>
-                
+
                 <!-- Highlight 2 -->
                 <div data-aos="fade-up" data-aos-delay="200" class="text-center">
                     <div class="mb-6 flex items-center justify-center">
@@ -1157,7 +1270,7 @@
                         沿途由義工提供基本補給站。
                     </p>
                 </div>
-                
+
                 <!-- Highlight 3 -->
                 <div data-aos="fade-up" data-aos-delay="300" class="text-center">
                     <div class="mb-6 flex items-center justify-center">
@@ -1190,7 +1303,7 @@
                     <span class="english-content">Challenge Route</span>
                     <span class="chinese-content chinese-font" style="display: none;">挑戰路線</span>
                 </h2>
-                
+
                 <p data-aos="fade-up" data-aos-delay="100" class="text-xl text-gray-400 max-w-2xl mx-auto english-content distance-content distance-50k active">
                     A challenging 54K with diverse terrain and stunning views
                 </p>
@@ -1198,13 +1311,13 @@
                     多樣地形同靚景嘅54公里挑戰賽道
                 </p>
                 <p class="text-xl text-gray-400 max-w-2xl mx-auto english-content distance-content distance-100k">
-                    The ultimate 100K challenge — same epic finish, longer journey
+                    The ultimate 100K challenge - same epic finish, longer journey
                 </p>
                 <p class="text-xl text-gray-400 max-w-2xl mx-auto chinese-content chinese-font distance-content distance-100k" style="display: none;">
-                    終極100公里挑戰 — 同一終點，更長旅程
+                    終極100公里挑戰 - 同一終點，更長旅程
                 </p>
             </div>
-            
+
             <!-- 50K Content -->
             <div class="distance-content distance-50k active">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -1220,15 +1333,15 @@
                             <div id="elevation-profile" class="elevation-profile"></div>
                         </div>
                         <div class="mt-6 text-center">
-                            <a href="https://www.strava.com/routes/3366873795108428114" target="_blank" rel="noopener" 
+                            <a href="https://www.strava.com/routes/3366873795108428114" target="_blank" rel="noopener"
                                class="inline-flex items-center px-6 py-3 rounded-full bg-[#FC4C02] hover:bg-[#e04400] transition-colors font-semibold">
-                                <i class="fab fa-strava mr-2"></i> 
+                                <i class="fab fa-strava mr-2"></i>
                                 <span class="english-content">View on Strava</span>
                                 <span class="chinese-content chinese-font" style="display:none;">喺 Strava 睇路線</span>
                             </a>
                         </div>
                     </div>
-                    
+
                     <div data-aos="fade-left">
                         <div class="gradient-border p-6">
                             <h3 class="flex items-center mb-6 text-lg font-display english-content">
@@ -1237,7 +1350,7 @@
                             <h3 class="flex items-center mb-6 text-lg font-display chinese-content chinese-font" style="display: none;">
                                 <i class="mr-2 fas fa-route text-skl-light"></i> 賽道詳情
                             </h3>
-                            
+
                             <!-- Route Points with Segment Info - Single Continuous Line -->
                             <div class="route-timeline-container relative pl-8">
                                 <!-- Point 1: Start -->
@@ -1251,7 +1364,7 @@
                                         <p class="text-xs text-gray-500 mt-1 chinese-content chinese-font" style="display: none;">開始你的征程</p>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Segment 1 Info (Start to CP1) -->
                                 <div class="segment-info">
                                     <div class="bg-gradient-to-r from-yellow-500/10 to-transparent rounded-lg p-3 border border-yellow-500/20">
@@ -1269,7 +1382,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Point 2: CP 1 -->
                                 <div class="route-checkpoint">
                                     <div class="checkpoint-dot checkpoint-dot-cp"></div>
@@ -1281,7 +1394,7 @@
                                         <p class="text-xs text-gray-500 mt-1 chinese-content chinese-font" style="display: none;">補給站 • 水同小食</p>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Segment 2 Info (CP1 to CP2) -->
                                 <div class="segment-info">
                                     <div class="bg-gradient-to-r from-red-500/10 to-transparent rounded-lg p-3 border border-red-500/20">
@@ -1299,7 +1412,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Point 3: CP 2 -->
                                 <div class="route-checkpoint">
                                     <div class="checkpoint-dot checkpoint-dot-cp"></div>
@@ -1311,7 +1424,7 @@
                                         <p class="text-xs text-gray-500 mt-1 chinese-content chinese-font" style="display: none;">補給站 • 水同小食</p>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Segment 3 Info (CP2 to CP3) -->
                                 <div class="segment-info">
                                     <div class="bg-gradient-to-r from-green-500/10 to-transparent rounded-lg p-3 border border-green-500/20">
@@ -1329,7 +1442,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Point 4: CP 3 -->
                                 <div class="route-checkpoint">
                                     <div class="checkpoint-dot checkpoint-dot-cp"></div>
@@ -1341,7 +1454,7 @@
                                         <p class="text-xs text-gray-500 mt-1 chinese-content chinese-font" style="display: none;">補給站 • 水同小食</p>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Segment 4 Info (CP3 to Finish) -->
                                 <div class="segment-info">
                                     <div class="bg-gradient-to-r from-green-500/10 to-transparent rounded-lg p-3 border border-green-500/20">
@@ -1360,7 +1473,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Point 5: Finish -->
                                 <div class="route-checkpoint route-checkpoint-finish">
                                     <div class="checkpoint-dot checkpoint-dot-finish"></div>
@@ -1381,7 +1494,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- 100K Content (Coming Soon) -->
             <div class="distance-content distance-100k">
                 <div class="coming-soon-overlay">
@@ -1420,7 +1533,7 @@
                     <span class="chinese-content chinese-font" style="display: none;">挑戰詳情</span>
                 </h2>
             </div>
-            
+
             <!-- 50K Schedule -->
             <div class="details-content details-50k active">
                 <div data-aos="fade-up" class="gradient-border p-8 mb-8">
@@ -1430,7 +1543,7 @@
                     <h3 class="text-2xl font-display font-bold mb-8 chinese-content chinese-font" style="display: none;">
                         <i class="mr-2 far fa-calendar-alt text-skl-primary"></i> SKL50 時間表
                     </h3>
-                    
+
                     <div class="timeline-modern">
                         <div class="timeline-item-modern">
                             <p class="text-xs text-yellow-400 font-display tracking-wider mb-1">JULY 29, 2026</p>
@@ -1439,7 +1552,7 @@
                             <p class="text-sm text-gray-400 mt-1 english-content">Team registration closes one month before the challenge</p>
                             <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">團隊報名於挑戰前一個月截止</p>
                         </div>
-                        
+
                         <div class="timeline-item-modern">
                             <p class="text-xs text-blue-400 font-display tracking-wider mb-1">JULY 29-30, 2026 • 8PM MDT</p>
                             <h4 class="font-semibold english-content">Online Info Session</h4>
@@ -1447,7 +1560,7 @@
                             <p class="text-sm text-gray-400 mt-1 english-content">Challenge briefing with route info. Two sessions available.</p>
                             <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">網上挑戰簡介會，講解路線及挑戰。提供兩晚方便參加者。</p>
                         </div>
-                        
+
                         <div class="timeline-item-modern">
                             <p class="text-xs text-blue-400 font-display tracking-wider mb-1">AUG 29, 2026 • 5:00 AM</p>
                             <h4 class="font-semibold english-content">Check-in</h4>
@@ -1455,7 +1568,7 @@
                             <p class="text-sm text-gray-400 mt-1 english-content">Team check-in and safety briefing at start point</p>
                             <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">團隊報到及起點安全簡報</p>
                         </div>
-                        
+
                         <div class="timeline-item-modern">
                             <p class="text-xs text-green-400 font-display tracking-wider mb-1">AUG 29, 2026 • 6:00 AM</p>
                             <h4 class="font-semibold english-content">Challenge Begins</h4>
@@ -1463,7 +1576,7 @@
                             <p class="text-sm text-gray-400 mt-1 english-content">54K challenge begins at dawn. Teams stay together throughout.</p>
                             <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">54公里挑戰於黎明開始。團隊必須全程一齊行動。</p>
                         </div>
-                        
+
                         <div class="timeline-item-modern">
                             <p class="text-xs text-yellow-400 font-display tracking-wider mb-1">AUG 29, 2026 • 2:00 PM</p>
                             <h4 class="font-semibold english-content">Suggested Cutoff at Aid Station 2</h4>
@@ -1471,7 +1584,7 @@
                             <p class="text-sm text-gray-400 mt-1 english-content">Teams not reaching Elbow Fall by this time may consider stopping</p>
                             <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">未能喺限時內到達Elbow Fall嘅團隊建議提早完成</p>
                         </div>
-                        
+
                         <div class="timeline-item-modern" style="padding-bottom: 0;">
                             <p class="text-xs text-green-400 font-display tracking-wider mb-1">AUG 29, 2026 • 8:00 PM</p>
                             <h4 class="font-semibold english-content">Challenge Finish</h4>
@@ -1482,7 +1595,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- 100K Schedule -->
             <div class="details-content details-100k">
                 <div class="coming-soon-overlay">
@@ -1498,7 +1611,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Important Notes & Gear -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
                 <div data-aos="fade-right" class="gradient-border p-8">
@@ -1508,36 +1621,36 @@
                     <h3 class="text-xl font-display font-bold mb-6 chinese-content chinese-font" style="display: none;">
                         <i class="mr-2 fas fa-exclamation-circle text-skl-primary"></i> 重要事項
                     </h3>
-                    
+
                     <div class="space-y-3">
-                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5 overflow-hidden">
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
                             <i class="fas fa-exclamation-triangle text-skl-accent mt-1 flex-shrink-0"></i>
-                            <p class="text-gray-300 text-sm english-content overflow-hidden">This is a <strong>self-supported challenge</strong>, not an organized race</p>
-                            <p class="text-gray-300 text-sm chinese-content chinese-font overflow-hidden" style="display:none;">呢個係<strong>自主挑戰</strong>，唔係正式比賽</p>
+                            <p class="text-gray-300 text-sm english-content">This is a <strong>self-supported challenge</strong>, not an organized race</p>
+                            <p class="text-gray-300 text-sm chinese-content chinese-font" style="display:none;">呢個係<strong>自主挑戰</strong>，唔係正式比賽</p>
                         </div>
-                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5 overflow-hidden">
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
                             <i class="fas fa-users text-skl-light mt-1 flex-shrink-0"></i>
-                            <p class="text-gray-300 text-sm english-content overflow-hidden">Teams of <strong>exactly 4 members</strong> must start and finish together</p>
-                            <p class="text-gray-300 text-sm chinese-content chinese-font overflow-hidden" style="display:none;"><strong>4人團隊</strong>必須一齊起步同完成挑戰</p>
+                            <p class="text-gray-300 text-sm english-content">Teams of <strong>exactly 4 members</strong> must start and finish together</p>
+                            <p class="text-gray-300 text-sm chinese-content chinese-font" style="display:none;"><strong>4人團隊</strong>必須一齊起步同完成挑戰</p>
                         </div>
-                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5 overflow-hidden">
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
                             <i class="fas fa-running text-skl-primary mt-1 flex-shrink-0"></i>
-                            <p class="text-gray-300 text-sm english-content overflow-hidden">Challengers are responsible for their own safety and equipment</p>
-                            <p class="text-gray-300 text-sm chinese-content chinese-font overflow-hidden" style="display:none;">挑戰者需自行負責安全同個人裝備</p>
+                            <p class="text-gray-300 text-sm english-content">Challengers are responsible for their own safety and equipment</p>
+                            <p class="text-gray-300 text-sm chinese-content chinese-font" style="display:none;">挑戰者需自行負責安全同個人裝備</p>
                         </div>
-                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5 overflow-hidden">
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
                             <i class="fas fa-route text-green-400 mt-1 flex-shrink-0"></i>
-                            <p class="text-gray-300 text-sm english-content overflow-hidden">All team members need to record with watch/Strava</p>
-                            <p class="text-gray-300 text-sm chinese-content chinese-font overflow-hidden" style="display:none;">每位隊員要各自用手錶或Strava記錄全程</p>
+                            <p class="text-gray-300 text-sm english-content">All team members need to record with watch/Strava</p>
+                            <p class="text-gray-300 text-sm chinese-content chinese-font" style="display:none;">每位隊員要各自用手錶或Strava記錄全程</p>
                         </div>
-                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5 overflow-hidden">
+                        <div class="flex items-start gap-3 p-3 rounded-lg bg-white/5">
                             <i class="fas fa-camera text-purple-400 mt-1 flex-shrink-0"></i>
-                            <p class="text-gray-300 text-sm english-content overflow-hidden">Share photos with <strong>#SaanKaaLaa</strong></p>
-                            <p class="text-gray-300 text-sm chinese-content chinese-font overflow-hidden" style="display:none;">喺社交媒體分享 <strong>#SaanKaaLaa</strong></p>
+                            <p class="text-gray-300 text-sm english-content">Share photos with <strong>#SaanKaaLaa</strong></p>
+                            <p class="text-gray-300 text-sm chinese-content chinese-font" style="display:none;">喺社交媒體分享 <strong>#SaanKaaLaa</strong></p>
                         </div>
                     </div>
                 </div>
-                
+
                 <div data-aos="fade-left" class="gradient-border p-8">
                     <h3 class="text-xl font-display font-bold mb-6 english-content">
                         <i class="mr-2 fas fa-hiking text-skl-light"></i> RECOMMENDED GEAR
@@ -1545,7 +1658,7 @@
                     <h3 class="text-xl font-display font-bold mb-6 chinese-content chinese-font" style="display: none;">
                         <i class="mr-2 fas fa-hiking text-skl-light"></i> 建議裝備
                     </h3>
-                    
+
                     <div class="grid grid-cols-2 gap-3">
                         <div class="flex items-center gap-2 text-sm text-gray-300">
                             <i class="fas fa-shoe-prints text-skl-primary w-5"></i>
@@ -1618,14 +1731,14 @@
                     <p class="text-red-100 mt-2 english-content">Register your team • Limited spots available</p>
                     <p class="text-red-100 mt-2 chinese-content chinese-font" style="display: none;">為你嘅團隊報名 • 名額有限</p>
                 </div>
-                
+
                 <form class="p-8 space-y-6" id="registrationForm">
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2 english-content">Team Name *</label>
                         <label class="block text-sm font-medium text-gray-300 mb-2 chinese-content chinese-font" style="display: none;">團隊名稱 *</label>
                         <input type="text" id="teamName" name="teamName" required class="form-input">
                     </div>
-                    
+
                     <div>
                         <h3 class="text-lg font-display mb-4 english-content">TEAM CONTACT</h3>
                         <h3 class="text-lg font-display mb-4 chinese-content chinese-font" style="display: none;">團隊聯絡人</h3>
@@ -1652,12 +1765,12 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Team Members (simplified for brevity - add member 1, 2, 3) -->
                     <div>
                         <h3 class="text-lg font-display mb-4 english-content">TEAM MEMBERS</h3>
                         <h3 class="text-lg font-display mb-4 chinese-content chinese-font" style="display: none;">團隊成員</h3>
-                        
+
                         <!-- Member 1 -->
                         <div class="p-4 rounded-xl bg-white/5 mb-4">
                             <p class="text-sm font-semibold mb-3 english-content">Member 1 *</p>
@@ -1669,7 +1782,7 @@
                                 <input type="email" id="member1Email" name="member1Email" placeholder="Email" class="form-input text-sm">
                             </div>
                         </div>
-                        
+
                         <!-- Member 2 -->
                         <div class="p-4 rounded-xl bg-white/5 mb-4">
                             <p class="text-sm font-semibold mb-3 english-content">Member 2 *</p>
@@ -1681,7 +1794,7 @@
                                 <input type="email" id="member2Email" name="member2Email" placeholder="Email" class="form-input text-sm">
                             </div>
                         </div>
-                        
+
                         <!-- Member 3 (Optional) -->
                         <div class="p-4 rounded-xl bg-white/5">
                             <p class="text-sm font-semibold mb-3 english-content">Member 3 (Optional)</p>
@@ -1694,7 +1807,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="flex items-start gap-3">
                         <input id="terms" name="terms" type="checkbox" required class="mt-1 w-5 h-5 rounded border-gray-600 bg-white/5 text-skl-primary focus:ring-skl-primary">
                         <label for="terms" class="text-sm text-gray-300 english-content">
@@ -1704,7 +1817,7 @@
                             我確認所有團隊成員了解呢個係自主挑戰，我哋需自行負責安全
                         </label>
                     </div>
-                    
+
                     <button type="submit" class="btn-glow w-full py-4 rounded-xl text-lg font-display tracking-wider">
                         <span class="english-content">SUBMIT REGISTRATION</span>
                         <span class="chinese-content chinese-font" style="display: none;">提交報名</span>
@@ -1727,7 +1840,7 @@
                         自組嘅團隊越野挑戰，4人團隊必須一齊起步同完成。
                     </p>
                 </div>
-                
+
                 <div>
                     <h3 class="font-display text-lg mb-4 english-content">CONTACT</h3>
                     <h3 class="font-display text-lg mb-4 chinese-content chinese-font" style="display: none;">聯絡我哋</h3>
@@ -1746,23 +1859,23 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div>
                     <h3 class="font-display text-lg mb-4 english-content">FOLLOW US</h3>
                     <h3 class="font-display text-lg mb-4 chinese-content chinese-font" style="display: none;">關注我哋</h3>
                     <div class="flex gap-4">
-                        <a href="https://www.instagram.com/yycoutdoorhker" target="_blank" rel="noopener" 
+                        <a href="https://www.instagram.com/yycoutdoorhker" target="_blank" rel="noopener"
                            class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-skl-primary transition-colors">
                             <i class="fab fa-instagram text-xl"></i>
                         </a>
-                        <a href="https://t.me/yycOutdoorHK" target="_blank" rel="noopener" 
+                        <a href="https://t.me/yycOutdoorHK" target="_blank" rel="noopener"
                            class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-skl-light transition-colors">
                             <i class="fab fa-telegram text-xl"></i>
                         </a>
                     </div>
                 </div>
             </div>
-            
+
             <div class="mt-12 pt-8 border-t border-white/10 text-center">
                 <p class="text-sm text-gray-500">
                     © 2026 Saan Kaa Laa 山卡旯. All rights reserved.
@@ -1789,12 +1902,12 @@
             mirror: false,
             disableMutationObserver: true
         });
-        
+
         // Sticky nav on scroll
         const stickyNav = document.getElementById('stickyNav');
         const languageSwitch = document.querySelector('.language-switch');
         let lastScroll = 0;
-        
+
         window.addEventListener('scroll', () => {
             const currentScroll = window.pageYOffset;
             if (currentScroll > 500) {
@@ -1806,40 +1919,40 @@
             }
             lastScroll = currentScroll;
         });
-        
+
         // Mobile menu
         const mobileMenu = document.getElementById('mobileMenu');
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const closeMobileMenu = document.getElementById('closeMobileMenu');
-        
+
         mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.add('active'));
         closeMobileMenu.addEventListener('click', () => mobileMenu.classList.remove('active'));
         mobileMenu.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => mobileMenu.classList.remove('active'));
         });
-        
+
         // Distance toggle - controls BOTH Route and Schedule sections
         function setDistance(distance) {
             // Update all toggle buttons (stats + route section)
             document.querySelectorAll('[id$="-btn50k"], [id="btn50k"]').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('[id$="-btn100k"], [id="btn100k"]').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('[id$="-btn' + distance + '"], [id="btn' + distance + '"]').forEach(el => el.classList.add('active'));
-            
+
             // Route section
             document.querySelectorAll('.distance-50k').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.distance-100k').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.distance-' + distance).forEach(el => el.classList.add('active'));
-            
+
             // Details section
             document.querySelectorAll('.details-50k').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.details-100k').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.details-' + distance).forEach(el => el.classList.add('active'));
-            
+
             // Re-apply language
             const isChineseActive = document.getElementById('chineseBtn').classList.contains('active');
             applyLanguage(isChineseActive ? 'chinese' : 'english');
         }
-        
+
         // Language toggle
         function applyLanguage(lang) {
             if (lang === 'chinese') {
@@ -1858,7 +1971,7 @@
                 btn.classList.toggle('active', btn.dataset.lang === lang);
             });
         }
-        
+
         document.getElementById('englishBtn').addEventListener('click', () => applyLanguage('english'));
         document.getElementById('chineseBtn').addEventListener('click', () => applyLanguage('chinese'));
         // Nav language buttons
@@ -1866,23 +1979,23 @@
             btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
         });
         document.addEventListener('DOMContentLoaded', () => applyLanguage('chinese'));
-        
+
         // Gallery photos
         // Load gallery photos from JSON
         let allPhotos = [];
         const GALLERY_COUNT = 8;
         let currentGalleryPhotos = [];
         let currentLightboxIndex = 0;
-        
+
         async function loadGallery() {
             try {
                 const response = await fetch('data/photos.json');
                 const data = await response.json();
                 allPhotos = data.photos;
-                
+
                 const shuffled = shuffleArray(allPhotos);
                 currentGalleryPhotos = shuffled.slice(0, GALLERY_COUNT);
-                
+
                 const container = document.getElementById('gallery-swiper');
                 container.innerHTML = currentGalleryPhotos.map((photo, i) => `
                     <div class="swiper-slide">
@@ -1891,7 +2004,7 @@
                         </div>
                     </div>
                 `).join('');
-                
+
                 // Initialize Swiper
                 new Swiper('.photoSwiper', {
                     slidesPerView: 2,
@@ -1906,7 +2019,7 @@
                 console.error('Error loading gallery photos:', error);
             }
         }
-        
+
         function shuffleArray(arr) {
             const a = [...arr];
             for (let i = a.length - 1; i > 0; i--) {
@@ -1915,58 +2028,58 @@
             }
             return a;
         }
-        
+
         function openLightbox(index) {
             currentLightboxIndex = index;
             updateLightboxImage();
             document.getElementById('lightbox').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
-        
+
         function closeLightbox() {
             document.getElementById('lightbox').classList.remove('active');
             document.body.style.overflow = '';
         }
-        
+
         function updateLightboxImage() {
             const photo = currentGalleryPhotos[currentLightboxIndex];
             document.getElementById('lightbox-img').src = `assets/2025/full/${photo}.jpg`;
             document.getElementById('lightbox-current').textContent = currentLightboxIndex + 1;
             document.getElementById('lightbox-total').textContent = currentGalleryPhotos.length;
         }
-        
+
         function navigateLightbox(dir) {
             currentLightboxIndex = (currentLightboxIndex + dir + currentGalleryPhotos.length) % currentGalleryPhotos.length;
             updateLightboxImage();
         }
-        
+
         function handleLightboxClick(e) {
             if (e.target.classList.contains('lightbox')) closeLightbox();
         }
-        
+
         document.addEventListener('keydown', (e) => {
             if (!document.getElementById('lightbox').classList.contains('active')) return;
             if (e.key === 'Escape') closeLightbox();
             if (e.key === 'ArrowLeft') navigateLightbox(-1);
             if (e.key === 'ArrowRight') navigateLightbox(1);
         });
-        
+
         document.addEventListener('DOMContentLoaded', loadGallery);
-        
+
         // Load finishers from JSON
         async function loadFinishers() {
             try {
                 const response = await fetch('data/finishers.json');
                 const data = await response.json();
                 const teams = data.teams;
-                
+
                 // Update counter
                 document.getElementById('finisher-count').textContent = teams.length;
-                
+
                 // Render teams
                 const grid = document.getElementById('finishers-grid');
                 const isChineseActive = document.getElementById('chineseBtn').classList.contains('active');
-                
+
                 grid.innerHTML = teams.map(team => {
                     const photoPath = team.photo ? `assets/finishers/${team.photo}` : 'assets/placeholder.jpg';
                     return `
@@ -1989,19 +2102,19 @@
                 console.error('Error loading finishers:', error);
             }
         }
-        
+
         document.addEventListener('DOMContentLoaded', loadFinishers);
-        
+
         // Load testimonials from JSON
         async function loadTestimonials() {
             try {
                 const response = await fetch('data/testimonials.json');
                 const data = await response.json();
                 const testimonials = data.testimonials;
-                
+
                 const container = document.getElementById('testimonials-container');
                 const isChineseActive = document.getElementById('chineseBtn').classList.contains('active');
-                
+
                 container.innerHTML = testimonials.map(t => {
                     const photoPath = t.photo ? `assets/testimonials/${t.photo}` : 'assets/placeholder-avatar.jpg';
                     return `
@@ -2025,7 +2138,7 @@
                         </div>
                     </div>
                 `}).join('');
-                
+
                 // Initialize testimonials swiper after content is loaded
                 new Swiper('.testimonialsSwiper', {
                     slidesPerView: 1,
@@ -2048,9 +2161,9 @@
                 console.error('Error loading testimonials:', error);
             }
         }
-        
+
         document.addEventListener('DOMContentLoaded', loadTestimonials);
-        
+
         // Map initialization
         document.addEventListener('DOMContentLoaded', function() {
             const map = L.map('map-container').setView([50.8, -114.9], 12);
@@ -2083,18 +2196,18 @@
             .on('addline', (e) => elevationControl.addData(e.line))
             .addTo(map);
         });
-        
+
         // EmailJS
         (function() { emailjs.init({publicKey: "4HZmWHrDr_85loz1y"}); })();
-        
+
         document.getElementById('registrationForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const btn = this.querySelector('button[type="submit"]');
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
             btn.disabled = true;
-            
+
             const templateParams = {
                 team_name: document.getElementById('teamName').value,
                 captain_first_name: document.getElementById('captainFirstName').value,
@@ -2115,7 +2228,7 @@
                 member3_phone: document.getElementById('member3Phone').value,
                 registration_date: new Date().toISOString().split('T')[0]
             };
-            
+
             emailjs.send('service_ggipkj8', 'template_t6njbi4', templateParams)
                 .then(() => {
                     alert('Thank you for registering!\n\n多謝報名！我哋會盡快聯絡你。');
