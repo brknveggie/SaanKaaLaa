@@ -62,18 +62,6 @@
             position: relative;
         }
 
-        /* Global overflow prevention */
-        * {
-            max-width: 100vw;
-            box-sizing: border-box;
-        }
-
-        /* Fix for horizontal scrollbar */
-        body, html, #app, .container, .container-fluid {
-            overflow-x: hidden !important;
-            max-width: 100vw;
-        }
-
         .chinese-font {
             font-family: 'Noto Sans TC', sans-serif;
         }
@@ -81,11 +69,7 @@
         .font-display {
             font-family: 'Oswald', sans-serif;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
-            min-width: 0;
-            word-break: break-word;
-            overflow-wrap: break-word;
-            max-width: 100%;
+            letter-spacing: 0.05em;
         }
 
         /* Main page scrollbar */
@@ -98,13 +82,6 @@
         ::-webkit-scrollbar-thumb {
             background: #0d9488;
             border-radius: 4px;
-        }
-
-        /* Components should not overflow - size content to fit */
-        * {
-            max-width: 100%;
-            box-sizing: border-box;
-            overflow: visible;
         }
 
         /* Hero section */
@@ -148,14 +125,6 @@
             /* Allow flex sizing */
             flex-shrink: 1;
             min-width: 0;
-        }
-
-        /* Ensure content inside gradient-border doesn't overflow */
-        .gradient-border > * {
-            min-width: 0;
-            word-break: break-word;
-            overflow-wrap: break-word;
-            max-width: 100%;
         }
 
         /* Glowing button */
@@ -204,13 +173,13 @@
         /* Section styling */
         .section-dark {
             background: linear-gradient(180deg, #0a0a0a 0%, #171717 100%);
-            overflow-x: hidden;
+            overflow: hidden;
             max-width: 100%;
         }
 
         .section-light {
             background: linear-gradient(180deg, #171717 0%, #1f1f1f 100%);
-            overflow-x: hidden;
+            overflow: hidden;
             max-width: 100%;
         }
 
@@ -300,27 +269,9 @@
             position: relative;
             padding-bottom: 2rem;
             padding-left: 0.5rem;
-            min-width: 0;
-            word-break: break-word;
-            overflow-wrap: break-word;
         }
 
-        .timeline-modern::before {
-            content: '';
-            position: absolute;
-            left: 6px;
-            top: 8px;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, #0d9488, #14b8a6);
-        }
-
-        .timeline-item-modern {
-            position: relative;
-            padding-bottom: 2rem;
-            padding-left: 0.5rem;
-        }
-
+        /* Dot */
         .timeline-item-modern::before {
             content: '';
             position: absolute;
@@ -332,6 +283,26 @@
             background: #0d9488;
             border: 3px solid #0a0a0a;
             box-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
+            z-index: 1;
+        }
+
+        /* Line connecting dots - per item */
+        .timeline-item-modern::after {
+            content: '';
+            position: absolute;
+            left: calc(-2.5rem + 6px);
+            top: 0;
+            bottom: -13px;
+            width: 2px;
+            background: linear-gradient(to bottom, #0d9488, #14b8a6);
+        }
+
+        .timeline-item-modern:first-child::after {
+            top: 13px;
+        }
+
+        .timeline-item-modern:last-child::after {
+            display: none;
         }
 
         /* Route Timeline - Single continuous vertical line */
@@ -341,18 +312,6 @@
             overflow: visible;
         }
 
-        /* Single continuous vertical line from Start to Finish */
-        .route-timeline-container::before {
-            content: '';
-            position: absolute;
-            left: 2.625rem; /* 2rem (pl-8) + 0.625rem (center of 1.25rem dots) */
-            top: 0.625rem; /* Start from center of Start dot */
-            bottom: 0.625rem; /* End at center of Finish dot */
-            width: 3px;
-            background: #0d9488; /* Teal - primary brand color */
-            z-index: 5;
-        }
-
         .route-checkpoint {
             position: relative;
             margin-bottom: 2rem;
@@ -360,6 +319,27 @@
 
         .route-checkpoint-finish {
             margin-bottom: 0;
+        }
+
+        /* Line connecting checkpoints - per item */
+        .route-checkpoint::after {
+            content: '';
+            position: absolute;
+            left: calc(0.625rem - 1.5px);
+            top: 0;
+            bottom: -2rem;
+            width: 3px;
+            background: #0d9488;
+            z-index: 5;
+        }
+
+        .route-checkpoint:first-child::after {
+            top: 0.625rem;
+        }
+
+        .route-checkpoint.route-checkpoint-finish::after {
+            bottom: auto;
+            height: 0.625rem;
         }
 
         .checkpoint-dot {
@@ -399,14 +379,25 @@
 
         /* Segment info styling */
         .segment-info {
+            position: relative;
             margin-left: 2.5rem;
             margin-top: 0.75rem;
             margin-bottom: 0.75rem;
-            /* Use flex to allow content to fit dynamically */
             width: 100%;
             max-width: calc(100% - 2.5rem);
-            overflow: hidden;
             min-width: 0;
+        }
+
+        /* Line through segment-info gaps */
+        .segment-info::after {
+            content: '';
+            position: absolute;
+            left: calc(-1.875rem - 1.5px);
+            top: 0;
+            bottom: -0.75rem;
+            width: 3px;
+            background: #0d9488;
+            z-index: 5;
         }
 
         .segment-info > div {
@@ -721,7 +712,7 @@
         [data-aos="fade-left"],
         [data-aos="fade-right"],
         [data-aos].aos-animate {
-            overflow-x: hidden;
+            overflow: hidden;
             position: relative;
         }
 
@@ -732,12 +723,6 @@
             overflow-wrap: break-word;
             max-width: 100%;
             hyphens: auto;
-        }
-
-        /* h2 specific fixes for overflow */
-        h2 {
-            max-width: 100vw;
-            overflow-x: hidden;
         }
 
         /* Fix chinese font headings overflow */
@@ -753,14 +738,8 @@
         }
 
         section {
-            overflow-x: hidden !important;
+            overflow: hidden;
             max-width: 100%;
-            width: 100%;
-        }
-
-        /* Prevent all sections from overflow */
-        .section-light, .section-dark {
-            overflow-x: hidden !important;
             width: 100%;
         }
 
@@ -908,57 +887,6 @@
             opacity: 1;
         }
 
-        /* ========================================
-           COMPREHENSIVE OVERFLOW FIXES
-           ======================================== */
-
-        /* Fix all text elements that could cause overflow */
-        p, span, div, a, li, td, th {
-            overflow-wrap: break-word;
-            word-wrap: break-word;
-        }
-
-        /* Fix all button elements */
-        button, .btn-glow, .toggle-btn, .language-btn, .nav-lang-btn {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
-        }
-
-        /* Fix flex children globally */
-        .flex > *, .items-center > *, .justify-between > *, .gap-3 > *, .gap-4 > * {
-            min-width: 0;
-        }
-
-        /* Fix grid cells */
-        .grid > div, .grid-cols-1 > div, .grid-cols-2 > div,
-        .grid-cols-3 > div, .grid-cols-4 > div {
-            min-width: 0;
-            max-width: 100%;
-        }
-
-        /* Fix any remaining overflow on key sections */
-        #finisher-count,
-        .stat-number,
-        .font-display {
-            display: inline-block;
-            min-width: 0;
-            max-width: 100%;
-        }
-
-        /* Fix mobile menu links */
-        .mobile-menu a {
-            word-break: break-word;
-            text-align: center;
-            max-width: 90vw;
-        }
-
-        /* Fix form inputs */
-        input, textarea, select {
-            min-width: 0;
-            max-width: 100%;
-        }
     </style>
 </head>
 <body>
