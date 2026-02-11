@@ -661,6 +661,22 @@
             max-width: 100%;
         }
 
+        /* Hide scrollbars on cards */
+        .gradient-border,
+        .gradient-border *,
+        .feature-card,
+        .feature-card * {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+        }
+
+        .gradient-border::-webkit-scrollbar,
+        .feature-card::-webkit-scrollbar,
+        .gradient-border *::-webkit-scrollbar,
+        .feature-card *::-webkit-scrollbar {
+            display: none !important;
+        }
+
         .swiper-pagination-bullet {
             background: rgba(255, 255, 255, 0.3);
             opacity: 1;
