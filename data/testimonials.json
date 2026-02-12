@@ -21,6 +21,39 @@
       "quote_en": "If you think your life is tough and difficult, welcome to join Saan Kaa Laa. After completing it, you'll realize your life isn't actually that bad.",
       "highlight_zh": "完成左之後你會覺得其實自己都唔會生活得咁差。",
       "highlight_en": "After completing it, you'll realize your life isn't actually that bad."
+    },
+    {
+      "id": 3,
+      "name": "Gordon",
+      "year": 2025,
+      "category": "SKL50",
+      "photo": "gordon.jpg",
+      "quote_zh": "估唔到嚟嚟Calgary 都有得玩咁長嘅活動，一隊人行勁正，勁熱血！",
+      "quote_en": "Never expected Calgary to have such an epic challenge event. The whole team was amazing — such incredible energy and passion!",
+      "highlight_zh": "一隊人行勁正，勁熱血！",
+      "highlight_en": "The whole team was amazing — such incredible energy and passion!"
+    },
+    {
+      "id": 4,
+      "name": "Julia",
+      "year": 2025,
+      "category": "SKL50",
+      "photo": "julia.jpg",
+      "quote_zh": "未去過毅行 連10K都未跑過嘅我 膽粗粗去參加山旯旮行50K 一開始只係諗住頂唔順就中途退出 無諗過真係可以行完！唔試過係唔知自己得唔得🫡下年都會再join!!",
+      "quote_en": "Never done a trail walk before, never even ran 10K, but I boldly took on the Saan Kaa Laa 50K challenge. At first I thought I'd drop out if I couldn't handle it, but I never imagined I could actually finish! You won't know what you're capable of until you try 🫡 I'll definitely join again next year!!",
+      "highlight_zh": "唔試過係唔知自己得唔得🫡",
+      "highlight_en": "You won't know what you're capable of until you try 🫡"
+    },
+    {
+      "id": 5,
+      "name": "Natalie",
+      "year": 2025,
+      "category": "SKL50",
+      "photo": "natalie.jpg",
+      "quote_zh": "平時行山都係輕鬆行而且路程短，所以當時真係唔敢相信自己竟然可以完成 57 公里，仲要喺 15 小時時限內行完，同隊友衝終點嗰刻真係好感動！一team人真係唔同自己一個人！一路上去到最後真係好攰，但每一步都係突破自己！如果你未試過，你真係唔會知道自己原來可以去到咁遠！一於俾個機會自己試下啦！😊⛰️💪🏼",
+      "quote_en": "I usually hike casually for short distances, so I really couldn't believe I completed 57 kilometers — especially finishing within the 15-hour time limit! Crossing the finish line with teammates was so touching! A team is completely different from going solo! It was exhausting, but every step was breaking through my limits! If you haven't tried, you really won't know how far you can go! Give yourself a chance to try! 😊⛰️💪🏼",
+      "highlight_zh": "如果你未試過，你真係唔會知道自己原來可以去到咁遠！",
+      "highlight_en": "If you haven't tried, you really won't know how far you can go!"
     }
   ]
 }
