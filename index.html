@@ -519,6 +519,57 @@
             color: white;
         }
 
+        /* Nav distance toggle (mirrors language toggle) */
+        .nav-dist-btn {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.5);
+            border: none;
+            cursor: pointer;
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-dist-btn.active {
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+            color: white;
+        }
+
+        /* Floating distance indicator — appears once you scroll past the in-page toggle.
+           Sits just below the sticky nav so the two never overlap. */
+        .distance-float {
+            position: fixed;
+            top: 84px;
+            left: 50%;
+            transform: translate(-50%, -12px);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            padding: 4px;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .distance-float.visible {
+            opacity: 1;
+            transform: translate(-50%, 0);
+            pointer-events: auto;
+        }
+
+        .distance-float .nav-dist-btn {
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
         /* Content visibility */
         .chinese-content {
             display: none;
@@ -896,6 +947,12 @@
         <button id="chineseBtn" class="language-btn active">中文</button>
     </div>
 
+    <!-- Floating distance indicator (shows current distance after scrolling past the toggle) -->
+    <div class="distance-float" id="distanceFloat">
+        <button id="float-btn50k" class="nav-dist-btn active" onclick="setDistance('50k')">SKL50</button>
+        <button id="float-btn100k" class="nav-dist-btn" onclick="setDistance('100k')">SKL100</button>
+    </div>
+
     <!-- Sticky Navigation -->
     <nav class="nav-sticky" id="stickyNav">
         <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -937,8 +994,13 @@
         <a href="#details" class="chinese-content chinese-font" style="display:none;">詳情</a>
         <a href="#register" class="text-skl-primary english-content">Register Now</a>
         <a href="#register" class="text-skl-primary chinese-content chinese-font" style="display:none;">立即報名</a>
-        <!-- Language toggle in mobile menu -->
+        <!-- Distance toggle in mobile menu -->
         <div class="mt-8 flex border border-white/20 rounded-full overflow-hidden">
+            <button id="mnav-btn50k" class="nav-dist-btn px-6 py-2 text-sm transition-all active" onclick="setDistance('50k')">SKL50</button>
+            <button id="mnav-btn100k" class="nav-dist-btn px-6 py-2 text-sm transition-all" onclick="setDistance('100k')">SKL100</button>
+        </div>
+        <!-- Language toggle in mobile menu -->
+        <div class="mt-4 flex border border-white/20 rounded-full overflow-hidden">
             <button class="nav-lang-btn px-6 py-2 text-sm font-semibold transition-all" data-lang="english">EN</button>
             <button class="nav-lang-btn px-6 py-2 text-sm font-semibold transition-all active" data-lang="chinese">中文</button>
         </div>
@@ -1003,7 +1065,7 @@
         <div class="max-w-7xl mx-auto px-4">
             <!-- Mini toggle in stats -->
             <div class="text-center mb-8">
-                <div class="toggle-modern inline-flex">
+                <div id="distanceToggle" class="toggle-modern inline-flex">
                     <button id="stats-btn50k" class="toggle-btn active" onclick="setDistance('50k')">SKL50</button>
                     <button id="stats-btn100k" class="toggle-btn" onclick="setDistance('100k')">SKL100</button>
                 </div>
@@ -1044,7 +1106,7 @@
                         <p class="text-gray-400 mt-2 chinese-content chinese-font" style="display:none;">距離</p>
                     </div>
                     <div>
-                        <div class="stat-number">TBD</div>
+                        <div class="stat-number">4000<span class="text-skl-primary">m</span></div>
                         <p class="text-gray-400 mt-2 english-content">Elevation Gain</p>
                         <p class="text-gray-400 mt-2 chinese-content chinese-font" style="display:none;">總爬升</p>
                     </div>
@@ -1302,166 +1364,48 @@
                                 <i class="mr-2 fas fa-route text-skl-light"></i> 賽道詳情
                             </h3>
 
-                            <!-- Route Points with Segment Info - Single Continuous Line -->
-                            <div class="route-timeline-container relative pl-8">
-                                <!-- Point 1: Start -->
-                                <div class="route-checkpoint">
-                                    <div class="checkpoint-dot checkpoint-dot-start"></div>
-                                    <div class="checkpoint-content">
-                                        <h4 class="text-lg font-bold text-white mb-1 english-content">Start</h4>
-                                        <h4 class="text-lg font-bold text-white mb-1 chinese-content chinese-font" style="display: none;">起點</h4>
-                                        <p class="text-sm text-gray-300 font-medium">Powderface Trail Parking Lot</p>
-                                        <p class="text-xs text-gray-500 mt-1 english-content">Begin your journey</p>
-                                        <p class="text-xs text-gray-500 mt-1 chinese-content chinese-font" style="display: none;">開始你的征程</p>
-                                    </div>
-                                </div>
-
-                                <!-- Segment 1 Info (Start to CP1) -->
-                                <div class="segment-info">
-                                    <div class="bg-gradient-to-r from-yellow-500/10 to-transparent rounded-lg p-3 border border-yellow-500/20">
-                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                                            <span class="text-skl-accent font-display font-semibold">15 km</span>
-                                            <span class="text-gray-400">•</span>
-                                            <span class="text-green-400"><i class="fas fa-arrow-up mr-1"></i>500m</span>
-                                            <span class="text-gray-400">•</span>
-                                            <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-yellow-500/20 text-yellow-400 english-content">
-                                                <i class="fas fa-hiking mr-1"></i>Moderate
-                                            </span>
-                                            <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-yellow-500/20 text-yellow-400 chinese-content chinese-font" style="display:none;">
-                                                <i class="fas fa-hiking mr-1"></i>中等
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Point 2: CP 1 -->
-                                <div class="route-checkpoint">
-                                    <div class="checkpoint-dot checkpoint-dot-cp"></div>
-                                    <div class="checkpoint-content">
-                                        <h4 class="text-lg font-bold text-white mb-1 english-content">CP 1</h4>
-                                        <h4 class="text-lg font-bold text-white mb-1 chinese-content chinese-font" style="display: none;">補給站1</h4>
-                                        <p class="text-sm text-gray-300 font-medium">Powderface Ridge Trailhead</p>
-                                        <p class="text-xs text-gray-500 mt-1 english-content">Aid Station • Water & Snacks</p>
-                                        <p class="text-xs text-gray-500 mt-1 chinese-content chinese-font" style="display: none;">補給站 • 水同小食</p>
-                                    </div>
-                                </div>
-
-                                <!-- Segment 2 Info (CP1 to CP2) -->
-                                <div class="segment-info">
-                                    <div class="bg-gradient-to-r from-red-500/10 to-transparent rounded-lg p-3 border border-red-500/20">
-                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                                            <span class="text-skl-accent font-display font-semibold">14 km</span>
-                                            <span class="text-gray-400">•</span>
-                                            <span class="text-green-400"><i class="fas fa-arrow-up mr-1"></i>680m</span>
-                                            <span class="text-gray-400">•</span>
-                                            <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-red-500/20 text-red-400 english-content">
-                                                <i class="fas fa-mountain mr-1"></i>Difficult
-                                            </span>
-                                            <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-red-500/20 text-red-400 chinese-content chinese-font" style="display:none;">
-                                                <i class="fas fa-mountain mr-1"></i>困難
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Point 3: CP 2 -->
-                                <div class="route-checkpoint">
-                                    <div class="checkpoint-dot checkpoint-dot-cp"></div>
-                                    <div class="checkpoint-content">
-                                        <h4 class="text-lg font-bold text-white mb-1 english-content">CP 2</h4>
-                                        <h4 class="text-lg font-bold text-white mb-1 chinese-content chinese-font" style="display: none;">補給站2</h4>
-                                        <p class="text-sm text-gray-300 font-medium">Elbow Fall Parking Lot</p>
-                                        <p class="text-xs text-gray-500 mt-1 english-content">Aid Station • Water & Snacks</p>
-                                        <p class="text-xs text-gray-500 mt-1 chinese-content chinese-font" style="display: none;">補給站 • 水同小食</p>
-                                    </div>
-                                </div>
-
-                                <!-- Segment 3 Info (CP2 to CP3) -->
-                                <div class="segment-info">
-                                    <div class="bg-gradient-to-r from-green-500/10 to-transparent rounded-lg p-3 border border-green-500/20">
-                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                                            <span class="text-skl-accent font-display font-semibold">10.5 km</span>
-                                            <span class="text-gray-400">•</span>
-                                            <span class="text-green-400"><i class="fas fa-arrow-up mr-1"></i>600m</span>
-                                            <span class="text-gray-400">•</span>
-                                            <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-green-500/20 text-green-400 english-content">
-                                                <i class="fas fa-check-circle mr-1"></i>Easy
-                                            </span>
-                                            <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-green-500/20 text-green-400 chinese-content chinese-font" style="display:none;">
-                                                <i class="fas fa-check-circle mr-1"></i>簡單
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Point 4: CP 3 -->
-                                <div class="route-checkpoint">
-                                    <div class="checkpoint-dot checkpoint-dot-cp"></div>
-                                    <div class="checkpoint-content">
-                                        <h4 class="text-lg font-bold text-white mb-1 english-content">CP 3</h4>
-                                        <h4 class="text-lg font-bold text-white mb-1 chinese-content chinese-font" style="display: none;">補給站3</h4>
-                                        <p class="text-sm text-gray-300 font-medium">Moose Mountain Trailhead</p>
-                                        <p class="text-xs text-gray-500 mt-1 english-content">Aid Station • Water & Snacks</p>
-                                        <p class="text-xs text-gray-500 mt-1 chinese-content chinese-font" style="display: none;">補給站 • 水同小食</p>
-                                    </div>
-                                </div>
-
-                                <!-- Segment 4 Info (CP3 to Finish) -->
-                                <div class="segment-info">
-                                    <div class="bg-gradient-to-r from-green-500/10 to-transparent rounded-lg p-3 border border-green-500/20">
-                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                                            <span class="text-skl-accent font-display font-semibold">14.5 km</span>
-                                            <span class="text-gray-400">•</span>
-                                            <span class="text-green-400"><i class="fas fa-arrow-up mr-1"></i>170m</span>
-                                            <span class="text-red-400"><i class="fas fa-arrow-down ml-2 mr-1"></i>750m</span>
-                                            <span class="text-gray-400">•</span>
-                                            <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-green-500/20 text-green-400 english-content">
-                                                <i class="fas fa-smile mr-1"></i>Easy
-                                            </span>
-                                            <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-green-500/20 text-green-400 chinese-content chinese-font" style="display:none;">
-                                                <i class="fas fa-smile mr-1"></i>簡單
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Point 5: Finish -->
-                                <div class="route-checkpoint route-checkpoint-finish">
-                                    <div class="checkpoint-dot checkpoint-dot-finish"></div>
-                                    <div class="checkpoint-content">
-                                        <h4 class="text-lg font-bold text-white mb-1 english-content">Finish</h4>
-                                        <h4 class="text-lg font-bold text-white mb-1 chinese-content chinese-font" style="display: none;">終點</h4>
-                                        <p class="text-sm text-gray-300 font-medium">Allen Bill Day Use Area</p>
-                                        <p class="text-xs text-skl-accent mt-1 font-semibold english-content">
-                                            <i class="fas fa-trophy mr-1"></i>Celebration & Achievement!
-                                        </p>
-                                        <p class="text-xs text-skl-accent mt-1 font-semibold chinese-content chinese-font" style="display: none;">
-                                            <i class="fas fa-trophy mr-1"></i>慶祝同成就！
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                            <!-- Route Points with Segment Info - rendered from data/route-50k.json -->
+                            <div id="route-timeline-50k" class="route-timeline-container relative pl-8"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 100K Content (Coming Soon) -->
+            <!-- 100K Content -->
             <div class="distance-content distance-100k">
-                <div class="coming-soon-overlay">
-                    <div class="overlay-banner">
-                        <div class="coming-soon-badge pulse-glow">
-                            <i class="fas fa-hourglass-half mr-2"></i>
-                            <span class="english-content">Coming Soon</span>
-                            <span class="chinese-content chinese-font" style="display: none;">即將公佈</span>
-                            <p class="text-sm font-normal mt-2 opacity-80 english-content">Route details will be announced soon</p>
-                            <p class="text-sm font-normal mt-2 opacity-80 chinese-content chinese-font" style="display: none;">路線詳情即將公佈</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <div class="map-container mb-6" id="map-container-100k"></div>
+                        <div class="gradient-border p-6">
+                            <h3 class="flex items-center mb-4 text-lg font-display english-content">
+                                <i class="mr-2 fas fa-chart-line text-skl-light"></i> ELEVATION PROFILE
+                            </h3>
+                            <h3 class="flex items-center mb-4 text-lg font-display chinese-content chinese-font" style="display: none;">
+                                <i class="mr-2 fas fa-chart-line text-skl-light"></i> 攀升圖
+                            </h3>
+                            <div id="elevation-profile-100k" class="elevation-profile"></div>
+                        </div>
+                        <div class="mt-6 text-center">
+                            <a href="https://www.strava.com/routes/3509685090577516176" target="_blank" rel="noopener"
+                               class="inline-flex items-center px-6 py-3 rounded-full bg-[#FC4C02] hover:bg-[#e04400] transition-colors font-semibold">
+                                <i class="fab fa-strava mr-2"></i>
+                                <span class="english-content">View on Strava</span>
+                                <span class="chinese-content chinese-font" style="display:none;">喺 Strava 睇路線</span>
+                            </a>
                         </div>
                     </div>
-                    <div class="overlay-content">
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            <div class="gradient-border p-6"></div>
-                            <div class="gradient-border p-6"></div>
+
+                    <div>
+                        <div class="gradient-border p-6">
+                            <h3 class="flex items-center mb-6 text-lg font-display english-content">
+                                <i class="mr-2 fas fa-route text-skl-light"></i> COURSE DETAILS
+                            </h3>
+                            <h3 class="flex items-center mb-6 text-lg font-display chinese-content chinese-font" style="display: none;">
+                                <i class="mr-2 fas fa-route text-skl-light"></i> 賽道詳情
+                            </h3>
+
+                            <!-- Route Points with Segment Info - rendered from data/route-100k.json -->
+                            <div id="route-timeline-100k" class="route-timeline-container relative pl-8"></div>
                         </div>
                     </div>
                 </div>
@@ -1501,11 +1445,11 @@
                             <h4 class="font-semibold english-content">Registration Deadline</h4>
                             <h4 class="font-semibold chinese-content chinese-font" style="display:none;">報名截止</h4>
                             <p class="text-sm text-gray-400 mt-1 english-content">Team registration closes one month before the challenge</p>
-                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">團隊報名於挑戰前一個月截止</p>
+                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">團隊報名於挑戰前一個月截止。</p>
                         </div>
 
                         <div class="timeline-item-modern">
-                            <p class="text-xs text-blue-400 font-display tracking-wider mb-1">JULY 29-30, 2026 • 8PM MDT</p>
+                            <p class="text-xs text-blue-400 font-display tracking-wider mb-1">JULY 29-30, 2026 • 8:00PM</p>
                             <h4 class="font-semibold english-content">Online Info Session</h4>
                             <h4 class="font-semibold chinese-content chinese-font" style="display:none;">網上簡介會</h4>
                             <p class="text-sm text-gray-400 mt-1 english-content">Challenge briefing with route info. Two sessions available.</p>
@@ -1517,7 +1461,7 @@
                             <h4 class="font-semibold english-content">Check-in</h4>
                             <h4 class="font-semibold chinese-content chinese-font" style="display:none;">報到</h4>
                             <p class="text-sm text-gray-400 mt-1 english-content">Team check-in and safety briefing at start point</p>
-                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">團隊報到及起點安全簡報</p>
+                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">團隊報到及起點安全簡報。</p>
                         </div>
 
                         <div class="timeline-item-modern">
@@ -1533,7 +1477,7 @@
                             <h4 class="font-semibold english-content">Suggested Cutoff at Aid Station 2</h4>
                             <h4 class="font-semibold chinese-content chinese-font" style="display:none;">建議關門時間（補給站2）</h4>
                             <p class="text-sm text-gray-400 mt-1 english-content">Teams not reaching Elbow Fall by this time may consider stopping</p>
-                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">未能喺限時內到達Elbow Fall嘅團隊建議提早完成</p>
+                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">未能喺限時內到達Elbow Fall嘅團隊建議提早完成。</p>
                         </div>
 
                         <div class="timeline-item-modern" style="padding-bottom: 0;">
@@ -1549,16 +1493,62 @@
 
             <!-- 100K Schedule -->
             <div class="details-content details-100k">
-                <div class="coming-soon-overlay">
-                    <div class="overlay-banner">
-                        <div class="coming-soon-badge pulse-glow">
-                            <i class="fas fa-hourglass-half mr-2"></i>
-                            <span class="english-content">Coming Soon</span>
-                            <span class="chinese-content chinese-font" style="display: none;">即將公佈</span>
+                <div data-aos="fade-up" class="gradient-border p-8 mb-8">
+                    <h3 class="text-2xl font-display font-bold mb-8 english-content">
+                        <i class="mr-2 far fa-calendar-alt text-skl-primary"></i> SKL100 SCHEDULE
+                    </h3>
+                    <h3 class="text-2xl font-display font-bold mb-8 chinese-content chinese-font" style="display: none;">
+                        <i class="mr-2 far fa-calendar-alt text-skl-primary"></i> SKL100 時間表
+                    </h3>
+
+                    <div class="timeline-modern">
+                        <div class="timeline-item-modern">
+                            <p class="text-xs text-yellow-400 font-display tracking-wider mb-1">JULY 29, 2026</p>
+                            <h4 class="font-semibold english-content">Registration Deadline</h4>
+                            <h4 class="font-semibold chinese-content chinese-font" style="display:none;">報名截止</h4>
+                            <p class="text-sm text-gray-400 mt-1 english-content">Team registration closes one month before the challenge</p>
+                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">團隊報名於挑戰前一個月截止。</p>
                         </div>
-                    </div>
-                    <div class="overlay-content">
-                        <div class="gradient-border p-8"></div>
+
+                        <div class="timeline-item-modern">
+                            <p class="text-xs text-blue-400 font-display tracking-wider mb-1">JULY 29-30, 2026 • 8:00 PM</p>
+                            <h4 class="font-semibold english-content">Online Info Session</h4>
+                            <h4 class="font-semibold chinese-content chinese-font" style="display:none;">網上簡介會</h4>
+                            <p class="text-sm text-gray-400 mt-1 english-content">Challenge briefing with route info. Two sessions available.</p>
+                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">網上挑戰簡介會，講解路線及挑戰。提供兩晚方便參加者。</p>
+                        </div>
+
+                        <div class="timeline-item-modern">
+                            <p class="text-xs text-blue-400 font-display tracking-wider mb-1">AUG 28, 2026 • 4:00 PM</p>
+                            <h4 class="font-semibold english-content">Check-in</h4>
+                            <h4 class="font-semibold chinese-content chinese-font" style="display:none;">報到</h4>
+                            <p class="text-sm text-gray-400 mt-1 english-content">Team check-in and safety briefing at start point</p>
+                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">團隊報到及起點安全簡報。</p>
+                        </div>
+
+                        <div class="timeline-item-modern">
+                            <p class="text-xs text-green-400 font-display tracking-wider mb-1">AUG 28, 2026 • 5:00 PM</p>
+                            <h4 class="font-semibold english-content">Challenge Begins</h4>
+                            <h4 class="font-semibold chinese-content chinese-font" style="display:none;">挑戰開始</h4>
+                            <p class="text-sm text-gray-400 mt-1 english-content">100K challenge begins in the evening. Teams stay together throughout.</p>
+                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">100公里挑戰於傍晚開始。團隊必須全程一齊行動。</p>
+                        </div>
+
+                        <div class="timeline-item-modern">
+                            <p class="text-xs text-yellow-400 font-display tracking-wider mb-1">AUG 29, 2026 • 2:00 PM</p>
+                            <h4 class="font-semibold english-content">Suggested Cutoff at Aid Station 5</h4>
+                            <h4 class="font-semibold chinese-content chinese-font" style="display:none;">建議關門時間（補給站5）</h4>
+                            <p class="text-sm text-gray-400 mt-1 english-content">Teams not reaching Elbow Fall by this time may consider stopping</p>
+                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">未能喺限時內到達Elbow Fall嘅團隊建議提早完成。</p>
+                        </div>
+
+                        <div class="timeline-item-modern" style="padding-bottom: 0;">
+                            <p class="text-xs text-green-400 font-display tracking-wider mb-1">AUG 29, 2026 • 8:00 PM</p>
+                            <h4 class="font-semibold english-content">Challenge Finish</h4>
+                            <h4 class="font-semibold chinese-content chinese-font" style="display:none;">挑戰結束</h4>
+                            <p class="text-sm text-gray-400 mt-1 english-content">30-hour time limit. Celebrate at the finish line with food and drinks!</p>
+                            <p class="text-sm text-gray-400 mt-1 chinese-content chinese-font" style="display:none;">30小時時限。於終點完成挑戰，享用美食同飲品！</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1684,6 +1674,14 @@
                 </div>
 
                 <form class="p-8 space-y-6" id="registrationForm">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2 english-content">Distance *</label>
+                        <label class="block text-sm font-medium text-gray-300 mb-2 chinese-content chinese-font" style="display: none;">距離 *</label>
+                        <select id="register_distance" name="register_distance" required class="form-input">
+                            <option value="50">50K</option>
+                            <option value="100">100K</option>
+                        </select>
+                    </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2 english-content">Team Name *</label>
                         <label class="block text-sm font-medium text-gray-300 mb-2 chinese-content chinese-font" style="display: none;">團隊名稱 *</label>
@@ -1867,6 +1865,8 @@
         // Sticky nav on scroll
         const stickyNav = document.getElementById('stickyNav');
         const languageSwitch = document.querySelector('.language-switch');
+        const distanceFloat = document.getElementById('distanceFloat');
+        const distanceToggle = document.getElementById('distanceToggle');
         let lastScroll = 0;
 
         window.addEventListener('scroll', () => {
@@ -1877,6 +1877,13 @@
             } else {
                 stickyNav.classList.remove('visible');
                 languageSwitch.classList.remove('hidden');
+            }
+
+            // Floating distance indicator: show once the in-page toggle has scrolled
+            // above the top of the viewport (i.e. the user has passed it).
+            if (distanceFloat && distanceToggle) {
+                const passedToggle = distanceToggle.getBoundingClientRect().bottom < 0;
+                distanceFloat.classList.toggle('visible', passedToggle);
             }
             lastScroll = currentScroll;
         });
@@ -1912,6 +1919,9 @@
             // Re-apply language
             const isChineseActive = document.getElementById('chineseBtn').classList.contains('active');
             applyLanguage(isChineseActive ? 'chinese' : 'english');
+
+            // Redraw the now-visible route map (Leaflet can't size a hidden container)
+            refreshRouteMap(distance);
         }
 
         // Language toggle
@@ -2125,9 +2135,11 @@
 
         document.addEventListener('DOMContentLoaded', loadTestimonials);
 
-        // Map initialization
-        document.addEventListener('DOMContentLoaded', function() {
-            const map = L.map('map-container').setView([50.8, -114.9], 12);
+        // Map initialization - one map per distance, keyed by distance code
+        const routeMaps = {};
+
+        function buildRouteMap(distance, mapDivId, elevationDivId, gpxFile) {
+            const map = L.map(mapDivId).setView([50.8, -114.9], 12);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap'
             }).addTo(map);
@@ -2137,7 +2149,7 @@
                 width: '100%',
                 height: 200,
                 margins: { top: 30, right: 20, bottom: 30, left: 40 },
-                elevationDiv: "#elevation-profile",
+                elevationDiv: "#" + elevationDivId,
                 detached: true,
                 closeBtn: false,
                 legend: false,
@@ -2148,7 +2160,7 @@
             });
             elevationControl.addTo(map);
 
-            new L.GPX('assets/YYCHKWalker.gpx', {
+            const gpxLayer = new L.GPX(gpxFile, {
                 async: true,
                 markers: { startIcon: 'assets/start.png', endIcon: 'assets/end.png' },
                 polyline_options: { color: '#0d9488', opacity: 0.9, weight: 4 }
@@ -2156,6 +2168,127 @@
             .on('loaded', (e) => map.fitBounds(e.target.getBounds()))
             .on('addline', (e) => elevationControl.addData(e.line))
             .addTo(map);
+
+            routeMaps[distance] = { map, gpxLayer };
+            return map;
+        }
+
+        // Each map is built lazily the first time its tab is shown. Building a
+        // leaflet-elevation chart inside a hidden (zero-width) container yields NaN
+        // geometry, so only the initially-visible 50k map is built up front.
+        const routeMapConfig = {
+            '50k':  { mapDiv: 'map-container',      elevDiv: 'elevation-profile',      gpx: 'assets/SaanKaaLaa50.gpx' },
+            '100k': { mapDiv: 'map-container-100k', elevDiv: 'elevation-profile-100k', gpx: 'assets/SaanKaaLaa100.gpx' }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const c = routeMapConfig['50k'];
+            buildRouteMap('50k', c.mapDiv, c.elevDiv, c.gpx);
+        });
+
+        // Called when a distance tab becomes visible. Builds the map on first view,
+        // then invalidateSize() so Leaflet re-measures the now-visible container.
+        function refreshRouteMap(distance) {
+            const c = routeMapConfig[distance];
+            if (!c) return;
+            setTimeout(() => {
+                if (!routeMaps[distance]) {
+                    buildRouteMap(distance, c.mapDiv, c.elevDiv, c.gpx);
+                    return;
+                }
+                const entry = routeMaps[distance];
+                entry.map.invalidateSize();
+                try { entry.map.fitBounds(entry.gpxLayer.getBounds()); } catch (e) {}
+            }, 60);
+        }
+
+        // Course-details timeline rendered from data/route-<distance>.json
+        const CHECKPOINT_DOT = { start: 'checkpoint-dot-start', cp: 'checkpoint-dot-cp', finish: 'checkpoint-dot-finish' };
+        const SEGMENT_STYLE = {
+            moderate:  { color: 'yellow', icon: 'fa-hiking',       en: 'Moderate',  zh: '中等' },
+            difficult: { color: 'red',    icon: 'fa-mountain',     en: 'Difficult', zh: '困難' },
+            easy:      { color: 'green',  icon: 'fa-check-circle',  en: 'Easy',      zh: '簡單' }
+        };
+
+        function checkpointHTML(cp) {
+            const dotClass = CHECKPOINT_DOT[cp.type] || 'checkpoint-dot-cp';
+            const isFinish = cp.type === 'finish';
+            const wrapClass = isFinish ? 'route-checkpoint route-checkpoint-finish' : 'route-checkpoint';
+            const mapLink = cp.maps ? `
+                            <a href="${cp.maps}" target="_blank" rel="noopener" title="Open in Google Maps"
+                               class="text-skl-primary hover:text-skl-light transition-colors">
+                                <i class="fas fa-location-dot"></i>
+                            </a>` : '';
+            const desc = isFinish ? `
+                        <p class="text-xs text-skl-accent mt-1 font-semibold english-content">
+                            <i class="fas fa-trophy mr-1"></i>${cp.desc_en}
+                        </p>
+                        <p class="text-xs text-skl-accent mt-1 font-semibold chinese-content chinese-font" style="display: none;">
+                            <i class="fas fa-trophy mr-1"></i>${cp.desc_zh}
+                        </p>` : `
+                        <p class="text-xs text-gray-500 mt-1 english-content">${cp.desc_en}</p>
+                        <p class="text-xs text-gray-500 mt-1 chinese-content chinese-font" style="display: none;">${cp.desc_zh}</p>`;
+            return `
+                <div class="${wrapClass}">
+                    <div class="checkpoint-dot ${dotClass}"></div>
+                    <div class="checkpoint-content">
+                        <h4 class="text-lg font-bold text-white mb-1 english-content">${cp.name_en}</h4>
+                        <h4 class="text-lg font-bold text-white mb-1 chinese-content chinese-font" style="display: none;">${cp.name_zh}</h4>
+                        <p class="text-sm text-gray-300 font-medium flex items-center gap-2">
+                            <span>${cp.location}</span>${mapLink}
+                        </p>${desc}
+                    </div>
+                </div>`;
+        }
+
+        function segmentHTML(seg) {
+            const s = SEGMENT_STYLE[seg.difficulty] || SEGMENT_STYLE.moderate;
+            const icon = seg.icon || s.icon;
+            const loss = seg.loss ? `<span class="text-red-400"><i class="fas fa-arrow-down ml-2 mr-1"></i>${seg.loss}</span>` : '';
+            return `
+                <div class="segment-info">
+                    <div class="bg-gradient-to-r from-${s.color}-500/10 to-transparent rounded-lg p-3 border border-${s.color}-500/20">
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                            <span class="text-skl-accent font-display font-semibold">${seg.distance}</span>
+                            <span class="text-gray-400">•</span>
+                            <span class="text-green-400"><i class="fas fa-arrow-up mr-1"></i>${seg.gain}</span>${loss}
+                            <span class="text-gray-400">•</span>
+                            <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-${s.color}-500/20 text-${s.color}-400 english-content">
+                                <i class="fas ${icon} mr-1"></i>${s.en}
+                            </span>
+                            <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-${s.color}-500/20 text-${s.color}-400 chinese-content chinese-font" style="display:none;">
+                                <i class="fas ${icon} mr-1"></i>${s.zh}
+                            </span>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        async function loadRouteTimeline(distance) {
+            const container = document.getElementById('route-timeline-' + distance);
+            if (!container) return;
+            try {
+                const res = await fetch('data/route-' + distance + '.json');
+                const data = await res.json();
+                const checkpoints = data.checkpoints || [];
+                const segments = data.segments || [];
+                let html = '';
+                checkpoints.forEach((cp, i) => {
+                    html += checkpointHTML(cp);
+                    if (segments[i]) html += segmentHTML(segments[i]);
+                });
+                container.innerHTML = html;
+                // Respect the current language on freshly-injected content
+                const isChineseActive = document.getElementById('chineseBtn').classList.contains('active');
+                applyLanguage(isChineseActive ? 'chinese' : 'english');
+            } catch (error) {
+                console.error('Error loading route ' + distance + ':', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRouteTimeline('50k');
+            loadRouteTimeline('100k');
         });
 
         // EmailJS
@@ -2171,6 +2304,7 @@
 
             const templateParams = {
                 team_name: document.getElementById('teamName').value,
+                distance: document.getElementById('distance').value,
                 captain_first_name: document.getElementById('captainFirstName').value,
                 captain_last_name: document.getElementById('captainLastName').value,
                 captain_email: document.getElementById('captainEmail').value,
