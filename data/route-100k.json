@@ -1,0 +1,95 @@
+{
+  "checkpoints": [
+    {
+      "type": "start",
+      "name_en": "Start",
+      "name_zh": "起點",
+      "location": "Kananaskis Visitor Information Centre",
+      "desc_en": "Begin your journey",
+      "desc_zh": "開始你的征程",
+      "maps": "https://maps.app.goo.gl/Hb6ZhQQDox5WYyk2A"
+    },
+    {
+      "type": "cp",
+      "name_en": "CP 1",
+      "name_zh": "補給站1",
+      "location": "Jumpingpound Ridge Trailhead",
+      "desc_en": "Aid Station • Water & Snacks",
+      "desc_zh": "補給站 • 水同小食",
+      "maps": "https://maps.app.goo.gl/8668QQa5QWCvmo5N8"
+    },
+    {
+      "type": "cp",
+      "name_en": "CP 2",
+      "name_zh": "補給站2",
+      "location": "Kananaskis British Commonwealth Air Training Plan Memorial",
+      "desc_en": "Aid Station • Water & Snacks",
+      "desc_zh": "補給站 • 水同小食",
+      "maps": "https://maps.app.goo.gl/B3X6ZgRo79YrS3Mw9"
+    },
+    {
+      "type": "cp",
+      "name_en": "CP 3",
+      "name_zh": "補給站3",
+      "location": "Compression Ridge Trailhead",
+      "desc_en": "Aid Station • Water & Snacks",
+      "desc_zh": "補給站 • 水同小食",
+      "maps": "https://maps.app.goo.gl/eF3UsqyQvi6j8Jim9"
+    },
+    {
+      "type": "cp",
+      "name_en": "CP 4",
+      "name_zh": "補給站4",
+      "location": "Powderface Ridge Trailhead",
+      "desc_en": "Aid Station • Water & Snacks",
+      "desc_zh": "補給站 • 水同小食",
+      "maps": "https://maps.app.goo.gl/tyh8HuvYuf6DgptQ8"
+    },
+    {
+      "type": "cp",
+      "name_en": "CP 5",
+      "name_zh": "補給站5",
+      "location": "Elbow Fall Parking Lot",
+      "desc_en": "Aid Station • Water & Snacks",
+      "desc_zh": "補給站 • 水同小食",
+      "maps": "https://maps.app.goo.gl/bEshGzAoEAv85y6G6"
+    },
+    {
+      "type": "cp",
+      "name_en": "CP 6",
+      "name_zh": "補給站6",
+      "location": "Moose Mountain Trailhead",
+      "desc_en": "Aid Station • Water & Snacks",
+      "desc_zh": "補給站 • 水同小食",
+      "maps": "https://maps.app.goo.gl/3EfVWRN3T8wdAS9C9"
+    },
+    {
+      "type": "cp",
+      "name_en": "CP 7",
+      "name_zh": "補給站7",
+      "location": "West Bragg Creek Day Use Area",
+      "desc_en": "Aid Station • Water & Snacks",
+      "desc_zh": "補給站 • 水同小食",
+      "maps": "https://maps.app.goo.gl/h2nRMYS32DGS6cZY8"
+    },
+    {
+      "type": "finish",
+      "name_en": "Finish",
+      "name_zh": "終點",
+      "location": "Allen Bill Day Use Area",
+      "desc_en": "Celebration & Achievement!",
+      "desc_zh": "慶祝同成就！",
+      "maps": "https://maps.app.goo.gl/kYoMPRXJV9vx9T6m8"
+    }
+  ],
+  "segments": [
+    { "distance": "12 km", "gain": "500m", "difficulty": "moderate" },
+    { "distance": "15 km", "gain": "500m", "difficulty": "moderate" },
+    { "distance": "15 km", "gain": "500m", "difficulty": "moderate" },
+    { "distance": "15 km", "gain": "500m", "difficulty": "moderate" },
+    { "distance": "15 km", "gain": "500m", "difficulty": "moderate" },
+    { "distance": "14 km", "gain": "680m", "difficulty": "difficult" },
+    { "distance": "10.5 km", "gain": "600m", "difficulty": "easy" },
+    { "distance": "14.5 km", "gain": "170m", "loss": "750m", "difficulty": "easy", "icon": "fa-smile" }
+  ]
+}
