@@ -83,13 +83,13 @@
     }
   ],
   "segments": [
-    { "distance": "12 km", "gain": "500m", "difficulty": "moderate" },
-    { "distance": "15 km", "gain": "500m", "difficulty": "moderate" },
-    { "distance": "15 km", "gain": "500m", "difficulty": "moderate" },
-    { "distance": "15 km", "gain": "500m", "difficulty": "moderate" },
-    { "distance": "15 km", "gain": "500m", "difficulty": "moderate" },
-    { "distance": "14 km", "gain": "680m", "difficulty": "difficult" },
-    { "distance": "10.5 km", "gain": "600m", "difficulty": "easy" },
-    { "distance": "14.5 km", "gain": "170m", "loss": "750m", "difficulty": "easy", "icon": "fa-smile" }
+    { "distance": "12 km", "gain": "450m", "loss": "140m", "difficulty": "easy" },
+    { "distance": "13 km", "gain": "680m", "loss": "580m", "difficulty": "moderate" },
+    { "distance": "5.5 km", "gain": "110m", "loss": "150m", "difficulty": "easy" },
+    { "distance": "17 km", "gain": "770m", "loss": "830m", "difficulty": "moderate" },
+    { "distance": "20 km", "gain": "960m", "loss": "1040m", "difficulty": "difficult" },
+    { "distance": "12 km", "gain": "680m", "loss": "200m","difficulty": "moderate" },
+    { "distance": "9.5 km", "gain": "50m", "loss": "620m", "difficulty": "easy" },
+    { "distance": "11.5 km", "gain": "360m", "loss": "375m", "difficulty": "easy", "icon": "fa-smile" }
   ]
 }
